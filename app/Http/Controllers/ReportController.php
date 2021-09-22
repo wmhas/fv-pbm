@@ -58,6 +58,7 @@ class ReportController extends Controller
                     ['orders.rx_interval', '>', '1'],
                     ['orders.total_amount', '!=', '0'],
                 ])
+                ->whereNull('orders.deleted_at')
                 ->orderby('prescriptions.next_supply_date', 'asc')
                 ->paginate(15);
         } else {
@@ -132,8 +133,10 @@ class ReportController extends Controller
             ->where('b.myob_product_id', $item->id)
             ->whereDate('a.created_at', '>=', $request->startDate)
             ->whereDate('a.created_at', '<=', $request->endDate)
-            ->orwhere('a.status_id', 4)
-            ->orWhere('a.status_id', 5)
+            ->whereIn('a.status_id', [4,5])
+            ->whereNull('a.deleted_at')
+            ->whereNull('a.return_timestamp')
+            ->whereNull('b.deleted_at')
             ->groupby('c.id')
             ->paginate(15);
         }
@@ -152,8 +155,10 @@ class ReportController extends Controller
             ->where('b.myob_product_id', $request->item_id)
             ->whereDate('a.created_at', '>=', $request->startDate)
             ->whereDate('a.created_at', '<=', $request->endDate)
-            ->orwhere('a.status_id', 4)
-            ->orWhere('a.status_id', 5)
+            ->whereIn('a.status_id', [4,5])
+            ->whereNull('a.deleted_at')
+            ->whereNull('a.return_timestamp')
+            ->whereNull('b.deleted_at')
             ->groupby('c.id')
             ->get();
         }

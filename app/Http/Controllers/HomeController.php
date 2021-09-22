@@ -39,6 +39,7 @@ class HomeController extends Controller
             ->where('B.rx_interval', '>', '1')
             ->where('B.total_amount', '!=', '0')
             ->whereIn('B.status_id', [4, 5])
+            ->whereNull('B.deleted_at')
             ->join('orders as B', 'B.id', 'A.order_id')
             ->join('patients as C', 'C.id', 'B.patient_id')->skip(0)->take(4)
             ->get();
@@ -110,6 +111,7 @@ class HomeController extends Controller
                 ['orders.total_amount', '!=', '0'],
             ])
             ->orderby('prescriptions.next_supply_date', 'asc')
+            ->whereNull('orders.deleted_at')
             ->paginate(15);
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
         return view('reports.report_refill', compact('order_lists', 'roles'));
@@ -127,6 +129,7 @@ class HomeController extends Controller
             ->join('patients', 'orders.patient_id', '=', 'patients.id')
             ->where('prescriptions.rx_end', '=', $today)
             ->orderBy('orders.created_at', 'desc')
+            ->whereNull('orders.deleted_at')
             ->paginate(15);
 
         $statuses = Status::all();

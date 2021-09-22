@@ -94,7 +94,11 @@
                                             </td>
                                             <td>
                                                 <div class="mt-2 d-flex justify-content-center">
-                                                    <a href="{{ url('/order/' . $patient->id . '/create') }}" data-toggle="tooltip" title="Create New Order" data-placement="left"><i class="mdi mdi-pill"></i></a>
+                                                    @if (!$patient->tariff_id == null)
+                                                        <a href="{{ url('/order/' . $patient->id . '/create') }}" data-toggle="tooltip" title="Create New Order" data-placement="left"><i class="mdi mdi-pill"></i></a>
+                                                    @else
+                                                        <button data-toggle="tooltip" title="Can't register new order" data-placement="left" class="btn btn-disabled"><i class="mdi mdi-pill"></i></button>
+                                                    @endif
                                                 </div>
                                             </td>
                                             <td>

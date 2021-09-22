@@ -45,26 +45,24 @@
                             @csrf
                             <button class="btn btn-danger">Clear table</button>
                         </form>
-
-                        @foreach ($stickers as $sticker)
-                            @if ($sticker->dose_uom == 'TAB')
-                                Tablet
-                                <table class="table table-bordered ">
-                                    <thead>
-                                        <tr>
-                                            <th style="width: 10px">No</th>
-                                            <th>Salutation</th>
-                                            <th>Name</th>
-                                            <th>IC / Passport</th>
-                                            <th>DO Number</th>
-                                            <th>Item</th>
-                                            <th>Quantity</th>
-                                            <th>Instruction</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-
-                                        @forelse ($stickers as $sticker)
+                        @if (!empty($do_number))
+                            Jenis Ubat - Tablet / Kapsul
+                            <table class="table table-bordered ">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 10px">No</th>
+                                        <th>Salutation</th>
+                                        <th>Name</th>
+                                        <th>IC / Passport</th>
+                                        <th>DO Number</th>
+                                        <th>Item</th>
+                                        <th>Quantity</th>
+                                        <th>Instruction</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($stickers as $sticker)
+                                        @if ($sticker->dose_uom == 'TAB' || ($sticker->dose_uom == 'CAP' && $sticker->instruction != 'INHALE/SEDUT'))
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
                                                 <td>{{ $sticker->salutations }}</td>
@@ -74,38 +72,29 @@
                                                 <td>{{ $sticker->item_name }}</td>
                                                 <td>{{ $sticker->quantity }}</td>
                                                 <td>{{ $sticker->instruction }}</td>
-
                                             </tr>
-                                        @empty
-                                            <tr>
-                                                <td colspan="7" class="text-center">No order selected</td>
-                                            </tr>
-                                        @endforelse
-                                    </tbody>
-                                </table>
-                            @else
-                            @endif
-
+                                        @endif
+                                    @endforeach
+                                </tbody>
+                            </table>
                             <br>
-
-                            @if ($sticker->dose_uom == 'UNIT')
-                                Insulin
-                                <table class="table table-bordered ">
-                                    <thead>
-                                        <tr>
-                                            <th style="width: 10px">No</th>
-                                            <th>Salutation</th>
-                                            <th>Name</th>
-                                            <th>IC / Passport</th>
-                                            <th>DO Number</th>
-                                            <th>Item</th>
-                                            <th>Quantity</th>
-                                            <th>Instruction</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-
-                                        @forelse ($stickers as $sticker)
+                            Jenis Ubat - Insulin
+                            <table class="table table-bordered ">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 10px">No</th>
+                                        <th>Salutation</th>
+                                        <th>Name</th>
+                                        <th>IC / Passport</th>
+                                        <th>DO Number</th>
+                                        <th>Item</th>
+                                        <th>Quantity</th>
+                                        <th>Instruction</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($stickers as $sticker)
+                                        @if ($sticker->dose_uom == 'PEN')
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
                                                 <td>{{ $sticker->salutations }}</td>
@@ -115,38 +104,29 @@
                                                 <td>{{ $sticker->item_name }}</td>
                                                 <td>{{ $sticker->quantity }}</td>
                                                 <td>{{ $sticker->instruction }}</td>
-
                                             </tr>
-                                        @empty
-                                            <tr>
-                                                <td colspan="7" class="text-center">No order selected</td>
-                                            </tr>
-                                        @endforelse
-                                    </tbody>
-                                </table>
-                            @else
-                            @endif
-
+                                        @endif
+                                    @endforeach
+                                </tbody>
+                            </table>
                             <br>
-
-                            @if ($sticker->dose_uom !== 'TAB')
-                                Sedut
-                                <table class="table table-bordered ">
-                                    <thead>
-                                        <tr>
-                                            <th style="width: 10px">No</th>
-                                            <th>Salutation</th>
-                                            <th>Name</th>
-                                            <th>IC / Passport</th>
-                                            <th>DO Number</th>
-                                            <th>Item</th>
-                                            <th>Quantity</th>
-                                            <th>Instruction</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-
-                                        @forelse ($stickers as $sticker)
+                            Jenis Ubat - Sedut
+                            <table class="table table-bordered ">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 10px">No</th>
+                                        <th>Salutation</th>
+                                        <th>Name</th>
+                                        <th>IC / Passport</th>
+                                        <th>DO Number</th>
+                                        <th>Item</th>
+                                        <th>Quantity</th>
+                                        <th>Instruction</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($stickers as $sticker)
+                                        @if ($sticker->dose_uom == 'CAP' && $sticker->instruction == 'INHALE/SEDUT')
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
                                                 <td>{{ $sticker->salutations }}</td>
@@ -156,19 +136,12 @@
                                                 <td>{{ $sticker->item_name }}</td>
                                                 <td>{{ $sticker->quantity }}</td>
                                                 <td>{{ $sticker->instruction }}</td>
-
                                             </tr>
-                                        @empty
-                                            <tr>
-                                                <td colspan="7" class="text-center">No order selected</td>
-                                            </tr>
-                                        @endforelse
-                                    </tbody>
-                                </table>
-                            @else
-                            @endif
-
-                        @endforeach
+                                        @endif
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        @endif
                     </div>
                 </div>
             </div>

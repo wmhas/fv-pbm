@@ -17,7 +17,7 @@ class CreateStickersTable extends Migration
             $table->id();
             $table->string('patient_name');
             $table->string('item_name');
-            $table->integer('quantity');
+            $table->float('quantity');
             $table->string('ic_no');
             $table->date('dispensing_date');
             $table->string('instruction');

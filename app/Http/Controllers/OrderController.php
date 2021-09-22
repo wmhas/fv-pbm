@@ -111,17 +111,17 @@ class OrderController extends Controller
     public function show($id)
     {
         $order = Order::findOrFail($id);
-        if ($order->dispensing_method == "0" && $order->rx_interval == "0" && $order->total_amount == "0") {
+        if ($order->dispensing_method == 0 && $order->rx_interval == 0 && $order->total_amount == 0) {
             return redirect()->action('OrderController@create_order', [
                 'order_id' => $order->id,
                 'patient' => $order->patient_id
             ]);
-        } elseif ($order->dispensing_method != "0" && $order->rx_interval == "0" && $order->total_amount == "0") {
+        } elseif ($order->dispensing_method != 0 && $order->rx_interval == 0 && $order->total_amount == 0) {
             return redirect()->action('OrderController@create_prescription', [
                 'order_id' => $order->id,
                 'id' => $order->patient_id
             ]);
-        } elseif ($order->dispensing_method != "0" && $order->rx_interval != "0" && $order->total_amount == "0") {
+        } elseif ($order->dispensing_method != 0 && $order->rx_interval != 0 && $order->total_amount == 0) {
             return redirect()->action('OrderController@create_orderEntry', [
                 'order_id' => $order->id,
                 'id' => $order->patient_id
@@ -335,7 +335,7 @@ class OrderController extends Controller
 
     public function store_prescription($patient, $order_id, Request $request)
     {
-        $order = Order::where('id', $order_id)->first();
+        $order = Order::where('id', $order_id)->whereNull('orders.deleted_at')->first();
         $order->rx_interval = $request->input('rx_interval');
         $order->save();
         if (empty($order->prescription)) {
@@ -417,19 +417,21 @@ class OrderController extends Controller
 
     public function store_orderEntry($patient, $order_id, Request $request)
     {
-        $order = Order::select('total_amount')->where('id', $order_id)->first();
-        $order->total_amount = $request->input('total_amount');
+        $order = Order::where('id', $order_id)->first();
+        
+        // dd($request->all());
   
-        if ($order->total_amount == '0') {
+        if ( $request->input('total_amount') == 0) {
             return redirect()->action('OrderController@create_orderEntry', [
                 'id' => $patient,
                 'order_id' => $order_id
             ])->with(['status' => false, 'message' => 'You need to add at least one item to create an order!']);
         } else {
+            $order->total_amount = $request->input('total_amount');
             $order->status_id = 2;
-            $order->save();
+            $order->update();
             return redirect()->action('OrderController@show', [
-                'order' => $order->id
+                'order' => $order_id
             ]);
         }
     }
@@ -479,7 +481,7 @@ class OrderController extends Controller
         $stock->source_date = Carbon::now()->format('Y-m-d');
         $stock->save();
 
-        if ($order->total_amount == "0") {
+        if ($order->total_amount == 0) {
             return redirect()->route('order.entry', [
                 'id' => $request->input('patient_id'),
                 'order_id' => $request->input('order_id')
