@@ -418,18 +418,18 @@ class OrderController extends Controller
     public function store_orderEntry($patient, $order_id, Request $request)
     {
         $order = Order::select('total_amount')->where('id', $order_id)->first();
-        $order->total_amount = $request->input('total_amount');
   
-        if ($order->total_amount == '0') {
+        if ( $request->input('total_amount') == '0') {
             return redirect()->action('OrderController@create_orderEntry', [
                 'id' => $patient,
                 'order_id' => $order_id
             ])->with(['status' => false, 'message' => 'You need to add at least one item to create an order!']);
         } else {
+            $order->total_amount = $request->input('total_amount');
             $order->status_id = 2;
             $order->save();
             return redirect()->action('OrderController@show', [
-                'order' => $order->id
+                'order' => $order_id
             ]);
         }
     }
