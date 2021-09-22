@@ -15,9 +15,13 @@ class BorangJevController extends Controller
         ]);
     }
 
-    public function print (Request $request)
+    //public function print (Request $request)
+    public function print ($doNumber)
     {
-        $doNumber = $request->get('do_number');
+    
+        //$doNumber = $request->get('do_number');
+     // dd($doNumber);
+
         if (!$doNumber) {
             return redirect(route('borang.index'));
         }

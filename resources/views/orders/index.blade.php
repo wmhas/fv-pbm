@@ -110,8 +110,10 @@
                                         <td></td>       
                                     @endif
                                     <td>
-                                        {{ $o->patient->full_name }}<br><br>
-                                        (IC: {{ $o->patient->identification }})
+                                        {{ $o->patient->full_name }}<br>
+                                        (IC: {{ $o->patient->identification }})<br>
+                                         <a class="btn btn-primary" href="{{ route('borangjhev.print',$o->do_number) }}">JHEV FORM</a>
+
                                     </td>
                                     <td>{{ date("d/m/Y", strtotime($o->created_at))}}</td>
                                     <td style="text-align: center;">

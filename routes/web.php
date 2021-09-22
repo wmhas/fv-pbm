@@ -176,5 +176,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['prefix' => 'borang'], function () {
         Route::get('/', 'BorangJevController@index')->name('borang.index');
         Route::get('/print', 'BorangJevController@print')->name('borang.print');
+        Route::get('/{do_number}/print', 'BorangJevController@print')->name('borangjhev.print');
+
     });
 });
