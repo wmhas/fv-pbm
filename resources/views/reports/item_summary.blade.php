@@ -25,7 +25,7 @@
                         <th>No</th>
                         <th>Customer Name</th>
                         <th>Quantity</th>
-                        <th>Amount</th>     
+                        <th>Amount (RM)</th>     
                     </tr>   
                 </thead>
                 <tbody>
@@ -34,7 +34,7 @@
                         <td>{{$loop->iteration}}</td>
                         <td>{{$list->full_name}}</td>
                         <td>{{$list->quantity}}</td>
-                        <td>{{number_format($list->amount,2)}}</td>
+                        <td style="text-align: right;">{{number_format($list->amount,2)}}</td>
                     </tr>
                     @endforeach
                 </tbody>
