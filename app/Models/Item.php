@@ -50,6 +50,7 @@ class Item extends Model
             ->where('c.item_id', $this->id)
             ->whereIn('c.source', ['sale','return'])
             ->whereIn('b.status_id', [4,5])
+            ->whereNull('b.deleted_at')
             ->groupBy('c.item_id')->first();
 
         return $used_stock;

@@ -335,7 +335,7 @@ class OrderController extends Controller
 
     public function store_prescription($patient, $order_id, Request $request)
     {
-        $order = Order::where('id', $order_id)->first();
+        $order = Order::where('id', $order_id)->whereNull('orders.deleted_at')->first();
         $order->rx_interval = $request->input('rx_interval');
         $order->save();
         if (empty($order->prescription)) {

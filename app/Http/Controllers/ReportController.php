@@ -58,6 +58,7 @@ class ReportController extends Controller
                     ['orders.rx_interval', '>', '1'],
                     ['orders.total_amount', '!=', '0'],
                 ])
+                ->whereNull('orders.deleted_at')
                 ->orderby('prescriptions.next_supply_date', 'asc')
                 ->paginate(15);
         } else {
