@@ -352,10 +352,14 @@
                                     </li>
                                 </ul>
                             </div>
-                            <br>
-                            <br>
                         </li>
                     @endif
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('borang.index') }}">
+                            <i class="menu-icon typcn typcn-bell"></i>
+                            <span class="menu-title">Borang Jev</span>
+                        </a>
+                    </li>
                 </ul>
             </nav>
             <!-- partial -->

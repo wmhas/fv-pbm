@@ -112,9 +112,9 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['prefix' => 'report'], function () {
         Route::get('/report_sales', 'ReportController@report_sales');
         Route::get('/report_refill', 'ReportController@report_refill');
-        Route::get('/report_item', 'ReportController@report_item'); 
-        Route::get('/report_stocks', 'ReportController@report_stocks'); 
-        Route::get('/{item}/item_summary', 'ReportController@item_summary'); 
+        Route::get('/report_item', 'ReportController@report_item');
+        Route::get('/report_stocks', 'ReportController@report_stocks');
+        Route::get('/{item}/item_summary', 'ReportController@item_summary');
         Route::get('/exportsalesitem', 'ReportController@export_sales_item');
     });
 
@@ -134,7 +134,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/getItemDetails/{id}', 'AjaxController@getItemDetails');
     Route::get('/getPatients/{id}', 'PatientController@getPatients');
     Route::get('/getPurchase/{id}', 'PurchaseController@getDetails');
-    
+
 
     //Hospital
     Route::group(['prefix' => 'hospital'], function () {
@@ -170,5 +170,11 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/{item}/create_purchase', 'PurchaseController@create_purchase');
         Route::post('/store_purchase', 'PurchaseController@store_purchase');
         Route::get('/history', 'PurchaseController@history');
+    });
+
+    // Borang Jev
+    Route::group(['prefix' => 'borang'], function () {
+        Route::get('/', 'BorangJevController@index')->name('borang.index');
+        Route::get('/print', 'BorangJevController@print')->name('borang.print');
     });
 });
