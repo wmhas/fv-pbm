@@ -3,14 +3,20 @@
 namespace App\Exports;
 
 use App\Models\Order;
+use App\Models\Item;
+use App\Models\OrderItem;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\Exportable;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Concerns\WithStyles;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class TransactionsExport implements FromCollection, WithHeadings, WithMapping
+class TransactionsExport implements FromCollection, WithHeadings, WithStyles
 {
 
+    use Exportable;
     private $startDate = false;
     private $endDate = false;
 
@@ -26,10 +32,11 @@ class TransactionsExport implements FromCollection, WithHeadings, WithMapping
     public function collection()
     {
         $order = Order::join("patients","patients.id","=","orders.patient_id")
-        ->join("cards","cards.id","=","patients.card_id")
-        ->join("prescriptions","prescriptions.order_id","=","orders.id")
-        ->join("order_items","order_items.order_id","=","orders.id")
-        ->join("items","items.id","=","order_items.myob_product_id");
+            ->join("cards","cards.id","=","patients.card_id")
+            ->join("prescriptions","prescriptions.order_id","=","orders.id")
+            ->join("order_items","order_items.order_id","=","orders.id")
+            ->join("items","items.id","=","order_items.myob_product_id")
+            ->join("states","states.id","=","patients.state_id");
 
         if ($this->startDate && $this->endDate){
             $order = $order->whereDate('orders.created_at', '>=', $this->startDate)
@@ -41,13 +48,58 @@ class TransactionsExport implements FromCollection, WithHeadings, WithMapping
             "orders.do_number", 
             "patients.ic_original_filename as ic", 
             "patients.full_name",
-            "patients.address_1 as address",
+            DB::raw('CONCAT(patients.address_1,", ",patients.address_2,", ",patients.postCode,", ",states.name) as address'),
             "prescriptions.rx_number", 
             "orders.dispensing_by",
             "items.brand_name as med",
-            "order_items.quantity")->groupBy("orders.id")->get();
+            "order_items.quantity")->get();
 
-        return $order;
+        $orders = [];
+
+        $num = 1;
+
+        if (count($order)>0){
+
+            foreach ($order as $k => $v) {
+
+                $oi = OrderItem::with("items")->where("order_id",$v->id)->get();
+                
+                if (count($oi)>0) {
+                    foreach ($oi as $koi => $voi) {
+                        if ($koi==0) {
+                            $orders[$k]['NO'] = $num;
+                            $orders[$k]['DATE']=$v->dates;
+                            $orders[$k]['DO NUMBER']=$v->do_number;
+                            $orders[$k]['IC']=$v->ic;
+                            $orders[$k]['FULLANME']=$v->full_name;
+                            $orders[$k]['ADDRES']=$v->address;
+                            $orders[$k]['RX NUMBER']=$v->rx_number;
+                            $orders[$k]['DISPENSED BY']=$v->dispensing_by;
+                            $orders[$k]['MEDICINE']=$voi->items->brand_name;
+                            $orders[$k]['QTY'] = $voi->quantity;
+                        } else {
+                            $orders[$k]['NO'] = "";
+                            $orders[$k]['DATE']="";
+                            $orders[$k]['DO NUMBER']="";
+                            $orders[$k]['IC']="";
+                            $orders[$k]['FULLANME']="";
+                            $orders[$k]['ADDRES']="";
+                            $orders[$k]['RX NUMBER']="";
+                            $orders[$k]['DISPENSED BY']="";
+                            $orders[$k]['MEDICINE']=$voi->items->brand_name;
+                            $orders[$k]['QTY'] = $voi->quantity;
+                        } 
+                    }
+
+                    if (!empty($orders[$k]['NO'])){
+                        $num+=1;
+                    }
+                }
+            }
+
+        }
+        
+        return collect($orders);
     }
 
     public function headings(): array
@@ -66,19 +118,9 @@ class TransactionsExport implements FromCollection, WithHeadings, WithMapping
         ];
     }
 
-    public function map($transaction): array
+    public function styles(Worksheet $sheet)
     {
-        return [
-            $transaction->id,
-            $transaction->dates,
-            $transaction->do_number,
-            $transaction->ic,
-            $transaction->full_name,
-            $transaction->address,
-            $transaction->rx_number,
-            $transaction->dispensing_by,
-            $transaction->med,
-            $transaction->quantity,
-        ];
+        $sheet->getStyle('A1:J1')->getFont()->setBold(true);
     }
+
 }
