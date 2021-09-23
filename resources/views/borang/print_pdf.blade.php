@@ -117,7 +117,11 @@
     <div class="page-break"></div>
 
     {{--Page 2--}}
-    <div style="border: 1px solid black; padding: 10px 20px; margin: 20px 0; font-size: 11px;">
+    <div style="text-align: right; font-size: 13px; font-family: roboto, sans-serif;">
+        BQ-BP-14 Borang Perubatan JHEV 1/09 (T) <br/>
+        Pindaan : 0
+    </div>
+    <div style="border: 1px solid black; padding: 10px 20px; font-size: 11px; margin-top: 20px;">
         <div style="text-align: center;">
             <strong>PERMOHONAN PERBELANJAAN KEMUDAHAN PERUBATAN</strong> <br/>
             <strong>DI BAWAH PEKELILING PERKHIDMATAN BILANGAN 21 TAHUN 2009</strong> <br/> <br/>
@@ -150,7 +154,7 @@
                     <td style="width: 40px;">1.</td>
                     <td colspan="3">
                         Nama Penuh <i>(seperti dalam kad pengenalan/pasport)</i>
-                        <div style="border: 1px solid black; height: 30px; margin-top: 5px;">
+                        <div style="border: 1px solid black; height: 20px; margin-top: 5px;">
                             {{$order->patient->card->name}}
                         </div>
                     </td>
@@ -159,7 +163,7 @@
                     <td>2.</td>
                     <td colspan="3">
                         No. Kad Pengenalan /Pasport
-                        <div style="border: 1px solid black; height: 18px; margin-top: 5px;">
+                        <div style="border: 1px solid black; height: 16px; margin-top: 5px;">
                             {{$order->patient->card->ic_no}}
                         </div>
                     </td>
@@ -168,7 +172,7 @@
                     <td>3.</td>
                     <td style="width: 200px">
                         No. Tentera
-                        <div style="border: 1px solid black; height: 18px; margin-top: 5px;">
+                        <div style="border: 1px solid black; height: 16px; margin-top: 5px;">
                             {{$order->patient->card->army_pension}}
                         </div>
                     </td>
@@ -268,14 +272,14 @@
                     <td style="width: 40px;">6.</td>
                     <td colspan="3">
                         Nama Penuh <i>(seperti dalam kad pengenalan/passport/sijil kelahiran)</i>
-                        <div style="border: 1px solid black; height: 30px; margin-top: 5px;"></div>
+                        <div style="border: 1px solid black; height: 20px; margin-top: 5px;"></div>
                     </td>
                 </tr>
                 <tr>
                     <td>7.</td>
                     <td colspan="3">
                         No. Kad Pengenalan/Pasport/Sijil Kelahiran
-                        <div style="border: 1px solid black; height: 18px; margin-top: 5px;"></div>
+                        <div style="border: 1px solid black; height: 16px; margin-top: 5px;"></div>
                     </td>
                 </tr>
                 <tr>
@@ -493,7 +497,7 @@
         BQ-BP-14 Borang Perubatan JHEV 1/09 (T) <br/>
         Pindaan : 0
     </div>
-    <div style="font-size: 12px;">
+    <div style="font-size: 11px; border: 1px solid black; margin-top: 20px; padding: 20px;">
         <table style="width: 100%">
             <tr>
                 <td style="width: 40px;">14.</td>
@@ -544,8 +548,8 @@
                             <td>
                                 Dokumen Kewangan
                                 <i>
-                                    (contoh: resit, invois, sebut harga atau dokumen kewangan lain yang berkaitan) (Resit
-                                    Rasmi Tuntutan Hanya Sah Diperakukan Dalam Tempoh 1 Tahun (12 Bulan) Dari Tarikh Resit Rasmi
+                                    (contoh: resit, invois, sebut harga atau dokumen kewangan lain yang berkaitan) <br/>
+                                    (Resit Rasmi Tuntutan Hanya Sah Diperakukan Dalam Tempoh 1 Tahun (12 Bulan) Dari Tarikh Resit Rasmi
                                     dikeluarkan)
                                 </i>
                             </td>
@@ -664,10 +668,12 @@
                 <td style="width: 40px;">19.</td>
                 <td>
                     Perakuan dan Pengesahan Pegawai / Pakar Perubatan Kerajaan
-                    “Saya dengan ini memperakukan bahawa kemudahan perubatan seperti di <strong>Butiran 16</strong> di atas diperlukan oleh pesakit
-                    berdasarkan penyakit yang dihadapinya. Saya juga mengesahkan bahawa kemudahan perubatan berkenaan tidak
-                    dapat dibekal / disediakan oleh pihak hospital / klinik atas sebab-sebab seperti yang dinyatakan dalam <strong>Butiran 17</strong> di
-                    atas.”
+                    <div style="margin-left: 20px;">
+                        “Saya dengan ini memperakukan bahawa kemudahan perubatan seperti di <strong>Butiran 16</strong> di atas diperlukan oleh pesakit
+                        berdasarkan penyakit yang dihadapinya. Saya juga mengesahkan bahawa kemudahan perubatan berkenaan tidak
+                        dapat dibekal / disediakan oleh pihak hospital / klinik atas sebab-sebab seperti yang dinyatakan dalam <strong>Butiran 17</strong> di
+                        atas.”
+                    </div>
                 </td>
             </tr>
             <tr>
@@ -690,8 +696,10 @@
                             <td style="width: 80px;">Tandatangan</td>
                             <td style="text-align: center; width: 240px;">__________________________</td>
                             <td colspan="2" rowspan="5">
-                                Nama & Cop Rasmi Pegawai/Pakar Perubatan
-                                <div style="border: 1px solid black; height: 90px;"></div>
+                                <span style="white-space: nowrap">
+                                    Nama & Cop Rasmi Pegawai/Pakar Perubatan
+                                </span>
+                                <div style="border: 1px solid black; height: 70px;"></div>
                             </td>
                         </tr>
                         <tr>
@@ -751,8 +759,10 @@
                             <td style="width: 80px;">Tandatangan</td>
                             <td style="text-align: center; width: 240px;">__________________________</td>
                             <td colspan="2" rowspan="5">
-                                Cop Rasmi KKM/Pengarah Hospital Universiti
-                                <div style="border: 1px solid black; height: 90px;"></div>
+                                <span style="white-space: nowrap">
+                                    Cop Rasmi KKM/Pengarah Hospital Universiti
+                                </span>
+                                <div style="border: 1px solid black; height: 70px;"></div>
                             </td>
                         </tr>
                         <tr>
@@ -770,7 +780,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td>Jawaban</td>
+                            <td>Jawatan</td>
                             <td style="text-align: center">__________________________</td>
                         </tr>
                         <tr>

@@ -18,7 +18,7 @@ class BorangJevController extends Controller
     //public function print (Request $request)
     public function print ($doNumber)
     {
-    
+
         //$doNumber = $request->get('do_number');
      // dd($doNumber);
 
