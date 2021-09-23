@@ -136,6 +136,9 @@
                                     <li class="nav-item">
                                         <a class="nav-link" href={{ url('/report/report_stocks') }}>Stocks</a>
                                     </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href={{ url('/report/sales_report') }}>Sales Report</a>
+                                    </li>
                                 </ul>
                             </div>
                         </li>
@@ -178,6 +181,9 @@
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" href={{ url('/report/report_stocks') }}>Stocks</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href={{ url('/report/sales_report') }}>Sales Report</a>
                                     </li>
                                 </ul>
                             </div>
@@ -278,6 +284,9 @@
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" href={{ url('/report/report_stocks') }}>Stocks</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href={{ url('/report/sales_report') }}>Sales Report</a>
                                     </li>
                                 </ul>
                             </div>

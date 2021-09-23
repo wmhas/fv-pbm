@@ -8,6 +8,8 @@ use App\Models\Item;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use PDF;
+use Excel;
+use App\Exports\TransactionsExport;
 
 class ReportController extends Controller
 {
@@ -147,7 +149,7 @@ class ReportController extends Controller
     public function export_sales_item(Request $request)
     {
         // ini_set('max_execution_time', 1000);
-        if ($request->get('startDate') != null && $request->get('endDate') != null) {
+        if ($request->post('startDate') != null && $request->post('endDate') != null) {
             $patient_lists = DB::table('orders as a')
             ->join('order_items as b', 'b.order_id', '=', 'a.id')
             ->join('patients as c', 'c.id', '=', 'a.patient_id')
@@ -201,4 +203,40 @@ class ReportController extends Controller
         $pdf = PDF::loadView('reports.report_stocks', compact('items', 'roles', 'date'));
         return $pdf->stream('patient_lists.pdf');
     }
+
+    public function sales_report()
+    {
+        $months = ['Jan', 'Feb', 'Mar', 'April', 'May', 'Jun', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        $totalAll = Order::whereIn('status_id', [4, 5])->sum('total_amount');
+        $monthsNo = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+        $no_orders = [];
+        foreach ($monthsNo as $no) {
+            $itemSale = Order::whereMonth('created_at', '=', $no)
+                ->whereIn('status_id', [4, 5])
+                ->sum('total_amount');
+
+            array_push($no_orders, (int)$itemSale);
+        }
+
+        $orders = Order::with('patient')->whereIn('status_id', [4, 5])
+            ->orderBy('created_at', 'DESC')
+            ->paginate(10);
+        $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
+        return view('reports.sales_report', ['months' => $months, 'no_orders' => $no_orders, 'totalAll' => $totalAll, 'orders' => $orders, 'roles' => $roles]);
+    }
+
+    public function export_sales_item_excel(Request $request)
+    {
+        
+        $startDate = false;
+        $endDate = false;
+
+        if ($request->post('startDate') != null && $request->post('endDate') != null) {
+            $startDate = $request->startDate;
+            $endDate = $request->endDate;
+        }
+
+        return Excel::download(new TransactionsExport($startDate, $endDate), 'transactions.xlsx');
+    }
+
 }
