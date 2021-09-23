@@ -29,9 +29,7 @@ class TransactionsExport implements FromCollection, WithHeadings, WithMapping
         ->join("cards","cards.id","=","patients.card_id")
         ->join("prescriptions","prescriptions.order_id","=","orders.id")
         ->join("order_items","order_items.order_id","=","orders.id")
-        ->join("items","items.id","=","order_items.myob_product_id")
-        ->whereDate('orders.created_at', '>=', $this->startDate)
-        ->whereDate('orders.created_at', '<=', $this->endDate);
+        ->join("items","items.id","=","order_items.myob_product_id");
 
         if ($this->startDate && $this->endDate){
             $order = $order->whereDate('orders.created_at', '>=', $this->startDate)

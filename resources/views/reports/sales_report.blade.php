@@ -28,13 +28,13 @@
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Date From</label>
-                                            <input name="startDate" type="date" class="form-control" required>
+                                            <input name="startDate" type="date" class="form-control">
                                         </div>
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Date To</label>
-                                            <input name="endDate" type="date" class="form-control" required>
+                                            <input name="endDate" type="date" class="form-control">
                                         </div>
                                     </div>
                                     <div class="col-md-2">
