@@ -23,23 +23,38 @@ class ReportController extends Controller
 
     public function report_sales()
     {
-        $months = ['Jan', 'Feb', 'Mar', 'April', 'May', 'Jun', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        $totalAll = Order::whereIn('status_id', [4, 5])->sum('total_amount');
-        $monthsNo = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-        $no_orders = [];
-        foreach ($monthsNo as $no) {
-            $itemSale = Order::whereMonth('created_at', '=', $no)
-                ->whereIn('status_id', [4, 5])
-                ->sum('total_amount');
+        // $months = ['Jan', 'Feb', 'Mar', 'April', 'May', 'Jun', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        // $totalAll = Order::whereIn('status_id', [4, 5])->sum('total_amount');
+        // $monthsNo = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+        // $no_orders = [];
+        // foreach ($monthsNo as $no) {
+        //     $itemSale = Order::whereMonth('created_at', '=', $no)
+        //         ->whereIn('status_id', [4, 5])
+        //         ->sum('total_amount');
 
-            array_push($no_orders, (int)$itemSale);
-        }
+        //     array_push($no_orders, (int)$itemSale);
+        // }
 
         $orders = Order::with('patient')->whereIn('status_id', [4, 5])
             ->orderBy('created_at', 'DESC')
             ->paginate(10);
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
-        return view('reports.report_sales', ['months' => $months, 'no_orders' => $no_orders, 'totalAll' => $totalAll, 'orders' => $orders, 'roles' => $roles]);
+        // return view('reports.report_sales', ['months' => $months, 'no_orders' => $no_orders, 'totalAll' => $totalAll, 'orders' => $orders, 'roles' => $roles]);
+        return view('reports.report_sales', ['orders' => $orders, 'roles' => $roles]);
+    }
+
+    public function search_sales(Request $request)
+    {
+        // ini_set('max_execution_time', 1000);
+        if ($request->post('startDate') != null && $request->post('endDate') != null) {
+            $orders= Order::with('patient')->whereIn('status_id', [4, 5])
+            ->whereDate('created_at', '>=', $request->startDate)
+            ->whereDate('created_at', '<=', $request->endDate)
+            ->orderBy('created_at', 'DESC')
+            ->paginate(10);
+        }
+        $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
+        return view('reports.report_sales', ['orders' => $orders, 'roles' => $roles]);
     }
 
     public function report_refill(Request $request)

@@ -22,18 +22,18 @@
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-body">
-                            <form>
+                            <form method="GET" action="/report/search/report_sales">
                                 <div class="row">
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Date From</label>
-                                            <input type="date" class="form-control">
+                                            <input name="startDate" type="date" class="form-control">
                                         </div>
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Date To</label>
-                                            <input type="date" class="form-control">
+                                            <input name="endDate" type="date" class="form-control">
                                         </div>
                                     </div>
                                     <div class="col-md-2">
