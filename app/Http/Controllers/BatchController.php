@@ -110,7 +110,7 @@ class BatchController extends Controller
         return view('batch.index', [
             'roles' => $roles,
             'unbatches' => Batch::where('batch_status', 'unbatch')->paginate(5),
-            'batches' => Batch::where('id', 'like', '%' . strtoupper($keyword) . '%')
+            'batches' => Batch::where('batch_no', 'like', '%' . strtoupper($keyword) . '%')
                 ->where('batch_status', 'batched')->paginate(5),
             'keyword' => $keyword,
         ]);

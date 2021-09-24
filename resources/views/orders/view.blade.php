@@ -444,7 +444,7 @@
 								<div class="row">
 								@csrf
 								<div class="col-4">
-									<select class="form-control" name="batchperson">
+									<select class="form-control" name="batchperson" required>
 										<option value="">--Select Batchperson--</option>
 										@foreach ($salesPersons as $person)
 											<option value="{{ $person->id }}">{{ $person->name }}</option>
