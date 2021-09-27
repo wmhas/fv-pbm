@@ -325,10 +325,6 @@ class OrderController extends Controller
         $hospitals = DB::table('hospitals')->select("id","name")->get();
         $clinics = DB::table('clinics')->select("id","name")->get();
         $order = Order::where('id', $order_id)->first();
-        if ($order->rx_interval == 0) {
-            $order->rx_interval = 2;
-            $order->save();
-        }
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
         return view('orders.create.create_order2', compact('order', 'hospitals', 'clinics', 'roles'));
     }
@@ -336,7 +332,11 @@ class OrderController extends Controller
     public function store_prescription($patient, $order_id, Request $request)
     {
         $order = Order::where('id', $order_id)->whereNull('orders.deleted_at')->first();
-        $order->rx_interval = $request->input('rx_interval');
+        if(empty($request->input('rx_interval'))){
+            $order->rx_interval = 2;
+        }else{
+            $order->rx_interval = $request->input('rx_interval');
+        }
         $order->save();
         if (empty($order->prescription)) {
             $prescription = new Prescription();
