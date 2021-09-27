@@ -358,12 +358,12 @@
                             </div>
                         </li>
                     @endif
-                    <li class="nav-item">
+                    <!-- <li class="nav-item">
                         <a class="nav-link" href="{{ route('borang.index') }}">
                             <i class="menu-icon typcn typcn-bell"></i>
                             <span class="menu-title">Borang Jev</span>
                         </a>
-                    </li>
+                    </li> -->
                 </ul>
             </nav>
             <!-- partial -->

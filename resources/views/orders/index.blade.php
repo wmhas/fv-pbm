@@ -112,8 +112,9 @@
                                     <td>
                                         {{ $o->patient->full_name }}<br>
                                         (IC: {{ $o->patient->identification }})<br>
+                                        @if($o->status_id !== 1 && $o->do_number)
                                          <a class="btn btn-primary" href="{{ route('borangjhev.print',$o->do_number) }}">JHEV FORM</a>
-
+                                        @endif
                                     </td>
                                     <td>{{ date("d/m/Y", strtotime($o->created_at))}}</td>
                                     <td style="text-align: center;">
