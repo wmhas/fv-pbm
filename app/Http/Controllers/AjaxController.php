@@ -11,13 +11,13 @@ class AjaxController extends Controller
     public function getDONumber($dispensing_by)
     {
         if($dispensing_by == 'FVKL'){
-            $count_order = Order::where('dispensing_by', 'FVKL')->where('do_number', '!=', '')->count();
+            $count_order = DB::table('orders')->where('dispensing_by', 'FVKL')->where('do_number', '!=', '')->count();
             $code = '50';
         } elseif ($dispensing_by == 'FVT')  {
-            $count_order = Order::where('dispensing_by', 'FVT')->where('do_number', '!=', '')->count();
+            $count_order = DB::table('orders')->where('dispensing_by', 'FVT')->where('do_number', '!=', '')->count();
             $code = '14';
         } else {
-            $count_order = Order::where('dispensing_by', 'FVL')->where('do_number', '!=', '')->count();
+            $count_order = DB::table('orders')->where('dispensing_by', 'FVL')->where('do_number', '!=', '')->count();
             $code = '99';
         }
         $number = str_pad($count_order + 1, 6, "0", STR_PAD_LEFT);

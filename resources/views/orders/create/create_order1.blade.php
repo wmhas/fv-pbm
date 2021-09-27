@@ -86,7 +86,7 @@
                                     <select id="dispensing_by" name="dispensing_by" class="form-control" required>
                                         <option value="" selected>Please Select</option>
                                         <option value="FVKL" @if (!empty($order) && $order->dispensing_by == 'FVKL') selected @endif>FVKL</option>
-                                        <option value="FVT" @if (!empty($order) && $order->dispensing_by == 'FVT') selected @endif>FVT</option>
+                                        {{-- <option value="FVT" @if (!empty($order) && $order->dispensing_by == 'FVT') selected @endif>FVT</option> --}}
                                         {{-- <option value="FVL" @if (!empty($order) && $order->dispensing_by == 'FVL') selected @endif>FVL</option> --}}
                                     </select>
                                 </div>
