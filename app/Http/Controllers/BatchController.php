@@ -45,14 +45,17 @@ class BatchController extends Controller
 
     public function batch_order(Order $order, Request $request)
     {
+        if ($order->patient->tariff_id == 1 || $order->patient->tariff_id == 2) {
+            $tariff = 1;
+        } elseif ($order->patient->tariff_id == 3)  {
+            $tariff = 3;
+        } else {
+            return redirect()->back()
+                ->with(['status' => false, 'message' => 'THIS PATIENT DOES NOT HAVE A TARIFF, PLEASE UPDATE']);
+        }
         $batchperson = $request->input('batchperson');
         $order->status_id = 5;
         $order->save();
-        if ($order->patient->tariff_id == 1 || $order->patient->tariff_id == 2) {
-            $tariff = 1;
-        } else {
-            $tariff = 3;
-        }
 
         $batch =  Batch::where('tariff_id', $tariff)->where('batch_status', 'unbatch')->latest()->first();
         $count_batch=Batch::count();
