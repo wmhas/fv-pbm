@@ -83,8 +83,15 @@
                             <div class="col-4">
                                 <div class="form-group">
                                     <label>Dispensing By</label>
-                                    <select id="dispensing_by" name="dispensing_by" class="form-control" required>
-                                        <option value="" selected>Please Select</option>
+                                    @php 
+                                        if (!empty($order)) {
+                                            $dispensing_by = "FVKL";
+                                        } else {
+                                            $dispensing_by = "FVKL";
+                                        }
+                                    @endphp
+                                    <select id="dispensing_by" name="dispensing_by" class="form-control" required readonly>
+                                        <option>Please select</option>
                                         <option value="FVKL" @if (!empty($order) && $order->dispensing_by == 'FVKL') selected @endif>FVKL</option>
                                         {{-- <option value="FVT" @if (!empty($order) && $order->dispensing_by == 'FVT') selected @endif>FVT</option> --}}
                                         {{-- <option value="FVL" @if (!empty($order) && $order->dispensing_by == 'FVL') selected @endif>FVL</option> --}}
@@ -264,22 +271,39 @@
 @section('script')
     @include('orders.js')
     <script type="text/javascript">
-        $('#dispensing_by').change(function() {
-            var id = $(this).val();
-            // console.log(id);
-            $.ajax({
-                url: '/ajax/getDONumber/' + id,
-                type: 'get',
-                dataType: 'json',
-                success: function(response) {
-                    var len = 0;
-                    if (response['data'] != null) {
-                        len = response['data'].length;
-                    }
-                    console.log(response);
-                    $("#do_number").val(response);
+       dispensing_by = "{{ $dispensing_by }}"
+        $('#dispensing_by').val(dispensing_by).change(); 
+        $('#dispensing_by').attr('readonly', true);
+        // $('#dispensing_by').change(function() {
+        //     var id = $(this).val();
+        //     // console.log(id);
+        //     $.ajax({
+        //         url: '/ajax/getDONumber/' + id,
+        //         type: 'get',
+        //         dataType: 'json',
+        //         success: function(response) {
+        //             var len = 0;
+        //             if (response['data'] != null) {
+        //                 len = response['data'].length;
+        //             }
+        //             console.log(response);
+        //             $("#do_number").val(response);
+        //         }
+        //     });
+        // });
+
+        $.ajax({
+            url: '/ajax/getDONumber/' + dispensing_by,
+            type: 'get',
+            dataType: 'json',
+            success: function(response) {
+                var len = 0;
+                if (response['data'] != null) {
+                    len = response['data'].length;
                 }
-            });
+                console.log(response);
+                $("#do_number").val(response);
+            }
         });
 
         //hide delivery div

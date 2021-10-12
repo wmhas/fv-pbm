@@ -30,6 +30,7 @@
                                 <thead>
                                     <tr>
                                         <th style="width: 5%">PO Number</th>
+                                        <th style="width: 5%">Purchase Brand Name</th>
                                         <th style="width: 5%">Purchase Price (RM)</th>
                                         <th style="width: 5%">Purchase UOM</th>
                                         <th style="width: 5%">Purchase Quantity</th>
@@ -48,6 +49,13 @@
                                                 <div class="form-group">
                                                     <input type="text" name="po_number" id="po_number" class="form-control"
                                                         style="width:150px;">
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <!-- purchase_brand_name -->
+                                                <div class="form-group">
+                                                    <input type="text" name="purchase_brand_name" id="purchase_brand_name" value="{{ $items->brand_name }}" class="form-control"
+                                                        style="width:150px;" readonly>
                                                 </div>
                                             </td>
                                             <td>
