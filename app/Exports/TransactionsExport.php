@@ -43,7 +43,7 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles
                     ->whereDate('orders.created_at', '<=', $this->endDate);
         }
 
-        $order = $order->select("orders.id", 
+        $order = $order->select("orders.id",
             "orders.created_at as dates", 
             "orders.do_number", 
             "patients.ic_original_filename as ic", 
@@ -77,6 +77,8 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles
                             $orders[$k]['DISPENSED BY']=$v->dispensing_by;
                             $orders[$k]['MEDICINE']=$voi->items->brand_name;
                             $orders[$k]['QTY'] = $voi->quantity;
+                            $orders[$k]['PRICE'] = $voi->price;
+                            $orders[$k]['TOTAL PRICE'] = $voi->quantity * $voi->price;
                         } else {
                             $orders[$k]['NO'] = "";
                             $orders[$k]['DATE']="";
@@ -88,7 +90,9 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles
                             $orders[$k]['DISPENSED BY']="";
                             $orders[$k]['MEDICINE']=$voi->items->brand_name;
                             $orders[$k]['QTY'] = $voi->quantity;
-                        } 
+                            $orders[$k]['PRICE'] = $voi->price;
+                            $orders[$k]['TOTAL PRICE'] = $voi->quantity * $voi->price;
+                        }
                     }
 
                     if (!empty($orders[$k]['NO'])){
@@ -115,12 +119,14 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles
             'DISPENSED BY',
             'MEDICINE',
             'QTY',
+            'PRICE',
+            'TOTAL PRICE',
         ];
     }
 
     public function styles(Worksheet $sheet)
     {
-        $sheet->getStyle('A1:J1')->getFont()->setBold(true);
+        $sheet->getStyle('A1:L1')->getFont()->setBold(true);
     }
 
 }

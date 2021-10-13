@@ -24,22 +24,35 @@
                     <div class="card-body">
                         <form action="{{ url('/report/report_item') }}" method="GET">
                             <div class="row">
-                                <div class="col-md-3">
-                                    <br> 
-                                    <select class="form-control" name="method" required>
-                                        <option value="">Please Choose</option>
-                                        <option value="ItemNumber">Search Item Code</option>
-                                        <option value="ItemName">Search Item Name </option>
-                                    </select>
-                                </div> 
-                                <div class="col-md-5">
-                                    <br> 
-                                    <input type="text" @if(!empty($keyword)) value="{{$keyword}}" @endif 
-                                        name="keyword" class="form-control" placeholder="Enter Item Code / Item Name">
+                                <div class="col-md-10">
+                                    <div class="row">
+                                        <div class="col-12 mt-2">
+                                            <input class="form-control" type="date" placeholder="Date" name="date" value="{{$date}}" />
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-5 mt-2">
+                                            <select class="form-control" name="method">
+                                                <option value="">Please Choose</option>
+                                                <option {{($method === 'ItemNumber') ? 'selected' : ''}} value="ItemNumber">Search Item Code</option>
+                                                <option {{($method === 'ItemName') ? 'selected' : ''}} value="ItemName">Search Item Name </option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-7 mt-2">
+                                            <input type="text" @if(!empty($keyword)) value="{{$keyword}}" @endif name="keyword" class="form-control" placeholder="Enter Item Code / Item Name">
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="col-md-2">
-                                    <div class="form-group">
-                                        <button type="submit" class="btn btn-primary" style="margin-top:32px; width:100%;">Search</button>
+                                    <div class="row">
+                                        <div class="col-12 text-right mt-2">
+                                            <button type="submit" class="btn btn-primary w-100" style="height: 32px;">Search</button>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12 text-right mt-2">
+                                            <a href="{{url('/report/report_item_export?date='.$date.'&method='.$method.'&keyword='.$keyword)}}" class="btn btn-success text-white w-100" style="height: 32px;">Export</a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -55,6 +68,7 @@
                                     <th>Item Code</th>
                                     <th>Item Name</th>
                                     <th>Quantity Used</th>   
+                                    <th>Total Price</th>
                                     <th>Action</th>
                                 </tr>   
                             </thead>
@@ -64,7 +78,8 @@
                                     <td>{{$loop->iteration}}</td>
                                     <td>{{$item->item_code}}</td>
                                     <td>{{$item->brand_name}}</td>
-                                    <td>@if (!empty($item->used_stock())) @if($item->used_stock()->quantity < 0) {{substr($item->used_stock()->quantity, 1)}} @else {{$item->used_stock()->quantity}} @endif @else 0  @endif</td>
+                                    <td class="text-right">@if (!empty($item->used_stock())) @if($item->used_stock()->quantity < 0) {{substr($item->used_stock()->quantity, 1)}} @else {{$item->used_stock()->quantity}} @endif @else 0  @endif</td>
+                                    <td class="text-right">{{$item->total_price($date)}}</td>
                                     <td>
                                     <button type="button"  class="btn btn-primary" data-toggle="modal" data-target="#exampleModal{{$item->id}}">Show Detail</button>
                                         <div class="modal fade" id="exampleModal{{$item->id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">

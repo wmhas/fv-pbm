@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\ItemExport;
+use App\Models\OrderItem;
 use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\Item;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Session;
 use PDF;
 use Excel;
 use App\Exports\TransactionsExport;
@@ -88,44 +91,68 @@ class ReportController extends Controller
         return view('reports.report_refill', compact('orders', 'order_lists', 'roles'));
     }
 
-    public function report_item(Request $request)
+    private function getItems ($date, $method, $keyword)
     {
-        // item(method): ItemName & ItemNumber
-        $items = null;
-        if ($request->get('keyword') != null) {
-            $method = $request->get('method');
-            $keyword = $request->get('keyword');
-            $keyword = preg_replace("/[^a-zA-Z0-9 ]/", "", $keyword);
+        $items = Item::query();
 
+        if ($date) {
+            $orders = Order::whereHas('orderItem')
+                ->with(['orderitem.items'])
+                ->whereDate('created_at', $date)
+                ->whereIn('status_id', [4,5])
+                ->whereNull('deleted_at')
+                ->whereNull('return_timestamp')
+                ->get();
+            $itemIds = [];
+            foreach ($orders AS $order) {
+                foreach ($order->orderitem AS $orderItem) {
+                    $itemIds[] = $orderItem->items->id;
+                }
+            }
+            $items->whereIn('id', $itemIds);
+        }
+
+        if ($keyword) {
             switch ($method) {
-
                 case ('ItemNumber'):
-
-                    $items = Item::where('item_code', 'like', '%' . strtoupper($keyword) . '%')
-                        ->orderBy('item_code', 'asc')->limit(500)
-                        ->paginate(15);
+                    $items = $items->where('item_code', 'like', '%' . strtoupper($keyword) . '%')
+                        ->orderBy('item_code', 'asc')->limit(500);
                     break;
 
                 case ('ItemName'):
-
-                    $items = Item::where('brand_name', 'like', '%' . strtoupper($keyword) . '%')
-                        ->orderBy('brand_name', 'asc')->limit(500)
-                        ->paginate(15);
+                    $items = $items->where('brand_name', 'like', '%' . strtoupper($keyword) . '%')
+                        ->orderBy('brand_name', 'asc')->limit(500);
                     break;
             }
-        } else {
-            $items = Item::paginate(15);
-            $method = null;
-            $keyword = null;
         }
 
-        // foreach($items as $item){
-        //     dd($item->stocklevel()->quantity);
-        // }
-
-        $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
-        return view('reports.report_item', compact('roles', 'items', 'keyword', 'method'));
+        return $items;
     }
+
+    public function report_item(Request $request)
+    {
+        // item(method): ItemName & ItemNumber
+        $date = $request->get('date', date('Y-m-d'));
+        $method = $request->get('method');
+        $keyword = $request->get('keyword');
+        $keyword = preg_replace("/[^a-zA-Z0-9 ]/", "", $keyword);
+
+        $items = $this->getItems($date, $method, $keyword)->paginate(15);
+        $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
+        return view('reports.report_item', compact('roles', 'items', 'keyword', 'method', 'date'));
+    }
+
+    public function report_item_export (Request $request) {
+        $date = $request->get('date', date('Y-m-d'));
+        $method = $request->get('method');
+        $keyword = $request->get('keyword');
+        $keyword = preg_replace("/[^a-zA-Z0-9 ]/", "", $keyword);
+
+        $items = $this->getItems($date, $method, $keyword)->get();
+        $export = new ItemExport($items, $date);
+        return Excel::download($export, 'items.xlsx');
+    }
+
     public function item_summary(Request $request, $item_id)
     {
         $item = Item::where('id', $item_id)->first();
@@ -251,7 +278,13 @@ class ReportController extends Controller
             $endDate = $request->endDate;
         }
 
-        return Excel::download(new TransactionsExport($startDate, $endDate), 'transactions.xlsx');
+        $transaction = new TransactionsExport($startDate, $endDate);
+        if ($transaction->collection()->count() > 0) {
+            return Excel::download($transaction, 'transactions.xlsx');
+        }
+
+        $request->session()->flash('error', 'No Data to Export');
+        return redirect(url('/report/sales_report'));
     }
 
 }
