@@ -45,6 +45,7 @@ class ItemExport implements FromCollection, WithHeadings, WithStyles
             }
             $data[] = [
                 'NO' => $no,
+                'DATE' => $this->date,
                 'ITEM CODE' => $item->item_code,
                 'ITEM NAME' => $item->brand_name,
                 'QUANTITY USED' => $quantity,
@@ -59,6 +60,7 @@ class ItemExport implements FromCollection, WithHeadings, WithStyles
     {
         return [
             'NO',
+            'DATE',
             'ITEM CODE',
             'ITEM NAME',
             'QUANTITY USED',
@@ -68,7 +70,7 @@ class ItemExport implements FromCollection, WithHeadings, WithStyles
 
     public function styles(Worksheet $sheet)
     {
-        $sheet->getStyle('A1:E1')->getFont()->setBold(true);
+        $sheet->getStyle('A1:F1')->getFont()->setBold(true);
     }
 
 }
