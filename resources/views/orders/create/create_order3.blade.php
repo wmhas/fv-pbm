@@ -345,6 +345,49 @@
                 parseFloat($("input#price").val(sum.toFixed(2)));
             });
 
+            $(document).on("change","#frequency",function(){
+                var dose_quantity = parseFloat($('.value_dq').val());
+                var frequency = $('.value_f').val();
+                // var frequency = $('.value_f').prop('selectedIndex',0);
+                var duration = parseFloat($('.value_d').val());
+                var unit_price = parseFloat($('.price').val());
+                var uom = $('.uom').val();
+                var formula_id = $('.formula_id').val();
+                var formula_value = $('.formula_value').val();
+
+                // if (frequency == 'OD' || frequency == 'PRN' || frequency == 'OM' || frequency == 'ON' ||
+                //     frequency == 'STAT') {
+                //     var frequency = 1;
+                // } else if (frequency == 'BD') {
+
+                //     var frequency = 2;
+
+                // } else if (frequency == 'TDS') {
+
+                //     var frequecy = 3;
+
+                // } else {
+                //     var frequency = 4;
+                // }
+
+                //mcm mana nak retrieve formula_id dengan formula_value
+                if (formula_id == 1) {
+                    var quantity = dose_quantity * frequency * duration;
+                } else if (formula_id == 6) {
+                    var quantity = 1;
+
+                } else {
+
+                    var quantity = (dose_quantity * frequency * duration) / formula_value;
+
+                }
+
+                var sum = quantity * unit_price;
+
+                parseFloat($("input#quantity").val(quantity.toFixed(2)));
+                parseFloat($("input#price").val(sum.toFixed(2)));
+            });
+
 
             $('#item_id').change(function() {
                 $('#quantity').val('');
