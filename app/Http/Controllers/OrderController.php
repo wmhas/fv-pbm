@@ -111,17 +111,17 @@ class OrderController extends Controller
     public function show($id)
     {
         $order = Order::findOrFail($id);
-        if ($order->dispensing_method == 0 && $order->rx_interval == 0 && $order->total_amount == 0) {
+        if ($order->dispensing_method == '0' && $order->rx_interval == '0' && $order->total_amount == '0') {
             return redirect()->action('OrderController@create_order', [
                 'order_id' => $order->id,
                 'patient' => $order->patient_id
             ]);
-        } elseif ($order->dispensing_method != 0 && $order->rx_interval == 0 && $order->total_amount == 0) {
+        } elseif ($order->dispensing_method != '0' && $order->rx_interval == '0' && $order->total_amount == '0') {
             return redirect()->action('OrderController@create_prescription', [
                 'order_id' => $order->id,
                 'id' => $order->patient_id
             ]);
-        } elseif ($order->dispensing_method != 0 && $order->rx_interval != 0 && $order->total_amount == 0) {
+        } elseif ($order->dispensing_method != '0' && $order->rx_interval != '0' && $order->total_amount == '0') {
             return redirect()->action('OrderController@create_orderEntry', [
                 'order_id' => $order->id,
                 'id' => $order->patient_id
