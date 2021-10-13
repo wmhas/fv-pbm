@@ -29,8 +29,8 @@
                         <table class="table table-bordered">
                                 <thead>
                                     <tr>
-                                        <th style="width: 5%">PO Number</th>
-                                        <th style="width: 5%">Purchase Brand Name</th>
+                                        <th style="width: 25%">PO Number</th>
+                                        <th style="width: 30%">Item Name</th>
                                         <th style="width: 5%">Purchase Price (RM)</th>
                                         <th style="width: 5%">Purchase UOM</th>
                                         <th style="width: 5%">Purchase Quantity</th>
@@ -47,36 +47,31 @@
                                             <td>
                                                 <!-- po_num -->
                                                 <div class="form-group">
-                                                    <input type="text" name="po_number" id="po_number" class="form-control"
-                                                        style="width:150px;">
+                                                    <input type="text" name="po_number" id="po_number" class="form-control" >
                                                 </div>
                                             </td>
                                             <td>
-                                                <!-- purchase_brand_name -->
+                                                <!-- brand_name -->
                                                 <div class="form-group">
-                                                    <input type="text" name="purchase_brand_name" id="purchase_brand_name" value="{{ $items->brand_name }}" class="form-control"
-                                                        style="width:150px;" readonly>
+                                                    <input type="text" value="{{$items->brand_name}}" class="form-control" readonly>
                                                 </div>
                                             </td>
                                             <td>
                                                 <!-- purchase_price -->
                                                 <div class="form-group">
-                                                    <input type="text" name="purchase_price" id="purchase_price" value="{{$items->purchase_price}}" class="form-control"
-                                                        style="width:150px;" readonly>
+                                                    <input type="text" name="purchase_price" id="purchase_price" value="{{$items->purchase_price}}" class="form-control" readonly>
                                                 </div>
                                             </td>
                                             <td>
                                                 <!-- purchase_uom -->
                                                 <div class="form-group">
-                                                    <input type="text" name="purchase_uom" id="purchase_uom"  value="{{$items->purchase_uom}}" class="form-control"
-                                                        style="width:150px;" readonly>
+                                                    <input type="text" name="purchase_uom" id="purchase_uom"  value="{{$items->purchase_uom}}" class="form-control" readonly>
                                                 </div>
                                             </td>
                                             <td>
                                                 <!-- quantity -->
                                                 <div class="form-group">
-                                                    <input type="text" name="quantity" id="quantity" class="form-control"
-                                                        style="width:150px;">
+                                                    <input type="text" name="quantity" id="quantity" class="form-control" >
                                                 </div>
                                             </td>
                                             <td>
@@ -90,24 +85,20 @@
                                                     </select>
                                                 </div>
                                             </td>
-                                        </tr>     
+                                        </tr>
+                                        <tr>
+                                            <td colspan="6">
+                                                <div class="form-group">
+                                                    <!-- Button trigger create modal -->
+                                                    <button type="button" class="btn btn-primary float-right"
+                                                            data-toggle="modal" data-target="#exampleModal">
+                                                        Create Purchase
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
                                 </tbody>
                             </table>
-                            <div class="row ">
-                                <div class="col-12">
-                                    <div class="card">
-                                        <div class="card-footer">
-                                            <div class="form-group">
-                                                <!-- Button trigger create modal -->
-                                                <button type="button" class="btn btn-primary float-right" style="margin-right:15px;"
-                                                    data-toggle="modal" data-target="#exampleModal">
-                                                    Create Purchase
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                                 <!-- Modal -->
                             <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
                                 aria-hidden="true">

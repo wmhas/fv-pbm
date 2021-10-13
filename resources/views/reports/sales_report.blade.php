@@ -56,12 +56,29 @@
         </div>
 </section>
 
-
-
+@if(\Illuminate\Support\Facades\Session::has('error'))
+<div class="toast bg-danger" data-delay="10000" role="alert" style="position: absolute; bottom: 20px; right: 20px;">
+    <div class="toast-header">
+        <strong class="mr-auto">Error</strong>
+        <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="toast-body text-white">
+        {{\Illuminate\Support\Facades\Session::get('error')}}
+    </div>
+</div>
+@endif
 
 @endsection
 
 @section('script')
 {{-- @include('reports.dashboard3') --}}
+    @parent
+    <script>
+        $(document).ready(function () {
+            $('.toast').toast('show');
+        });
+    </script>
 @endsection
 

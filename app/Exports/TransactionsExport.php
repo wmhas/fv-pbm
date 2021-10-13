@@ -43,7 +43,7 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles
                     ->whereDate('orders.created_at', '<=', $this->endDate);
         }
 
-        $order = $order->select("orders.id", 
+        $order = $order->select("orders.id",
             "orders.created_at as dates", 
             "orders.do_number", 
             "patients.ic_original_filename as ic", 
@@ -80,8 +80,8 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles
                             $orders[$k]['DISPENSED BY']=$v->dispensing_by;
                             $orders[$k]['MEDICINE']=$voi->items->brand_name;
                             $orders[$k]['QTY'] = $voi->quantity;
-                            $orders[$k]['UNIT PRICE'] = $voi->unit_price;
-                            $orders[$k]['TOTAL PRICE'] = $voi->total_price;
+                            $orders[$k]['UNIT PRICE'] = $v->unit_price;
+                            $orders[$k]['TOTAL PRICE'] = $v->total_price;
                         } else {
                             $orders[$k]['NO'] = "";
                             $orders[$k]['DATE']="";

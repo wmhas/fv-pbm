@@ -114,6 +114,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/search/report_sales', 'ReportController@search_sales');
         Route::get('/report_refill', 'ReportController@report_refill');
         Route::get('/report_item', 'ReportController@report_item');
+        Route::get('/report_item_export', 'ReportController@report_item_export');
         Route::get('/report_stocks', 'ReportController@report_stocks');
         Route::get('/{item}/item_summary', 'ReportController@item_summary');
         Route::get('/exportsalesitem', 'ReportController@export_sales_item');

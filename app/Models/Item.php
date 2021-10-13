@@ -57,6 +57,30 @@ class Item extends Model
     }
     protected $table = 'items';
 
+    public function order_item ()
+    {
+        return $this->hasMany(OrderItem::class, 'myob_product_id', 'id');
+    }
+
+    public function total_price ($date = null)
+    {
+        $date = ($date) ?: date('Y-m-d');
+        $id = $this->id;
+        $totalPrice = 0;
+        $orders = Order::whereHas('orderItem', function ($orderItem) use ($id) {
+                $orderItem->where('myob_product_id', $id);
+            })
+            ->with(['orderItem'])
+            ->whereDate('created_at', $date)
+            ->get();
+        foreach ($orders AS $order) {
+            foreach($order->orderItem AS $orderItem) {
+                $totalPrice += $orderItem->quantity * $orderItem->price;
+            }
+        }
+        return $totalPrice;
+    }
+
     //MYOB
     // protected $fillable = [
     //     'ItemID'
