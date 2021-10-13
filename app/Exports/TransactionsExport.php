@@ -46,7 +46,7 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles
         $order = $order->select("orders.id",
             "orders.created_at as dates", 
             "orders.do_number", 
-            "patients.ic_original_filename as ic", 
+            "patients.identification as ic",
             "patients.full_name",
             DB::raw('CONCAT(patients.address_1,", ",patients.address_2,", ",patients.postCode,", ",states.name) as address'),
             "prescriptions.rx_number", 
