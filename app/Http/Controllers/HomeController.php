@@ -93,7 +93,8 @@ class HomeController extends Controller
         $status_id = $request->get('status');
         $statuses = Status::all();
         $orders = Order::with('prescription')->with('patient')->with('delivery')->where('status_id', 'like', '%' . strtoupper($status_id) . '%')
-            ->orderBy('id', 'asc')->limit(500)
+            ->orderBy('created_at', 'desc')
+            ->limit(500)
             ->paginate(15);
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
         return view('orders.index', compact('orders', 'method', 'keyword', 'status_id', 'statuses', 'roles'));
