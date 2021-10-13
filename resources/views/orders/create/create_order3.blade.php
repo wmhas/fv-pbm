@@ -181,7 +181,7 @@
                                         <select name="frequency" id="frequency" class="value_f form-control">
                                             <option value="0">-</option>
                                             @foreach ($frequencies as $freq)
-                                                <option value="{{ $freq->id }}">{{ $freq->name }}</option>
+                                                <option value="{{ $freq->value }}">{{ $freq->name }}</option>
                                             @endforeach
                                         </select>
                                     </div>
