@@ -52,7 +52,10 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles
             "prescriptions.rx_number", 
             "orders.dispensing_by",
             "items.brand_name as med",
-            "order_items.quantity")->get();
+            "order_items.quantity",
+            "items.selling_price as unit_price",
+            "order_items.price as total_price"
+        )->get();
 
         $orders = [];
 
@@ -77,8 +80,8 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles
                             $orders[$k]['DISPENSED BY']=$v->dispensing_by;
                             $orders[$k]['MEDICINE']=$voi->items->brand_name;
                             $orders[$k]['QTY'] = $voi->quantity;
-                            $orders[$k]['PRICE'] = $voi->price;
-                            $orders[$k]['TOTAL PRICE'] = $voi->quantity * $voi->price;
+                            $orders[$k]['UNIT PRICE'] = $v->unit_price;
+                            $orders[$k]['TOTAL PRICE'] = $v->total_price;
                         } else {
                             $orders[$k]['NO'] = "";
                             $orders[$k]['DATE']="";
@@ -90,9 +93,9 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles
                             $orders[$k]['DISPENSED BY']="";
                             $orders[$k]['MEDICINE']=$voi->items->brand_name;
                             $orders[$k]['QTY'] = $voi->quantity;
-                            $orders[$k]['PRICE'] = $voi->price;
-                            $orders[$k]['TOTAL PRICE'] = $voi->quantity * $voi->price;
-                        }
+                            $orders[$k]['UNIT PRICE'] = "";
+                            $orders[$k]['TOTAL PRICE'] = "";
+                        } 
                     }
 
                     if (!empty($orders[$k]['NO'])){
@@ -119,7 +122,7 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles
             'DISPENSED BY',
             'MEDICINE',
             'QTY',
-            'PRICE',
+            'UNIT PRICE',
             'TOTAL PRICE',
         ];
     }
