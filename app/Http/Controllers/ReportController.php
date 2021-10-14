@@ -39,7 +39,7 @@ class ReportController extends Controller
         //     array_push($no_orders, (int)$itemSale);
         // }
 
-        $orders = Order::with('patient')->whereIn('status_id', [4, 5])
+        $orders = Order::with('patient.tariff')->whereIn('status_id', [4, 5])
             ->orderBy('created_at', 'DESC')
             ->paginate(10);
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
@@ -51,7 +51,7 @@ class ReportController extends Controller
     {
         // ini_set('max_execution_time', 1000);
         if ($request->post('startDate') != null && $request->post('endDate') != null) {
-            $orders= Order::with('patient')->whereIn('status_id', [4, 5])
+            $orders= Order::with('patient.tariff')->whereIn('status_id', [4, 5])
             ->whereDate('created_at', '>=', $request->startDate)
             ->whereDate('created_at', '<=', $request->endDate)
             ->orderBy('created_at', 'DESC')
