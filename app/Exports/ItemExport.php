@@ -38,12 +38,8 @@ class ItemExport implements FromCollection, WithHeadings, WithStyles, WithColumn
         $no = 1;
         foreach ($this->items AS $item) {
             $quantity = 0;
-            If (!empty($item->used_stock())) {
-                if($item->used_stock()->quantity < 0) {
-                    $quantity = substr($item->used_stock()->quantity, 1);
-                } else {
-                    $quantity = $item->used_stock()->quantity;
-                }
+            foreach($item->order_items AS $orderItem) {
+                $quantity += $orderItem->quantity;
             }
             $data[] = [
                 'NO' => $no,

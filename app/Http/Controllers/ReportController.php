@@ -97,21 +97,25 @@ class ReportController extends Controller
         $items = Item::query();
 
         if ($date) {
-            $orders = Order::setEagerLoads([])
-                ->whereHas('orderitem')
+            $orders = Order::whereHas('orderitem')
                 ->with(['orderitem.items'])
                 ->whereDate('updated_at', $date)
                 ->whereIn('status_id', [4])
                 ->whereNull('deleted_at')
                 ->whereNull('return_timestamp')
                 ->get();
+            $orderIds = [];
             $itemIds = [];
             foreach ($orders AS $order) {
+                $orderIds[] = $order->id;
                 foreach ($order->orderitem AS $orderItem) {
                     $itemIds[] = $orderItem->items->id;
                 }
             }
-            $items->whereIn('id', $itemIds);
+            $items = $items->whereIn('id', $itemIds);
+            $items = $items->with(['order_items' => function ($orderItems) use ($orderIds) {
+                $orderItems->whereIn('order_id', $orderIds);
+            }]);
         }
 
         if ($keyword) {

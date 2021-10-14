@@ -74,11 +74,15 @@
                             </thead>
                             <tbody>
                                 @foreach($items as $item)
+                                    @php($quantity = 0)
+                                    @foreach($item->order_items AS $orderItem)
+                                        @php($quantity += $orderItem->quantity)
+                                    @endforeach
                                 <tr>
                                     <td>{{$loop->iteration}}</td>
                                     <td>{{$item->item_code}}</td>
                                     <td>{{$item->brand_name}}</td>
-                                    <td class="text-right">@if (!empty($item->used_stock())) @if($item->used_stock()->quantity < 0) {{substr($item->used_stock()->quantity, 1)}} @else {{$item->used_stock()->quantity}} @endif @else 0  @endif</td>
+                                    <td class="text-right">{{$quantity}}</td>
                                     <td class="text-right">{{number_format($item->total_price($date), 2)}}</td>
                                     <td>
                                     <button type="button"  class="btn btn-primary" data-toggle="modal" data-target="#exampleModal{{$item->id}}">Show Detail</button>

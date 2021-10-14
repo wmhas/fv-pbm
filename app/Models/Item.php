@@ -57,7 +57,7 @@ class Item extends Model
     }
     protected $table = 'items';
 
-    public function order_item ()
+    public function order_items ()
     {
         return $this->hasMany(OrderItem::class, 'myob_product_id', 'id');
     }
