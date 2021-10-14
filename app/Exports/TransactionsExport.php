@@ -38,15 +38,16 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
             ->join("prescriptions","prescriptions.order_id","=","orders.id")
             ->join("order_items","order_items.order_id","=","orders.id")
             ->join("items","items.id","=","order_items.myob_product_id")
-            ->join("states","states.id","=","patients.state_id");
+            ->join("states","states.id","=","patients.state_id")
+            ->where('status_id', 4);
 
         if ($this->startDate && $this->endDate){
-            $order = $order->whereDate('orders.created_at', '>=', $this->startDate)
-                    ->whereDate('orders.created_at', '<=', $this->endDate);
+            $order = $order->whereDate('orders.updated_at', '>=', $this->startDate)
+                    ->whereDate('orders.updated_at', '<=', $this->endDate);
         }
 
         $order = $order->select("orders.id",
-            "orders.created_at as dates", 
+            "orders.updated_at as dates",
             "orders.do_number", 
             "patients.identification as ic",
             "patients.full_name",
