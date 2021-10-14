@@ -68,7 +68,7 @@
                                     <th>Item Code</th>
                                     <th>Item Name</th>
                                     <th>Quantity Used</th>   
-                                    <th>Total Price</th>
+                                    <th>Total Price (RM)</th>
                                     <th>Action</th>
                                 </tr>   
                             </thead>
@@ -79,7 +79,7 @@
                                     <td>{{$item->item_code}}</td>
                                     <td>{{$item->brand_name}}</td>
                                     <td class="text-right">@if (!empty($item->used_stock())) @if($item->used_stock()->quantity < 0) {{substr($item->used_stock()->quantity, 1)}} @else {{$item->used_stock()->quantity}} @endif @else 0  @endif</td>
-                                    <td class="text-right">{{$item->total_price($date)}}</td>
+                                    <td class="text-right">{{number_format($item->total_price($date), 2)}}</td>
                                     <td>
                                     <button type="button"  class="btn btn-primary" data-toggle="modal" data-target="#exampleModal{{$item->id}}">Show Detail</button>
                                         <div class="modal fade" id="exampleModal{{$item->id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">

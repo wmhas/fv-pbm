@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exports\ItemExport;
 use App\Models\OrderItem;
+use App\Models\Status;
 use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\Item;
@@ -96,10 +97,11 @@ class ReportController extends Controller
         $items = Item::query();
 
         if ($date) {
-            $orders = Order::whereHas('orderItem')
+            $orders = Order::setEagerLoads([])
+                ->whereHas('orderitem')
                 ->with(['orderitem.items'])
-                ->whereDate('created_at', $date)
-                ->whereIn('status_id', [4,5])
+                ->whereDate('updated_at', $date)
+                ->whereIn('status_id', [4])
                 ->whereNull('deleted_at')
                 ->whereNull('return_timestamp')
                 ->get();
