@@ -38,8 +38,10 @@ class ItemExport implements FromCollection, WithHeadings, WithStyles, WithColumn
         $no = 1;
         foreach ($this->items AS $item) {
             $quantity = 0;
+            $price = 0;
             foreach($item->order_items AS $orderItem) {
                 $quantity += $orderItem->quantity;
+                $price += $orderItem->price;
             }
             $data[] = [
                 'NO' => $no,
@@ -47,7 +49,7 @@ class ItemExport implements FromCollection, WithHeadings, WithStyles, WithColumn
                 'ITEM CODE' => $item->item_code,
                 'ITEM NAME' => $item->brand_name,
                 'QUANTITY USED' => $quantity,
-                'TOTAL PRICE (RM)' => $item->total_price($this->date)
+                'TOTAL PRICE (RM)' => $price
             ];
             $no++;
         }

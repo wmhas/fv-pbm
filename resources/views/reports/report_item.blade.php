@@ -75,15 +75,17 @@
                             <tbody>
                                 @foreach($items as $item)
                                     @php($quantity = 0)
+                                    @php($price = 0)
                                     @foreach($item->order_items AS $orderItem)
                                         @php($quantity += $orderItem->quantity)
+                                        @php($price += $orderItem->price)
                                     @endforeach
                                 <tr>
                                     <td>{{$loop->iteration}}</td>
                                     <td>{{$item->item_code}}</td>
                                     <td>{{$item->brand_name}}</td>
                                     <td class="text-right">{{$quantity}}</td>
-                                    <td class="text-right">{{number_format($item->total_price($date), 2)}}</td>
+                                    <td class="text-right">{{number_format($price, 2)}}</td>
                                     <td>
                                     <button type="button"  class="btn btn-primary" data-toggle="modal" data-target="#exampleModal{{$item->id}}">Show Detail</button>
                                         <div class="modal fade" id="exampleModal{{$item->id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
