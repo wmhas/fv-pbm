@@ -71,33 +71,18 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
                 
                 if (count($oi)>0) {
                     foreach ($oi as $koi => $voi) {
-                        if ($koi==0) {
-                            $orders[$k]['NO'] = $num;
-                            $orders[$k]['DATE']=$v->dates;
-                            $orders[$k]['DO NUMBER']=$v->do_number;
-                            $orders[$k]['IC']=$v->ic;
-                            $orders[$k]['FULLANME']=$v->full_name;
-                            $orders[$k]['ADDRES']=$v->address;
-                            $orders[$k]['RX NUMBER']=$v->rx_number;
-                            $orders[$k]['DISPENSED BY']=$v->dispensing_by;
-                            $orders[$k]['MEDICINE']=$voi->items->brand_name;
-                            $orders[$k]['QTY'] = $voi->quantity;
-                            $orders[$k]['UNIT PRICE'] = $v->unit_price;
-                            $orders[$k]['TOTAL PRICE'] = $v->total_price;
-                        } else {
-                            $orders[$k]['NO'] = "";
-                            $orders[$k]['DATE']="";
-                            $orders[$k]['DO NUMBER']="";
-                            $orders[$k]['IC']="";
-                            $orders[$k]['FULLANME']="";
-                            $orders[$k]['ADDRES']="";
-                            $orders[$k]['RX NUMBER']="";
-                            $orders[$k]['DISPENSED BY']="";
-                            $orders[$k]['MEDICINE']=$voi->items->brand_name;
-                            $orders[$k]['QTY'] = $voi->quantity;
-                            $orders[$k]['UNIT PRICE'] = "";
-                            $orders[$k]['TOTAL PRICE'] = "";
-                        } 
+                        $orders[$k]['NO'] = $num;
+                        $orders[$k]['DATE']=$v->dates;
+                        $orders[$k]['DO NUMBER']=$v->do_number;
+                        $orders[$k]['IC']=$v->ic;
+                        $orders[$k]['FULLANME']=$v->full_name;
+                        $orders[$k]['ADDRES']=$v->address;
+                        $orders[$k]['RX NUMBER']=$v->rx_number;
+                        $orders[$k]['DISPENSED BY']=$v->dispensing_by;
+                        $orders[$k]['MEDICINE']=$voi->items->brand_name;
+                        $orders[$k]['QTY'] = $voi->quantity;
+                        $orders[$k]['UNIT PRICE'] = $v->unit_price;
+                        $orders[$k]['TOTAL PRICE'] = $v->total_price;
                     }
 
                     if (!empty($orders[$k]['NO'])){
