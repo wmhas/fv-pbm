@@ -395,7 +395,7 @@ class OrderController extends Controller
         $prescription = Prescription::select('rx_start', 'rx_end')->where('order_id', $order_id)->first();
 
         // Get duration in days
-        $duration = floor(abs(strtotime($prescription->rx_end) - strtotime($prescription->rx_start)) / (60 * 60 * 24)) + 1;
+        $duration = floor(abs(strtotime($prescription->rx_end) - strtotime($prescription->rx_start)) / (60 * 60 * 24));
 
         $item_lists = [];
         foreach ($items as $item) {
