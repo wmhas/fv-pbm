@@ -23,6 +23,8 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Exception;
 
+use Illuminate\Support\Facades\Log;
+
 class OrderController extends Controller
 {
     function __construct()
@@ -384,10 +386,16 @@ class OrderController extends Controller
     {
         ini_set('max_execution_time', 300);
         // $items = DB::table('myob_products as a')->join('myob_product_details as b', 'b.myob_product_id', 'a.ItemNumber')->where('IsInactive', 'N')->get();
-        $items = Item::select('id','brand_name','item_code')->get();
+        $items = Item::select('id','brand_name','item_code', 'frequency_id')->get();
         $order = Order::where('id', $order_id)->first();
 
         $orderItems = $order->orderitem;
+
+        // Get rx_start and rx_end from table prescription
+        $prescription = Prescription::select('rx_start', 'rx_end')->where('order_id', $order_id)->first();
+
+        // Get duration in days
+        $duration = floor(abs(strtotime($prescription->rx_end) - strtotime($prescription->rx_start)) / (60 * 60 * 24)) + 1;
 
         $item_lists = [];
         foreach ($items as $item) {
@@ -399,6 +407,7 @@ class OrderController extends Controller
                     'brand_name' => $item->brand_name,
                     'code' => $item->item_code,
                     'quantity' => $location->counter != null ? $location->counter : 0,
+                    'frequency' => $item->frequency_id,
                 ]);
             } else {
                 array_push($item_lists, [
@@ -406,13 +415,14 @@ class OrderController extends Controller
                     'brand_name' => $item->brand_name,
                     'code' => $item->item_code,
                     'quantity' => $location->courier != null ? $location->courier : 0,
+                    'frequency' => $item->frequency_id,
                 ]);
             }
         }
         $frequencies = Frequency::all();
 
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
-        return view('orders.create.create_order3', compact('order', 'orderItems', 'item_lists', 'roles', 'frequencies'));
+        return view('orders.create.create_order3', compact('order', 'orderItems', 'item_lists', 'roles', 'frequencies', 'duration'));
     }
 
     public function store_orderEntry($patient, $order_id, Request $request)
