@@ -40,8 +40,10 @@ class ItemExport implements FromCollection, WithHeadings, WithStyles, WithColumn
             $quantity = 0;
             $price = 0;
             foreach($item->order_items AS $orderItem) {
-                $quantity += $orderItem->quantity;
-                $price += $orderItem->price;
+                if ($orderItem->order) {
+                    $quantity += $orderItem->quantity;
+                    $price += $orderItem->price;
+                }
             }
             $data[] = [
                 'NO' => $no,

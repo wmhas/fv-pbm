@@ -97,24 +97,9 @@ class ReportController extends Controller
         $items = Item::query();
 
         if ($date) {
-            $orders = Order::whereHas('orderitem')
-                ->with(['orderitem.items'])
-                ->whereDate('updated_at', $date)
-                ->whereIn('status_id', [4])
-                ->whereNull('deleted_at')
-                ->whereNull('return_timestamp')
-                ->get();
-            $orderIds = [];
-            $itemIds = [];
-            foreach ($orders AS $order) {
-                $orderIds[] = $order->id;
-                foreach ($order->orderitem AS $orderItem) {
-                    $itemIds[] = $orderItem->items->id;
-                }
-            }
-            $items = $items->whereIn('id', $itemIds);
-            $items = $items->with(['order_items' => function ($orderItems) use ($orderIds) {
-                $orderItems->whereIn('order_id', $orderIds);
+            $items = $items->with(['order_items.order' => function ($order) use ($date) {
+                 $order->whereDate('updated_at', $date);
+                 $order->where('status_id', 4);
             }]);
         }
 
@@ -122,12 +107,12 @@ class ReportController extends Controller
             switch ($method) {
                 case ('ItemNumber'):
                     $items = $items->where('item_code', 'like', '%' . strtoupper($keyword) . '%')
-                        ->orderBy('item_code', 'asc')->limit(500);
+                        ->orderBy('item_code', 'asc');
                     break;
 
                 case ('ItemName'):
                     $items = $items->where('brand_name', 'like', '%' . strtoupper($keyword) . '%')
-                        ->orderBy('brand_name', 'asc')->limit(500);
+                        ->orderBy('brand_name', 'asc');
                     break;
             }
         }

@@ -77,8 +77,10 @@
                                     @php($quantity = 0)
                                     @php($price = 0)
                                     @foreach($item->order_items AS $orderItem)
-                                        @php($quantity += $orderItem->quantity)
-                                        @php($price += $orderItem->price)
+                                        @if($orderItem->order)
+                                            @php($quantity += $orderItem->quantity)
+                                            @php($price += $orderItem->price)
+                                        @endif
                                     @endforeach
                                 <tr>
                                     <td>{{$loop->iteration}}</td>
