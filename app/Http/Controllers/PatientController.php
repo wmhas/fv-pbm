@@ -52,7 +52,7 @@ class PatientController extends Controller
 
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
         return view('patients.index', [
-            'patients' => $patients, 'cards' => $cards, 'roles' => $roles
+            'patients' => $patients, 'cards' => $cards, 'roles' => $roles, 'method' => $method, 'keyword' => $keyword
         ]);
     }
 
