@@ -110,7 +110,8 @@
         <strong>P.O. NUMBER &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TERMS</strong>  
     </div>
     <br><br><br><br><br><br><br>
-    <div class="div4"> JHEV/BP/UBAT/401/1 Jil&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; MOPD &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Net 30th after
+    <div class="div4"> 
+        JHEV/BP/UBAT/401/1 Jil&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; MOPD &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Net 30th after 
     </div>  
     <br><br>
     <div>
