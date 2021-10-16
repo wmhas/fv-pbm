@@ -28,13 +28,13 @@
                                     <div class="col-md-2">
                                         <select class="form-control" name="method" required>
                                             <option value="">Please Choose</option>
-                                            <option value="identification">Search By IC / Passport</option>
-                                            <option value="army_pension">Search By Army No.</option>
+                                            <option value="identification" <?php if ($method == "identification") echo "selected"; ?>>Search By IC / Passport</option>
+                                            <option value="army_pension" <?php if ($method == "army_pension") echo "selected"; ?>>Search By Army No.</option>
                                         </select>
                                     </div>
                                     <div class="col-md-5">
                                         <input type="text" name="keyword" class="form-control"
-                                            placeholder="Enter IC Number / Army Number">
+                                            placeholder="Enter IC Number / Army Number" value="{{ $keyword }}">
                                     </div>
                                     <div class="col-md-2">
                                         <button type="submit" class="btn btn-secondary" style="width:100%;">Search</button>

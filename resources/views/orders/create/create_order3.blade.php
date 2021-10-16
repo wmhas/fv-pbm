@@ -156,7 +156,8 @@
                                                 style="width: 230px">
                                             <option>--Select--</option>
                                             @foreach ($item_lists as $item)
-                                                <option value="{{ $item['id'] }}">{{ $item['code'] }}
+                                                <option value="{{ $item['id'] }}">
+                                                    {{ $item['code'] }}
                                                     {{ $item['brand_name'] }}
                                                     ({{ $item['quantity'] }}) </option>
                                             @endforeach
@@ -181,7 +182,7 @@
                                         <select name="frequency" id="frequency" class="value_f form-control">
                                             <option value="0">-</option>
                                             @foreach ($frequencies as $freq)
-                                                <option value="{{ $freq->value }}">{{ $freq->name }}</option>
+                                                <option value="{{ $freq->value }}"  >{{ $freq->name }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -201,7 +202,7 @@
                                 <td>
                                     <div class="form-group">
                                         <input type="number" name="duration" id="duration" class="value_d form-control"
-                                               style="width:60px;">
+                                               style="width:60px;" value="{{ $duration }}" readonly>
                                     </div>
                                 </td>
                                 <td>
