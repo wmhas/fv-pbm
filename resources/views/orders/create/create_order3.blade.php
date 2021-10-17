@@ -231,7 +231,7 @@
                             </tr>
                             <tr>
                                 <td colspan="11" style="vertical-align: top;">
-                                    <button class="btn waves-effect btn-info btn-sm float-right" type="submit">Add
+                                    <button class="btn waves-effect btn-info btn-sm" type="submit">Add
                                         Item</button>
                                 </td>
                             </tr>
