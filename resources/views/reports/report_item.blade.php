@@ -22,7 +22,9 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-body">
-                        <form action="{{ url('/report/report_item') }}" method="GET">
+                        <form action="{{ url('/report/report_item') }}" method="GET" id="search-form">
+                            <input type="hidden" name="order" id="order" value="{{$order}}" />
+                            <input type="hidden" name="direction" id="direction" value="{{$direction}}" />
                             <div class="row">
                                 <div class="col-md-10">
                                     <div class="row">
@@ -65,8 +67,30 @@
                             <thead>
                                 <tr>
                                     <th>No</th>
-                                    <th>Item Code</th>
-                                    <th>Item Name</th>
+                                    <th>
+                                        <a href="#" class="order text-black" data-value="item_code">
+                                            Item Code
+                                            @if($order === 'item_code')
+                                                @if ($direction === 'asc')
+                                                    <i class="mdi mdi-menu-down"></i>
+                                                @else
+                                                    <i class="mdi mdi-menu-up"></i>
+                                                @endif
+                                            @endif
+                                        </a>
+                                    </th>
+                                    <th>
+                                        <a href="#" class="order text-black" data-value="brand_name">
+                                            Item Name
+                                            @if($order === 'brand_name')
+                                                @if ($direction === 'asc')
+                                                    <i class="mdi mdi-menu-down"></i>
+                                                @else
+                                                    <i class="mdi mdi-menu-up"></i>
+                                                @endif
+                                            @endif
+                                        </a>
+                                    </th>
                                     <th>Quantity Used</th>   
                                     <th>Total Price (RM)</th>
                                     <th>Action</th>
@@ -83,7 +107,9 @@
                                         @endif
                                     @endforeach
                                 <tr>
-                                    <td>{{$loop->iteration}}</td>
+                                    <td>
+                                        {{$loop->iteration}}
+                                    </td>
                                     <td>{{$item->item_code}}</td>
                                     <td>{{$item->brand_name}}</td>
                                     <td class="text-right">{{$quantity}}</td>
@@ -129,4 +155,27 @@
         </div>
     </div>
 </section>
+@endsection
+@section('script')
+    <script>
+        $(document).ready(function () {
+            $('.order').click(function (event) {
+                event.preventDefault();
+                const value = $(this).data('value');
+                let current_value = $('#order').val();
+                let current_direction = $('#direction').val();
+
+                if (value === current_value) {
+                    current_direction = (current_direction === 'asc') ? 'desc' : 'asc';
+                } else {
+                    current_direction = 'asc';
+                    current_value = value;
+                }
+
+                $('#order').val(current_value);
+                $('#direction').val(current_direction);
+                $('#search-form').submit();
+            });
+        });
+    </script>
 @endsection
