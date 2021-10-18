@@ -48,6 +48,11 @@ class StickerController extends Controller
                     $instruction = $orderItem->dose_quantity.' SEDUT '.$orderItem->frequencies->value.' KALI SEHARI';
                 }
 
+                $sellingUom = $orderItem->items->selling_uom;
+                if ($sellingUom === 'TAB') {
+                    $sellingUom = 'BIJI';
+                }
+
                 $data[] = [
                     'salutation' => $order->patient->salutation,
                     'name' => $order->patient->full_name,
@@ -55,7 +60,7 @@ class StickerController extends Controller
                     'item' => $orderItem->items->generic_name.' ('.$orderItem->items->brand_name.')',
                     'instruction' => $instruction,
                     'indication' => $orderItem->items->indikasi,
-                    'quantity_uom_duration' => $orderItem->quantity.' '.$orderItem->items->selling_uom.' ('.$orderItem->duration.' HARI)',
+                    'quantity_uom_duration' => $orderItem->quantity.' '.$sellingUom.' ('.$orderItem->duration.' HARI)',
                     'do_date' => (new Carbon($order->updated_at))->translatedFormat('Y-m-d'),
                     'created_at' => now(),
                     'updated_at' => now()
