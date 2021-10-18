@@ -12,7 +12,7 @@ class StickerController extends Controller
 {
     function __construct()
     {
-        $this->middleware('permission:sticker', ['only' => ['index', 'delete']]);
+        $this->middleware('permission:sticker', ['only' => ['index', 'delete', 'print']]);
     }
 
     public function index (Request $request)
