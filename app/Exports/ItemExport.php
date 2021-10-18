@@ -50,8 +50,8 @@ class ItemExport implements FromCollection, WithHeadings, WithStyles, WithColumn
                 'DATE' => $this->date,
                 'ITEM CODE' => $item->item_code,
                 'ITEM NAME' => $item->brand_name,
-                'QUANTITY USED' => $quantity,
-                'TOTAL PRICE (RM)' => $price
+                'QUANTITY USED' => ($quantity === 0) ? '0' : $quantity,
+                'TOTAL PRICE (RM)' => ($price === 0) ? '0.00' : $price
             ];
             $no++;
         }
