@@ -23,4 +23,9 @@ class OrderItem extends Model
     {
        return $this->belongsTo(Item::class, 'myob_product_id', 'id')->with('frequency');
     }
+
+    public function frequencies ()
+    {
+        return $this->belongsTo(Frequency::class, 'frequency', 'id');
+    }
 }

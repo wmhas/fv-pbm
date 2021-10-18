@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Label;
 use App\Models\Order;
 use App\Models\Sticker;
 use Carbon\Carbon;
@@ -36,39 +37,34 @@ class StickerController extends Controller
 
     public function print ($orderId)
     {
-        $order = Order::where('id', $orderId)->with(['patient', 'orderitem.items'])->first();
+        $order = Order::where('id', $orderId)->with(['patient', 'orderitem.items', 'orderitem.frequencies'])->first();
         if ($order) {
+            $data = [];
             foreach ($order->orderitem AS $orderItem) {
-                $sticker = new Sticker();
-                $sticker->salutations = strtoupper($order->patient->salutation);
-                $sticker->patient_name = strtoupper($order->patient->full_name);
-                $sticker->item_name = substr(' ' . $orderItem->items->brand_name . ' ' , 0, 80);
-                $sticker->quantity = substr($orderItem->quantity, 0, 37);
-                $sticker->ic_no = str_replace('-', '', substr($order->patient->identification, 6, 12));
-                $sticker->dispensing_date = Carbon::now()->format('Y-m-d');
-                $sticker->instruction = $orderItem->items->instruction;
-                $sticker->dose_quantity = $orderItem->dose_quantity;
-                $sticker->frequency =  $orderItem->items->frequency->name;
-                $sticker->dose_uom = $orderItem->items->selling_uom;
-                $sticker->indikasi = $orderItem->items->indikasi;
-                $sticker->p1 = 'SUNTIK';
-                $sticker->p2 = $orderItem->dose_quantity;
-                $sticker->p3 = $orderItem->items->selling_uom;
-                $sticker->p4 = '(PAGI)';
-                $sticker->p5 = $orderItem->dose_quantity;
-                $sticker->p6 = '(T/HARI)';
-                $sticker->p7 = $orderItem->dose_quantity;
-                $sticker->p8 = '(UNIT)';
-                $sticker->p9 = '(MLM)';
-                $sticker->p10 = $orderItem->dose_quantity;
-                $sticker->p11 = 'MINIT';
-                $sticker->p12 = $orderItem->items->instruction;
-                $sticker->p13 = 'AMBIL';
-                $sticker->p14 = 'KALI SEHARI';
-                $sticker->p15 = 'SEDUT';
-                $sticker->save();
+                $instruction = '';
+                if (($orderItem->items->selling_uom === 'TAB' || $orderItem->items->selling_uom === 'CAP') && $orderItem->items->instruction !== 'INHALE/SEDUT') {
+                    $instruction = 'AMBIL '.$orderItem->dose_quantity.' BIJI '.$orderItem->frequencies->value.' KALI SEHARI '.$orderItem->items->instruction;
+                } else if ($orderItem->items->selling_uom === 'CAP' && $orderItem->items->instruction === 'INHALE/SEDUT') {
+                    $instruction = $orderItem->dose_quantity.' SEDUT '.$orderItem->frequencies->value.' KALI SEHARI';
+                }
+
+                $data[] = [
+                    'salutation' => $order->patient->salutation,
+                    'name' => $order->patient->full_name,
+                    'identification' => str_replace('-', '', substr($order->patient->identification, 6, 12)),
+                    'item' => $orderItem->items->generic_name.' ('.$orderItem->items->brand_name.')',
+                    'instruction' => $instruction,
+                    'indication' => $orderItem->items->indikasi,
+                    'quantity_uom_duration' => $orderItem->quantity.' '.$orderItem->items->selling_uom.' ('.$orderItem->duration.' HARI)',
+                    'do_date' => (new Carbon($order->updated_at))->translatedFormat('Y-m-d'),
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ];
             }
-            return back();
+            $inserted = Label::insert($data);
+            if ($inserted) {
+                return back();
+            }
         }
 
         return back()->with(['status' => false, 'message' => 'Please enter correct DO number']);
