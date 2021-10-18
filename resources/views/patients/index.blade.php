@@ -99,7 +99,6 @@
                                                     @else
                                                         <button data-toggle="tooltip" title="Can't register new order" data-placement="left" class="btn btn-disabled"><i class="mdi mdi-pill"></i></button>
                                                     @endif
-                                                    <button id="deletePatient" data-id="{{ $patient->id }}"  title="Delete Patient" class="btn btn-danger"><i class="mdi mdi-account-alert"></i></button>
                                                 </div>
                                             </td>
                                             <td>
@@ -126,6 +125,13 @@
                                                 -
                                             </div>
                                             @endif
+                                            </td>
+                                            <td>
+                                                <div class="mt-2 d-flex justify-content-center">
+                                                    <a style="cursor: pointer;" id="deletePatient" data-id="{{ $patient->id }}"  title="Delete Patient">
+                                                        <i class="mdi mdi-delete"></i>
+                                                    </a>
+                                                </div>
                                             </td>
                                         </tr>
                                     @endforeach
