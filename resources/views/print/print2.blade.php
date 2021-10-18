@@ -131,10 +131,10 @@
             <td  class="nak-tepi">{{$item->quantity}}</td>
             <td  class="nak-tepi">{{$item->items->item_code}}</td>
             <td  class="nak-tepi">{{$item->items->brand_name}}</td>
-            <td  class="nak-tepi">RM{{number_format($item->price,2)}}</td>
+            <td  class="nak-tepi">{{number_format($item->price,2)}}</td>
             <td  class="nak-tepi">N-T</td>
             <td  class="nak-tepi">{{$item->items->selling_uom}}</td>
-            <td  class="nak-tepi">RM{{number_format($item->price,2)}}</td>
+            <td  class="nak-tepi">{{number_format($item->price,2)}}</td>
         </tr>
         @endforeach
         <tr style="border:none;">
@@ -149,9 +149,9 @@
                 TOTAL INCSST(6%)
             </td>
             <td class="nak-tepi" style="border-top:1px solid black;">
-                RM{{number_format($order->total_amount,2)}}<br>
-                RM0.00<br>
-                RM{{number_format($order->total_amount,2)}}</td>
+                {{number_format($order->total_amount,2)}}<br>
+                0.00<br>
+                {{number_format($order->total_amount,2)}}</td>
         </tr>
         <tr>
             <td colspan="4" style="text-align:center;" >  
@@ -161,7 +161,7 @@
                 <b>BALANCE DUE</b>        
             </td>
             <td style="border:1px solid black;">
-                RM{{number_format($order->total_amount,2)}}
+                {{number_format($order->total_amount,2)}}
             </td>
         </tr>
     </table>
@@ -175,8 +175,8 @@
 
         <tr>
             <td>Non-Taxable</td>
-            <td>RM571.00</td>
-            <td>RM0.00</td>
+            <td>571.00</td>
+            <td>0.00</td>
         </tr><br><br><br><br><br><br>
     </table>
     <table>

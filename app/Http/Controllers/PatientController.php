@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Patient;
 use App\Models\State;
 use App\Models\Card;
+use App\Models\Order;
 use App\Models\PatientAttachment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -224,6 +225,19 @@ class PatientController extends Controller
         }
 
         return redirect()->action('PatientController@index')->with(['status' => true, 'message' => 'Register Sucessfully !']);
+    }
+    
+    public function delete_patient(Request $request)
+    {
+        $patient = Patient::find($request->id);        
+        if ($patient){
+            Card::where("id", $patient->card_id)->delete();
+            Order::where("patient_id", $patient->id)->delete();
+            $patient->delete();
+            return response()->json(['msg'=>'success'],200);
+        }
+
+        return response()->json(['msg'=>'failed'],500);
     }
 
     public function patient_detail(Patient $patient)

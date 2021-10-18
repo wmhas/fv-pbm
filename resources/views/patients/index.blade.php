@@ -99,6 +99,7 @@
                                                     @else
                                                         <button data-toggle="tooltip" title="Can't register new order" data-placement="left" class="btn btn-disabled"><i class="mdi mdi-pill"></i></button>
                                                     @endif
+                                                    <button id="deletePatient" data-id="{{ $patient->id }}"  title="Delete Patient" class="btn btn-danger"><i class="mdi mdi-account-alert"></i></button>
                                                 </div>
                                             </td>
                                             <td>
@@ -142,13 +143,72 @@
                 </div>
             </div>
         </div>
+    </div>tabindex="-1" role="dialog"
+
+    <div class="modal" id="modalDeletePatient" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form method="POST" id="formDeletePatient" action="#" enctype="multipart/form-data">
+                    <div class="modal-header">
+                        <input type="hidden" name="idPatient" id="idPatient">
+                        <h5 class="modal-title" id="mTitle">Delete Patient</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p id="mDesc">Are you sure to delete this data ?</p>
+                    </div>
+                    <div class="modal-footer" id="mFotter">
+                        <button id="cancelDelete" type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
+
 @endsection
 
 @section('script')
 <script>
     $(document).ready(function(){
-      $('[data-toggle="tooltip"]').tooltip();   
+      $('[data-toggle="tooltip"]').tooltip();
+
+      $(document).on("click","#deletePatient",function(){
+        id = $(this).data("id");
+        $("#idPatient").val(id);
+        $("#modalDeletePatient").modal("show");
+      });
+
+      $("#formDeletePatient").on("submit",function(e){
+        e.preventDefault();
+
+        $("#modalDeletePatient").modal("hide");
+
+        $.ajax({
+            url: '{{ route("patient.delete") }}',
+            type: 'post',
+            dataType: 'json',
+            data:{
+                id:$("#idPatient").val(),
+                _token:"{{ csrf_token() }}"
+            },
+            success: function(data) {
+                if (data.msg=="success"){
+                    $("#mFotter").hide();
+                    $("#mTitle").html("Success");
+                    $("#mDesc").html("Success delete data!");
+                    $("#modalDeletePatient").modal("show");
+                    setTimeout(function(){ 
+                        window.location.reload(); 
+                    }, 1000);
+                }
+            }
+        });
+
+      });
+
     });
 </script>
 @endsection

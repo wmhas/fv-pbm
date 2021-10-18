@@ -51,6 +51,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/store', 'PatientController@store');
         Route::post('/{patient}/store/address', 'PatientController@store_address');
         Route::post('/{patient}/store/card', 'PatientController@store_card');
+        Route::post('/delete_patient', 'PatientController@delete_patient')->name("patient.delete");
         Route::get('/search', 'PatientController@search');
         Route::get('/view', 'PatientController@show');
         Route::get('/{patient}/view', 'PatientController@patient_view');

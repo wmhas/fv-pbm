@@ -74,12 +74,23 @@
                                         </td>
                                         <td>{{ date("d/m/Y", strtotime($order->created_at))}}</td>
                                         <td>
-                                            <a href=" {{ url('/patient/' . $order->patient->id . '/view') }}" data-toggle="tooltip" title="View Patient" >
-                                               {{ $order->patient->full_name }}
+                                            @php 
+                                            $patient_id = "";
+                                            $patient_name = "";
+                                            if (isset($order->patient)){
+                                                if ($order->patient){
+                                                    $patient_id = $order->patient->id;
+                                                    $patient_name = $order->patient->full_name;
+                                                }
+                                            }
+
+                                            @endphp
+                                            <a href=" {{ url('/patient/' . $patient_id . '/view') }}" data-toggle="tooltip" title="View Patient" >
+                                               {{ $patient_name }}
                                             </a>
                                         </td>
                                         <td>@if (!empty($order->patient->tariff_id)) {{$order->patient->tariff->name}} @else <b>(!) no panel</b> @endif</td>
-                                        <td style="text-align: right;">{{ number_format($order->total_amount, 2) }}</td>
+                                        <td>{{ number_format($order->total_amount, 2) }}</td>
                                         <td>
                                             @if ($order->status_id == 1)
                                                 <span class="badge bg-primary" style="font-size: 100%;">New Order</span>
