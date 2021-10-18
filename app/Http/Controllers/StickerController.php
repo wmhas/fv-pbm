@@ -19,7 +19,7 @@ class StickerController extends Controller
     {
         $orders = Order::query();
         $doNumber = $request->get('do_number');
-        if ($doNumber) {
+        if ($doNumber !== null) {
             $orders = $orders
                 ->where('do_number', 'LIKE', '%'.$doNumber.'%')
                 ->where('status_id', '!=', 1);
