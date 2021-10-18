@@ -14,7 +14,67 @@ class StickerController extends Controller
     {
         $this->middleware('permission:sticker', ['only' => ['index', 'delete']]);
     }
-    public function index(Request $request, $order_id = null)
+
+    public function index (Request $request)
+    {
+        $orders = Order::query();
+        $doNumber = $request->get('do_number');
+        if ($doNumber) {
+            $orders = $orders
+                ->where('do_number', 'LIKE', '%'.$doNumber.'%')
+                ->where('status_id', '!=', 1);
+        } else {
+            $orders = $orders->where('status_id', 2);
+        }
+        $orders = $orders
+            ->orderBy('updated_at', 'desc')
+            ->with(['patient', 'orderitem.items'])
+            ->paginate(15);
+        $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
+        return view('sticker.index2', compact('doNumber', 'roles', 'orders'));
+    }
+
+    public function print ($orderId)
+    {
+        $order = Order::where('id', $orderId)->with(['patient', 'orderitem.items'])->first();
+        if ($order) {
+            foreach ($order->orderitem AS $orderItem) {
+                $sticker = new Sticker();
+                $sticker->salutations = strtoupper($order->patient->salutation);
+                $sticker->patient_name = strtoupper($order->patient->full_name);
+                $sticker->item_name = substr(' ' . $orderItem->items->brand_name . ' ' , 0, 80);
+                $sticker->quantity = substr($orderItem->quantity, 0, 37);
+                $sticker->ic_no = str_replace('-', '', substr($order->patient->identification, 6, 12));
+                $sticker->dispensing_date = Carbon::now()->format('Y-m-d');
+                $sticker->instruction = $orderItem->items->instruction;
+                $sticker->dose_quantity = $orderItem->dose_quantity;
+                $sticker->frequency =  $orderItem->items->frequency->name;
+                $sticker->dose_uom = $orderItem->items->selling_uom;
+                $sticker->indikasi = $orderItem->items->indikasi;
+                $sticker->p1 = 'SUNTIK';
+                $sticker->p2 = $orderItem->dose_quantity;
+                $sticker->p3 = $orderItem->items->selling_uom;
+                $sticker->p4 = '(PAGI)';
+                $sticker->p5 = $orderItem->dose_quantity;
+                $sticker->p6 = '(T/HARI)';
+                $sticker->p7 = $orderItem->dose_quantity;
+                $sticker->p8 = '(UNIT)';
+                $sticker->p9 = '(MLM)';
+                $sticker->p10 = $orderItem->dose_quantity;
+                $sticker->p11 = 'MINIT';
+                $sticker->p12 = $orderItem->items->instruction;
+                $sticker->p13 = 'AMBIL';
+                $sticker->p14 = 'KALI SEHARI';
+                $sticker->p15 = 'SEDUT';
+                $sticker->save();
+            }
+            return back();
+        }
+
+        return back()->with(['status' => false, 'message' => 'Please enter correct DO number']);
+    }
+
+    public function indexOld(Request $request, $order_id = null)
     {
         $stickers = [];
         $orderPrint = Order::where('id', $order_id)->first();
