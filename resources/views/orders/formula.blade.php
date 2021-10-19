@@ -1,199 +1,736 @@
-@section('script')
-    <script src="{{ asset('js/bs-custom-file-input/bs-custom-file-input.min.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+@extends('layouts.app')
 
-    <script type="text/javascript">
-        $(document).ready(function() {
+@section('content')
 
-            // calculate quantity based on f x dq x d
-            $('input[type="number"] ,input[type="text"] ').keyup(function() {
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0">Edit Orders
+                        @if ($order->status_id == 1)
+                            <span class="badge bg-primary">New Order</span>
+                        @elseif ($order->status_id == 2)
+                            <span class="badge bg-secondary">Process Order</span>
+                        @elseif ($order->status_id == 3)
+                            <span class="badge bg-warning">Dispense Order</span>
+                        @elseif ($order->status_id == 4)
+                            <span class="badge bg-success">Complete Order</span>
+                        @elseif ($order->status_id == 5)
+                            <span class="badge bg-info">Batch Order</span>
+                        @endif
+                    </h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="{{ url('/home') }}">Home</a></li>
+                        <li class="breadcrumb-item active"><a href="{{ url('/order') }}">Orders</a></li>
+                        <li class="breadcrumb-item active">View Orders</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--  PATIENT INFO  -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Patient Information</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Patient Name</label>
+                                <input type="text" class="form-control" value="{{ $order->patient->full_name }}" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>IC / Passport Number</label>
+                                <input type="text" class="form-control" value="{{ $order->patient->identification }}"
+                                    readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Pension / Army Number</label>
+                                <input type="text" class="form-control" value="@if (!empty($order->patient->card)) {{ $order->patient->card->army_pension }}@else @endif" readonly>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    <!--  ORDER ENTRY  -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Update Order Entry</h5>
+                </div>
+                <div class="card-body" style="overflow-x:auto;">
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Indication</th>
+                            <th>Instruction</th>
+                            <th>Frequency</th>
+                            <th>Dose UOM</th>
+                            <th>Dose Qty.</th>
+                            <th>Duration</th>
+                            <th>Quantity</th>
+                            <th>Unit Price (RM)</th>
+                            <th>Total Price (RM)</th>
+                            <th>&nbsp;</th>
+                        </tr>
+                        </thead>
+                        @if ($order->orderItem != null)
+                            @foreach ($order->orderItem as $o_i)
 
-                var dose_quantity = parseFloat($('.value_dq').val());
-                var frequency = $('.value_f').val();
-                // var frequency = $('.value_f').prop('selectedIndex',0);
-                var duration = parseFloat($('.value_d').val());
-                var unit_price = parseFloat($('.price').val());
-                var uom = $('.uom').val();
-                var formula_id = $('.formula_id').val();
-                var formula_value = $('.formula_value').val();
+                                <tbody>
+                                <tr>
+                                    <td>
+                                        <input id="order_item_id" type="hidden" class="form-control" value="@if (!empty($o_i->items)) {{ $o_i->id }}
+                                        @else @endif" style="width:230px;" disabled>
+                                        <input id="i_item" type="hidden" class="form-control" value="@if (!empty($o_i->items)) {{ $o_i->items->id }}
+                                        @else @endif" style="width:230px;" disabled>
+                                        <input id="i_item_title" type="text" class="form-control" value="@if (!empty($o_i->items)) {{ $o_i->items->brand_name }}
+                                        @else @endif" style="width:230px;" disabled>
+                                    </td>
+                                    <td>
+                                        <input id="i_indication" type="text" class="form-control" value="@if (!empty($o_i->items)) {{ $o_i->items->indication }}
+                                        @else @endif" style="width:150px;" disabled>
+                                    </td>
+                                    <td>
+                                        <input id="i_intruction" type="text" class="form-control" value="@if (!empty($o_i->items)) {{ $o_i->items->instruction }}
+                                        @else @endif" style="width:200px;" disabled>
+                                    </td>
+                                    <td>
+                                        <input id="i_frequency" type="hidden" class="form-control" value="@if (!empty($o_i->items)) {{ $o_i->items->frequency->id }} @else @endif"
+                                               style="width:50px;" disabled>
+                                        <input type="text" class="form-control" value="@if (!empty($o_i->items)) {{ $o_i->items->frequency->name }} @else @endif"
+                                               style="width:50px;" disabled>
+                                    </td>
+                                    <td>
+                                        <input id="i_dose_uom" type="text" class="form-control" value="@if (!empty($o_i->items)) {{ $o_i->items->selling_uom }}
+                                        @else @endif" style="width:50px;" disabled>
+                                    </td>
+                                    <td>
+                                        <input id="i_dose_qty" type="text" class="form-control" value="{{ $o_i->dose_quantity }}"
+                                               style="width:60px;" disabled>
+                                    </td>
+                                    <td>
+                                        <input id="i_dose_duration" type="text" class="form-control" value="{{ $o_i->duration }}"
+                                               style="width:60px;" disabled>
+                                    </td>
+                                    <td>
+                                        <input id="i_quantity" type="text" class="form-control" value="{{ $o_i->quantity }}"
+                                               style="width:70px;" disabled>
+                                    </td>
+                                    <td>
+                                        <input id="i_unit_price" type="text" class="form-control" value="@if (!empty($o_i->items)) {{ number_format($o_i->items->selling_price, 2) }} @else @endif" style="width:70px;" disabled>
+                                    </td>
+                                    <td>
+                                        <input id="i_total_price" type="text" class="form-control"
+                                               value="{{ number_format($o_i->price, 2) }}" style="width:70px;" disabled>
+                                    </td>
+                                    <td>
+                                        <form 
+                                            action="{{ url('/order/delete_item/' . $order->patient->id . '/' . $o_i->id) }}"
+                                            method="post">
+                                            @method('DELETE')
+                                            @csrf
+                                            <input type="hidden" name="patient_info"
+                                                   value="{{ $order->patient->id }}">
+                                            <button type="submit"
+                                                    class="btn waves-effect btn-danger btn-sm">Delete</button>
+                                        </form><br/>
+                                        <div>
+                                            <input type="hidden" id="i_patient_id"
+                                                   value="{{ $order->patient->id }}">
+                                            <input type="hidden" id="i_order_id"
+                                                   value="{{ $order->id }}">
+                                            <button id="editItem" class="btn waves-effect btn-success btn-sm">Edit</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            @endforeach
+                        @endif
+                        <tbody>
+                        <form method="post" action="{{ url('order/store_item/') }}">
+                            @csrf
+                            <input type="hidden" name="patient_id" value="{{ $order->patient->id }}">
+                            <tr class="row-table">
+                                <td>
+                                    @if ($order->id == null)
+                                        <input type="hidden" name="order_id" value="{{ $record->id }}">
+                                    @else
+                                        <input type="hidden" name="order_id" value="{{ $order->id }}">
+                                    @endif
+                                    <div class="form-group">
+                                        <select class="js-single form-control" name="item_id" id="item_id"
+                                                style="width: 230px">
+                                            <option>--Select--</option>
+                                            @foreach ($item_lists as $item)
+                                                <option value="{{ $item['id'] }}">
+                                                    {{ $item['code'] }}
+                                                    {{ $item['brand_name'] }}
+                                                    ({{ $item['quantity'] }}) </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-group">
+                                        <input type="text" name="indication" id="indication" class="form-control"
+                                               style="width:150px;">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-group">
+                                        <input type="text" name="instruction" id="instruction" class="form-control"
+                                               style="width:200px;">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-group">
+                                        {{-- <input type="text" name="frequency" id="frequency" class="value_f form-control" style="width:50px;"> --}}
+                                        <select name="frequency" id="frequency" class="value_f form-control">
+                                            <option value="0">-</option>
+                                            @foreach ($frequencies as $freq)
+                                                <option value="{{ $freq->value }}"  >{{ $freq->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-group">
+                                        <input type="text" name="selling_uom" id="selling_uom" class="uom form-control"
+                                               style="width:50px;">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-group">
+                                        <input type="number" name="dose_quantity" id="dose_quantity"
+                                               class="value_dq form-control" style="width:60px;">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-group">
+                                        <input type="number" name="duration" id="duration" class="value_d form-control"
+                                               style="width:60px;" value="{{ $duration }}" readonly>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-group">
+                                        <input type="text" name="quantity" id="quantity" class="quantity form-control"
+                                               style="width:70px;">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-group">
+                                        <input type="number" name="selling_price" id="selling_price"
+                                               class="price form-control" step="0.01" style="width:70px;">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-group">
+                                        <input type="text" name="price" id="price" class="form-control"
+                                               style="width:70px;">
+                                    </div>
+                                </td>
+                                <td style="vertical-align: middle;">
+                                    {{-- <button class="btn waves-effect btn-danger btn-sm">Delete</button> --}}
+                                </td>
+                                <input type="hidden" id="formula_id" class="formula_id">
+                                <input type="hidden" id="formula_value" class="formula_value">
+                            </tr>
+                            <tr>
+                                <td colspan="11" style="vertical-align: top;">
+                                    <button class="btn waves-effect btn-info btn-sm" type="submit">Add
+                                        Item</button>
+                                </td>
+                            </tr>
+                        </form>
+                        </tbody>
+                        <tfoot>
+                        <tr>
+                            <td colspan="10" class="text-right" style="vertical-align: middle;">Grand Total Amount (RM)
+                            </td>
+                            <td><input type="text" class="form-control" style="width:70px;"
+                                       value="{{ number_format($order->orderitem->sum('price'), 2) }}" disabled> </td>
+                        </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    <form action="{{ url('/order/' . $order->id . '/update') }}" method="post" enctype="multipart/form-data">
+        @csrf
+        <!--  DISPENSE INFO  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Update Order Information</h5>
+                    </div>
+                    <div class="card-header">
+                        <h5 class="card-title">Dispense Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Salesperson</label>
+                                    <select class="form-control" name="salesperson">
+                                        @if (!empty($order->salesperson_id))
+                                            <option value="{{ $order->salesperson_id }}" selected>
+                                                {{ $order->salesperson->name }}</option>
+                                        @endif
+                                        @foreach ($salesPersons as $person)
+                                            <option value="{{ $person->id }}">{{ $person->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <label>DO Number</label>
+                                    @if ($resubmission == 1)
+                                        <input type="text" class="form-control" id="do_number" name="do_number"
+                                            value="{{ $order->do_number }}" readonly>
+                                    @else
+                                        <input type="text" class="form-control" id="do_number" name="do_number" @if (!empty($order)) value="{{ $order->do_number }}" @endif
+                                            readonly>
+                                    @endif
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <label>Dispensing By</label>
+                                    @if ($resubmission == 1)
+                                        <select id="dispensing_by" name="dispensing_by" class="form-control">
+                                            <option value="FVKL" @if (!empty($order) && $order->dispensing_by == 'FVKL') selected @endif>FVKL</option>
+                                            <option value="FVT" @if (!empty($order) && $order->dispensing_by == 'FVT') selected @endif>FVT</option>
+                                        </select>
+                                    @else
+                                        <input type="text" class="form-control" id="dispensing_by" name="dispensing_by" @if (!empty($order)) value="{{ $order->dispensing_by }}" @endif
+                                            readonly>
+                                    @endif
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <label>Dispensing Method</label>
+                                    <select id="dispensing_method" name="dispensing_method" class="form-control">
+                                        <option value="Walkin" @if (!empty($order) && $order->dispensing_method == 'Walkin') selected @endif>Walk In</option>
+                                        <option value="Delivery" @if (!empty($order) && $order->dispensing_method == 'Delivery') selected @endif>Delivery</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--  DELIVERY INFO  -->
+        <div class="row delivery Delivery">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Delivery Information</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Delivery Method</label>
+                                    <select class="form-control" name="delivery_method">
+                                        <option value="Courier" @if (!empty($order->delivery) && $order->delivery->delivery_method == 'Courier') selected @endif>Courier</option>
+                                        <option value="Runner" @if (!empty($order->delivery) && $order->delivery->delivery_method == 'Runner') selected @endif>Runner</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Send Date</label>
+                                    <input type="date" class="form-control" name="send_date" @if (!empty($order->delivery)) value="{{ $order->delivery->send_date }}" @endif>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Tracking Number</label>
+                                    <input type="text" class="form-control" name="tracking_number" @if (!empty($order->delivery)) value="{{ $order->delivery->tracking_number }}" @endif>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Consignment Note</label>
+                                    <div class="input-group">
+                                        <div class="custom-file">
+                                            @if (!empty($order->delivery->file_name))
+                                                <input type="text" class="form-control"
+                                                    value="{{ $order->delivery->file_name }}" readonly
+                                                    onclick="window.open('{{ url('/order/' . $order->delivery->id . '/view/downloadConsignmentNote') }}');"
+                                                    style="cursor:pointer;">
+                                                <a data-toggle='modal' data-target='#updateCN' class="btn btn-primary"
+                                                    style="margin-left:10px;">Change</a>
+                                            @else
+                                                <input type="file" accept=".pdf, .PDF, .jpg, .JPG, .png, .PNG"
+                                                    name="cn_attach" id="cn_attach">
+                                                <label class="custom-file-label text" for="cn_attach">Choose file</label>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Address 1</label>
+                                    <input type="text" class="form-control" name="dispensing_add1" @if (!empty($order->delivery)) value="{{ $order->delivery->address_1 }}" @endif>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Address 2</label>
+                                    <input type="text" class="form-control" name="dispensing_add2" @if (!empty($order->delivery)) value="{{ $order->delivery->address_2 }}" @endif>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Postcode</label>
+                                    <input type="text" class="form-control" name="dispensing_postcode" @if (!empty($order->delivery)) value="{{ $order->delivery->postcode }}" @endif>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>City</label>
+                                    <input type="text" class="form-control" name="dispensing_city" @if (!empty($order->delivery)) value="{{ $order->delivery->city }}" @endif>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>State</label>
+                                    <select class="form-control" name="dispensing_state">
+                                        @if (!empty($order->delivery))
+                                            <option value="{{ $order->delivery->states_id }}" selected>
+                                                {{ $order->delivery->state->name }}</option>
+                                        @endif
+                                        @foreach ($states as $state)
+                                            <option value="{{ $state->id }}">{{ $state->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--  PRESCRIPTION INFO  -->
+        <div class="row" onload="formRX()">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Prescription Information</h3>
+                        <div class="card-tools">
+                            <div class="form-group">
+                                <div class="custom-control custom-switch">
+                                    <input type="checkbox" class="custom-control-input" id="NSD" @if ($order->rx_interval == 1) checked @endif>
+                                    <label class="custom-control-label" for="NSD">Set One Off Supply</label>
+                                    <input type="hidden" name="rx_interval" id="rx_interval"
+                                        value="{{ $order->rx_interval }}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Hospital</label>
+                                    <select class="form-control" name="rx_hospital">
+                                        @if (!empty($order->prescription))
+                                            <option value="{{ $order->prescription->hospital_id }}" selected>
+                                                {{ $order->prescription->hospital->name }}</option>
+                                        @endif
+                                        @foreach ($hospitals as $hospital)
+                                            <option value="{{ $hospital->id }}">{{ $hospital->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Clinic</label>
+                                    <select class="form-control" name="rx_clinic">
+                                        @if (!empty($order->prescription))
+                                            <option value="{{ $order->prescription->clinic_id }}" selected>
+                                                {{ $order->prescription->clinic->name }}</option>
+                                        @endif
+                                        @foreach ($clinics as $clinic)
+                                            <option value="{{ $clinic->id }}">{{ $clinic->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>RX Number</label>
+                                    <input type="text" class="form-control" name="rx_number" @if (!empty($order->prescription)) value="{{ $order->prescription->rx_number }}" @endif required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>RX Attachment</label>
+                                    <div class="input-group">
+                                        <div class="custom-file">
+                                            @if (!empty($order->prescription->rx_original_filename))
+                                                <input type="text" class="form-control"
+                                                    value="{{ $order->prescription->rx_original_filename }}" readonly
+                                                    onclick="window.open('{{ url('/order/' . $order->prescription->id . '/view/downloadRXAttachment') }}');"
+                                                    style="cursor:pointer;">
+                                                <a data-toggle='modal' data-target='#updateRXA' class="btn btn-primary"
+                                                    style="margin-left:10px;">Change</a>
+                                            @else
+                                                <input type="file" accept=".pdf, .PDF, .jpg, .JPG, .png, .PNG"
+                                                    name="rx_attach" id="rx_attach">
+                                                <label class="custom-file-label text" for="rx_attach">Choose file</label>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4" id="colRxStart">
+                                <div class="form-group">
+                                    <label>RX Start</label>
+                                    <input type="date" class="form-control" name="rx_start_date" @if (!empty($order->prescription)) value="{{ $order->prescription->rx_start }}" @endif required>
+                                </div>
+                            </div>
+                            <div class="col-md-4" id="colRxEnd">
+                                <div class="form-group">
+                                    <label>RX End</label>
+                                    <input type="date" class="form-control" name="rx_end_date" @if (!empty($order->prescription)) value="{{ $order->prescription->rx_end }}" @endif required>
+                                </div>
+                            </div>
+                            <div class="col-md-4" id="colNSD">
+                                <div class="form-group">
+                                    <label>Next Supply Date</label>
+                                    <input type="date" class="form-control" id="rx_supply_date" name="rx_supply_date" @if (!empty($order->prescription)) value="{{ $order->prescription->next_supply_date }}" @endif>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-footer">
+                        <div class="form-group">
+                            <input type="hidden" name="total_amount" value="{{ $order->orderitem->sum('price') }}">
+                            <button type="submit" class="btn btn-primary float-right">Save Order</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
 
-                if (frequency == 'OD' || frequency == 'PRN' || frequency == 'OM' || frequency == 'ON' ||
-                    frequency == 'STAT') {
-                    var frequency = 1;
-                } else if (frequency == 'BD') {
+    <!-- Modal Update Consignment Note -->
+    <div class="modal fade" id="updateCN" tabindex="-1" role="dialog" aria-labelledby="updateCNLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                @if (!empty($order->delivery->file_name))
+                    <form method="POST" action="{{ url('/order/' . $order->delivery->id . '/updateConsignmentNote') }}"
+                        enctype="multipart/form-data">
+                        @csrf
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="updateCNLabel">Change Consignment Note </h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="input-group">
+                                <div class="custom-file">
+                                    <input type="file" accept=".pdf, .PDF, .jpg, .JPG, .png, .PNG" name="cn_attach"
+                                        id="cn_attach">
+                                    <label class="custom-file-label" for="cn_attach">Choose file</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Update</button>
+                        </div>
+                    </form>
+                @endif
+            </div>
+        </div>
+    </div>
 
-                    var frequency = 2;
+    <!-- Modal Update RX Attachment -->
+    <div class="modal fade" id="updateRXA" tabindex="-1" role="dialog" aria-labelledby="updateRXALabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                @if (!empty($order->prescription->rx_original_filename))
+                    <form method="POST" action="{{ url('/order/' . $order->prescription->id . '/updateRXAttachment') }}"
+                        enctype="multipart/form-data">
+                        @csrf
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="updateRXALabel">Change RX Attachment </h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Please choose RX Attachment</p>
+                            <div class="input-group">
+                                <div class="custom-file">
+                                    <input type="file" accept=".pdf, .PDF, .jpg, .JPG, .png, .PNG" name="rx_attach"
+                                        id="rx_attach">
+                                    <label class="custom-file-label" for="rx_attach">Choose file</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Update</button>
+                        </div>
+                    </form>
+                @endif
+            </div>
+        </div>
+    </div>
 
-                } else if (frequency == 'TDS') {
-
-                    var frequecy = 3;
-
-                } else {
-                    var frequency = 4;
-                }
-
-                //mcm mana nak retrieve formula_id dengan formula_value
-                if (formula_id == '1') {
-                    var quantity = dose_quantity * frequency * duration;
-
-                } else if (formula_id == '6') {
-                    var quantity = 1;
-
-                } else {
-
-                    var quantity = (dose_quantity * frequency * duration) / formula_value;
-
-                }
-
-                var sum = quantity * unit_price;
-
-                parseFloat($("input#quantity").val(quantity.toFixed(2)));
-                parseFloat($("input#price").val(sum.toFixed(2)));
-            });
-
-
-            // Department Change
-            $('#item_id').change(function() {
-                $('#quantity').val('');
-                // Department id
-                var id = $(this).val();
-                // console.log(id);
-                // Empty the dropdown
-                $('#selling_price').find('option').not(':first').remove();
-                $('#selling_uom').find('option').not(':first').remove();
-                $('#instruction').find('option').not(':first').remove();
-                $('#indication').find('option').not(':first').remove();
-
-                // AJAX request 
-                $.ajax({
-                    url: '/getItemDetails/' + id,
-                    type: 'get',
-                    dataType: 'json',
-                    success: function(response) {
-                        console.log(response);
-                        var len = 0;
-                        if (response['data'] != null) {
-                            len = response['data'].length;
-                        }
-                        console.log(len);
-
-                        if (len > 0) {
-                            // Read data and create <option >
-                            for (var i = 0; i < len; i++) {
-
-                                var id = response['data'][i].id;
-                                var selling_price = response['data'][i].selling_price;
-                                var selling_uom = response['data'][i].selling_uom;
-                                var instruction = response['data'][i].instruction;
-                                var indication = response['data'][i].indication;
-                                var frequency = response['data'][i].name;
-                                var frequency_id = response['data'][i].freq_id;
-                                var formula_id = response['data'][i].formula_id;
-                                var formula_value = response['data'][i].value;
-
-                                // console.log(frequency);
-                                // var option = "<option value='"+id+"'>"+amount+"</option>"; 
-
-                                // $("#unit_price").append(option);
-                                $("#selling_price").val(selling_price);
-                                $("#selling_uom").val(selling_uom);
-                                $("#instruction").val(instruction);
-                                $("#indication").val(indication);
-                                $("#frequency option[value='" + frequency_id + "']").attr(
-                                    'selected', 'selected');
-                                $("#formula_id").val(formula_id);
-                                $("#formula_value").val(formula_value);
-                                // $("#gst").val(0.00);
-                            }
-                        }
-
-                    }
-                });
-            });
-        });
-
-        //search item on dropdown
-        $(document).ready(function() {
-            $('.js-single').select2();
-        });
-
-        //set on off supply on prescription
-        $('#NSD').change(function() {
-            if ($(this).prop("checked")) {
-                $('#colNSD').hide();
-                $('#rx_interval').val(1);
-            } else {
-                $('#colNSD').show();
-                $('#rx_interval').val(2);
-            }
-        });
-
-        $(function formRX() {
-            if ({{ $order->rx_interval }} == 1) {
-                $('#colNSD').hide();
-                // console.log('true')
-            } else {
-                $('#colNSD').show();
-            }
-        });
-
-        //hide delivery div
-        $(document).ready(function() {
-            $("#dispensing_method").change(function() {
-                $(this).find("option:selected").each(function() {
-                    var optionValue = $(this).attr("value");
-                    console.log(optionValue);
-                    if (optionValue) {
-                        $(".delivery").not("." + optionValue).hide();
-                        $("." + optionValue).show();
-                    } else {
-                        $(".delivery").hide();
-                    }
-                });
-            }).change();
-        });
-
-        //file upload
-        $(function() {
-            bsCustomFileInput.init();
-        });
-
-        $('#dispensing_by').change(function() {
-            var id = $(this).val();
-            // console.log(id);
-            $.ajax({
-                url: '/ajax/getDONumber/' + id,
-                type: 'get',
-                dataType: 'json',
-                success: function(response) {
-                    var len = 0;
-                    if (response['data'] != null) {
-                        len = response['data'].length;
-                    }
-                    console.log(response);
-                    $("#do_number").val(response);
-                }
-            });
-        });
-
-        $(document).ready(function() {
-            var id = '{{$order->dispensing_by}}';
-            // console.log(id);
-            $.ajax({
-                url: '/ajax/getDONumber/' + id,
-                type: 'get',
-                dataType: 'json',
-                success: function(response) {
-                    var len = 0;
-                    if (response['data'] != null) {
-                        len = response['data'].length;
-                    }
-                    console.log(response);
-                    $("#do_number").val(response);
-                }
-            });
-        });
-    </script>
+    <!-- Modal -->
+    <div class="modal fade" id="modalEditItem" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Edit Item</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-responsive">
+                        <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Indication</th>
+                            <th>Instruction</th>
+                            <th>Frequency</th>
+                            <th>Dose UOM</th>
+                            <th>Dose Qty.</th>
+                            <th>Duration</th>
+                            <th>Quantity</th>
+                            <th>Unit Price (RM)</th>
+                            <th>Total Price (RM)</th>
+                            <th>&nbsp;</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            <form method="post" action="{{ url('order/update_item/') }}">
+                                @csrf
+                                <input type="hidden" name="patient_id" value="{{ $order->patient->id }}">
+                                <tr class="row-table">
+                                    <td>
+                                        @if ($order->id == null)
+                                            <input type="hidden" name="order_id" value="{{ $record->id }}">
+                                        @else
+                                            <input type="hidden" name="order_id" value="{{ $order->id }}">
+                                        @endif
+                                        <input type="hidden" name="order_item_id" id="u_order_item_id">
+                                        <div class="form-group">
+                                            <input name="item_id" id="u_item_id" type="hidden" class="form-control" style="width:230px;">
+                                            <input id="u_item_title" type="text" class="form-control" style="width:230px;" readonly>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="form-group">
+                                            <input type="text" name="indication" id="u_indication" class="form-control"
+                                                   style="width:150px;" readonly>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="form-group">
+                                            <input type="text" name="instruction" id="u_instruction" class="form-control"
+                                                   style="width:200px;" readonly>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="form-group">
+                                            <select name="frequency" id="u_frequency" class="u_value_f form-control">
+                                                <option value="0">-</option>
+                                                @foreach ($frequencies as $freq)
+                                                    <option value="{{ $freq->value }}"  >{{ $freq->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="form-group">
+                                            <input type="text" name="selling_uom" id="u_selling_uom" class="u_uom form-control"
+                                                   style="width:50px;" readonly>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="form-group">
+                                            <input type="number" name="dose_quantity" id="u_dose_quantity"
+                                                   class="u_value_dq form-control" style="width:60px;">
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="form-group">
+                                            <input type="number" name="duration" id="u_duration" class="u_value_d form-control"
+                                                   style="width:60px;" value="{{ $duration }}" readonly>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="form-group">
+                                            <input type="text" name="quantity" id="u_quantity" class="u_quantity form-control"
+                                                   style="width:70px;">
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="form-group">
+                                            <input type="number" name="selling_price" id="u_selling_price"
+                                                   class="u_price form-control" step="0.01" style="width:70px;">
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="form-group">
+                                            <input type="text" name="price" id="u_price" class="form-control"
+                                                   style="width:70px;">
+                                        </div>
+                                    </td>
+                                    <input type="hidden" id="u_formula_id" class="u_formula_id">
+                                    <input type="hidden" id="u_formula_value" class="u_formula_value">
+                                </tr>
+                                <tr>
+                                    <td colspan="11" style="vertical-align: top;">
+                                        <button class="btn waves-effect btn-success btn-sm" type="submit">Update
+                                            Item</button>
+                                    </td>
+                                </tr>
+                            </form>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
+@include('orders.formula')

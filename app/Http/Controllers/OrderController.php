@@ -137,6 +137,8 @@ class OrderController extends Controller
 
     public function edit($id)
     {
+        ini_set('max_execution_time', 0);
+        ini_set('memory_limit', 0);
         $states = State::all();
         $hospitals = Hospital::all();
         $clinics = Clinic::all();
@@ -163,10 +165,15 @@ class OrderController extends Controller
                 ]);
             }
         }
+        // Get rx_start and rx_end from table prescription
+        $prescription = Prescription::select('rx_start', 'rx_end')->where('order_id', $order->id)->first();
+
+        // Get duration in days
+        $duration = floor(abs(strtotime($prescription->rx_end) - strtotime($prescription->rx_start)) / (60 * 60 * 24));
         $frequencies = Frequency::all();
         $resubmission = 0;
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
-        return view('orders.edit', compact('states', 'hospitals', 'clinics', 'salesPersons', 'order', 'items', 'item_lists', 'frequencies', 'roles', 'resubmission'));
+        return view('orders.edit', compact('states', 'hospitals', 'clinics', 'salesPersons', 'order', 'items', 'item_lists', 'frequencies', 'roles', 'resubmission','duration'));
     }
 
     public function store_edit($id, Request $request)
@@ -500,6 +507,52 @@ class OrderController extends Controller
             return redirect()->route('order.update', [
                 'order' => $request->input('order_id')
             ])->with(['status' => true, 'message' => 'Successfully add item']);
+        }
+    }
+
+    public function update_item(Request $request)
+    {
+        $order_item = OrderItem::where('id', $request->input('order_item_id'))->first();
+        $order = Order::where('id', $order_item->order_id)->first();
+        $location = Location::where('item_id', $order_item->myob_product_id)->first();
+        if ($order->dispensing_method == 'Walkin' && $location->counter >= $request->input('quantity')) {
+            $location->counter = $location->counter - $request->input('quantity');
+            $location->save();
+        } elseif ($order->dispensing_method == 'Delivery' && $location->courier >= $request->input('quantity')) {
+            $location->courier = $location->courier - $request->input('quantity');
+            $location->save();
+        } else {
+            return redirect()->action('OrderController@create_orderEntry', ['patient' => $order->patient_id, 'order_id', $order->id])->with(['status' => false, 'message' => 'Item quantity exceeded the number of quantity available']);
+        }
+
+        $record = OrderItem::find($order_item->id);
+        $record->order_id = $request->input('order_id');
+        $record->myob_product_id = $request->input('item_id');
+        $record->dose_quantity = $request->input('dose_quantity');
+        $record->duration = $request->input('duration');
+        $record->frequency = $request->input('frequency');
+        $record->quantity = $request->input('quantity');
+        $record->price = $request->input('price');
+        $record->save();
+
+        $stock = new Stock();
+        $stock->item_id = $request->input('item_id');
+        $stock->quantity = -$request->input('quantity');
+        $stock->balance = 0;
+        $stock->source = 'sale';
+        $stock->source_id = $record->id;
+        $stock->source_date = Carbon::now()->format('Y-m-d');
+        $stock->save();
+
+        if ($order->total_amount == 0) {
+            return redirect()->route('order.entry', [
+                'id' => $request->input('patient_id'),
+                'order_id' => $request->input('order_id')
+            ])->with(['status' => true, 'message' => 'Successfully update item']);
+        } else {
+            return redirect()->route('order.update', [
+                'order' => $request->input('order_id')
+            ])->with(['status' => true, 'message' => 'Successfully update item']);
         }
     }
 

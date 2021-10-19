@@ -86,46 +86,52 @@
                                 <tbody>
                                 <tr>
                                     <td>
-                                        <input type="text" class="form-control" value="@if (!empty($o_i->items)) {{ $o_i->items->brand_name }}
+                                        <input id="order_item_id" type="hidden" class="form-control" value="@if (!empty($o_i->items)) {{ $o_i->id }}
+                                        @else @endif" style="width:230px;" disabled>
+                                        <input id="i_item" type="hidden" class="form-control" value="@if (!empty($o_i->items)) {{ $o_i->items->id }}
+                                        @else @endif" style="width:230px;" disabled>
+                                        <input id="i_item_title" type="text" class="form-control" value="@if (!empty($o_i->items)) {{ $o_i->items->brand_name }}
                                         @else @endif" style="width:230px;" disabled>
                                     </td>
                                     <td>
-                                        <input type="text" class="form-control" value="@if (!empty($o_i->items)) {{ $o_i->items->indication }}
+                                        <input id="i_indication" type="text" class="form-control" value="@if (!empty($o_i->items)) {{ $o_i->items->indication }}
                                         @else @endif" style="width:150px;" disabled>
                                     </td>
                                     <td>
-                                        <input type="text" class="form-control" value="@if (!empty($o_i->items)) {{ $o_i->items->instruction }}
+                                        <input id="i_intruction" type="text" class="form-control" value="@if (!empty($o_i->items)) {{ $o_i->items->instruction }}
                                         @else @endif" style="width:200px;" disabled>
                                     </td>
                                     <td>
+                                        <input id="i_frequency" type="hidden" class="form-control" value="@if (!empty($o_i->items)) {{ $o_i->items->frequency->id }} @else @endif"
+                                               style="width:50px;" disabled>
                                         <input type="text" class="form-control" value="@if (!empty($o_i->items)) {{ $o_i->items->frequency->name }} @else @endif"
                                                style="width:50px;" disabled>
                                     </td>
                                     <td>
-                                        <input type="text" class="form-control" value="@if (!empty($o_i->items)) {{ $o_i->items->selling_uom }}
+                                        <input id="i_dose_uom" type="text" class="form-control" value="@if (!empty($o_i->items)) {{ $o_i->items->selling_uom }}
                                         @else @endif" style="width:50px;" disabled>
                                     </td>
                                     <td>
-                                        <input type="text" class="form-control" value="{{ $o_i->dose_quantity }}"
+                                        <input id="i_dose_qty" type="text" class="form-control" value="{{ $o_i->dose_quantity }}"
                                                style="width:60px;" disabled>
                                     </td>
                                     <td>
-                                        <input type="text" class="form-control" value="{{ $o_i->duration }}"
+                                        <input id="i_dose_duration" type="text" class="form-control" value="{{ $o_i->duration }}"
                                                style="width:60px;" disabled>
                                     </td>
                                     <td>
-                                        <input type="text" class="form-control" value="{{ $o_i->quantity }}"
+                                        <input id="i_quantity" type="text" class="form-control" value="{{ $o_i->quantity }}"
                                                style="width:70px;" disabled>
                                     </td>
                                     <td>
-                                        <input type="text" class="form-control" value="@if (!empty($o_i->items)) {{ number_format($o_i->items->selling_price, 2) }} @else @endif" style="width:70px;" disabled>
+                                        <input id="i_unit_price" type="text" class="form-control" value="@if (!empty($o_i->items)) {{ number_format($o_i->items->selling_price, 2) }} @else @endif" style="width:70px;" disabled>
                                     </td>
                                     <td>
-                                        <input type="text" class="form-control"
+                                        <input id="i_total_price" type="text" class="form-control"
                                                value="{{ number_format($o_i->price, 2) }}" style="width:70px;" disabled>
                                     </td>
                                     <td>
-                                        <form
+                                        <form 
                                             action="{{ url('/order/delete_item/' . $order->patient->id . '/' . $o_i->id) }}"
                                             method="post">
                                             @method('DELETE')
@@ -134,7 +140,14 @@
                                                    value="{{ $order->patient->id }}">
                                             <button type="submit"
                                                     class="btn waves-effect btn-danger btn-sm">Delete</button>
-                                        </form>
+                                        </form><br/>
+                                        <div>
+                                            <input type="hidden" id="i_patient_id"
+                                                   value="{{ $order->patient->id }}">
+                                            <input type="hidden" id="i_order_id"
+                                                   value="{{ $order->id }}">
+                                            <button id="editItem" class="btn waves-effect btn-success btn-sm">Edit</button>
+                                        </div>
                                     </td>
                                 </tr>
                                 </tbody>
@@ -296,99 +309,287 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="modalEditItem" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Edit Item</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-responsive">
+                        <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Indication</th>
+                            <th>Instruction</th>
+                            <th>Frequency</th>
+                            <th>Dose UOM</th>
+                            <th>Dose Qty.</th>
+                            <th>Duration</th>
+                            <th>Quantity</th>
+                            <th>Unit Price (RM)</th>
+                            <th>Total Price (RM)</th>
+                            <th>&nbsp;</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            <form method="post" action="{{ url('order/update_item/') }}">
+                                @csrf
+                                <input type="hidden" name="patient_id" value="{{ $order->patient->id }}">
+                                <tr class="row-table">
+                                    <td>
+                                        @if ($order->id == null)
+                                            <input type="hidden" name="order_id" value="{{ $record->id }}">
+                                        @else
+                                            <input type="hidden" name="order_id" value="{{ $order->id }}">
+                                        @endif
+                                        <input type="hidden" name="order_item_id" id="u_order_item_id">
+                                        <div class="form-group">
+                                            <input name="item_id" id="u_item_id" type="hidden" class="form-control" style="width:230px;">
+                                            <input id="u_item_title" type="text" class="form-control" style="width:230px;" readonly>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="form-group">
+                                            <input type="text" name="indication" id="u_indication" class="form-control"
+                                                   style="width:150px;" readonly>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="form-group">
+                                            <input type="text" name="instruction" id="u_instruction" class="form-control"
+                                                   style="width:200px;" readonly>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="form-group">
+                                            <select name="frequency" id="u_frequency" class="u_value_f form-control">
+                                                <option value="0">-</option>
+                                                @foreach ($frequencies as $freq)
+                                                    <option value="{{ $freq->value }}"  >{{ $freq->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="form-group">
+                                            <input type="text" name="selling_uom" id="u_selling_uom" class="u_uom form-control"
+                                                   style="width:50px;" readonly>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="form-group">
+                                            <input type="number" name="dose_quantity" id="u_dose_quantity"
+                                                   class="u_value_dq form-control" style="width:60px;">
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="form-group">
+                                            <input type="number" name="duration" id="u_duration" class="u_value_d form-control"
+                                                   style="width:60px;" value="{{ $duration }}" readonly>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="form-group">
+                                            <input type="text" name="quantity" id="u_quantity" class="u_quantity form-control"
+                                                   style="width:70px;">
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="form-group">
+                                            <input type="number" name="selling_price" id="u_selling_price"
+                                                   class="u_price form-control" step="0.01" style="width:70px;">
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="form-group">
+                                            <input type="text" name="price" id="u_price" class="form-control"
+                                                   style="width:70px;">
+                                        </div>
+                                    </td>
+                                    <input type="hidden" id="u_formula_id" class="u_formula_id">
+                                    <input type="hidden" id="u_formula_value" class="u_formula_value">
+                                </tr>
+                                <tr>
+                                    <td colspan="11" style="vertical-align: top;">
+                                        <button class="btn waves-effect btn-success btn-sm" type="submit">Update
+                                            Item</button>
+                                    </td>
+                                </tr>
+                            </form>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('script')
     @include('orders.js')
     <script type="text/javascript">
+
+        function calculateQuantity(thisParent){
+            var dose_quantity = parseFloat(thisParent.find('.value_dq').val());
+            var frequency = thisParent.find('.value_f').val();
+            // var frequency = $('.value_f').prop('selectedIndex',0);
+            var duration = parseFloat(thisParent.find('.value_d').val());
+            var unit_price = parseFloat(thisParent.find('.price').val());
+            var uom = thisParent.find('.uom').val();
+            var formula_id = thisParent.find('.formula_id').val();
+            var formula_value = thisParent.find('.formula_value').val();
+
+            // if (frequency == 'OD' || frequency == 'PRN' || frequency == 'OM' || frequency == 'ON' ||
+            //     frequency == 'STAT') {
+            //     var frequency = 1;
+            // } else if (frequency == 'BD') {
+
+            //     var frequency = 2;
+
+            // } else if (frequency == 'TDS') {
+
+            //     var frequecy = 3;
+
+            // } else {
+            //     var frequency = 4;
+            // }
+
+            //mcm mana nak retrieve formula_id dengan formula_value
+            if (formula_id == 1) {
+                var quantity = dose_quantity * frequency * duration;
+            } else if (formula_id == 6) {
+                var quantity = 1;
+
+            } else {
+
+                var quantity = (dose_quantity * frequency * duration) / formula_value;
+
+            }
+
+            var sum = quantity * unit_price;
+
+            ceilQ = Math.ceil(quantity.toFixed(2));
+            ceilS = Math.ceil(sum.toFixed(2));
+
+            parseFloat(thisParent.find("input#quantity").val(ceilQ));
+            parseFloat(thisParent.find("input#price").val(ceilS));
+        }
+
+        function uCalculateQuantity(thisParent){
+            var dose_quantity = parseFloat(thisParent.find('.u_value_dq').val());
+            var frequency = thisParent.find('.u_value_f').val();
+            // var frequency = $('.value_f').prop('selectedIndex',0);
+            var duration = parseFloat(thisParent.find('.u_value_d').val());
+            var unit_price = parseFloat(thisParent.find('.u_price').val());
+            var uom = thisParent.find('.u_uom').val();
+            var formula_id = thisParent.find('.u_formula_id').val();
+            var formula_value = thisParent.find('.u_formula_value').val();
+
+            // if (frequency == 'OD' || frequency == 'PRN' || frequency == 'OM' || frequency == 'ON' ||
+            //     frequency == 'STAT') {
+            //     var frequency = 1;
+            // } else if (frequency == 'BD') {
+
+            //     var frequency = 2;
+
+            // } else if (frequency == 'TDS') {
+
+            //     var frequecy = 3;
+
+            // } else {
+            //     var frequency = 4;
+            // }
+
+            //mcm mana nak retrieve formula_id dengan formula_value
+            if (formula_id == 1) {
+                var quantity = dose_quantity * frequency * duration;
+            } else if (formula_id == 6) {
+                var quantity = 1;
+
+            } else {
+
+                var quantity = (dose_quantity * frequency * duration) / formula_value;
+
+            }
+
+            var sum = quantity * unit_price;
+
+            ceilQ = Math.ceil(quantity.toFixed(2));
+            ceilS = Math.ceil(sum.toFixed(2));
+
+            parseFloat(thisParent.find("input#u_quantity").val(ceilQ));
+            parseFloat(thisParent.find("input#u_price").val(ceilS));
+        }
+
+        function ajaxUpdateItem(id){
+             // AJAX request
+            $.ajax({
+                url: '/getItemDetails/' + id,
+                type: 'get',
+                dataType: 'json',
+                success: function(response) {
+                    var len = 0;
+                    if (response['data'] != null) {
+                        len = response['data'].length;
+                    }
+
+                    if (len > 0) {
+                        // Read data and create <option >
+                        for (var i = 0; i < len; i++) {
+
+                            var id = response['data'][i].id;
+                            var selling_price = response['data'][i].selling_price;
+                            var selling_uom = response['data'][i].selling_uom;
+                            var instruction = response['data'][i].instruction;
+                            var indication = response['data'][i].indication;
+                            var frequency = response['data'][i].name;
+                            var frequency_id = response['data'][i].freq_id;
+                            var formula_id = response['data'][i].formula_id;
+                            var formula_value = response['data'][i].value;
+
+
+                            // console.log(frequency);
+                            // var option = "<option value='"+id+"'>"+amount+"</option>";
+
+                            // $("#unit_price").append(option);
+                            $("#u_selling_price").val(selling_price);
+                            $("#u_selling_uom").val(selling_uom);
+                            $("#u_instruction").val(instruction);
+                            $("#u_indication").val(indication);
+                            $("#u_frequency option[value='" + frequency_id + "']").attr(
+                                'selected', 'selected');
+                            $("#u_formula_id").val(formula_id);
+                            $("#u_formula_value").val(formula_value);
+                            // $("#gst").val(0.00);
+                        }
+                    }
+
+                }
+            });
+        }
+
         $(document).ready(function() {
             // calculate quantity based on f x dq x d
             $('input[type="number"] ,input[type="text"] ').keyup(function() {
-                var dose_quantity = parseFloat($('.value_dq').val());
-                var frequency = $('.value_f').val();
-                // var frequency = $('.value_f').prop('selectedIndex',0);
-                var duration = parseFloat($('.value_d').val());
-                var unit_price = parseFloat($('.price').val());
-                var uom = $('.uom').val();
-                var formula_id = $('.formula_id').val();
-                var formula_value = $('.formula_value').val();
-
-                // if (frequency == 'OD' || frequency == 'PRN' || frequency == 'OM' || frequency == 'ON' ||
-                //     frequency == 'STAT') {
-                //     var frequency = 1;
-                // } else if (frequency == 'BD') {
-
-                //     var frequency = 2;
-
-                // } else if (frequency == 'TDS') {
-
-                //     var frequecy = 3;
-
-                // } else {
-                //     var frequency = 4;
-                // }
-
-                //mcm mana nak retrieve formula_id dengan formula_value
-                if (formula_id == 1) {
-                    var quantity = dose_quantity * frequency * duration;
-                } else if (formula_id == 6) {
-                    var quantity = 1;
-
-                } else {
-
-                    var quantity = (dose_quantity * frequency * duration) / formula_value;
-
-                }
-
-                var sum = quantity * unit_price;
-
-                parseFloat($("input#quantity").val(quantity.toFixed(2)));
-                parseFloat($("input#price").val(sum.toFixed(2)));
+                thisParent = $(this).parent().parent().parent();
+                calculateQuantity(thisParent);
+                uCalculateQuantity(thisParent);
             });
 
             $(document).on("change","#frequency",function(){
-                var dose_quantity = parseFloat($('.value_dq').val());
-                var frequency = $('.value_f').val();
-                // var frequency = $('.value_f').prop('selectedIndex',0);
-                var duration = parseFloat($('.value_d').val());
-                var unit_price = parseFloat($('.price').val());
-                var uom = $('.uom').val();
-                var formula_id = $('.formula_id').val();
-                var formula_value = $('.formula_value').val();
-
-                // if (frequency == 'OD' || frequency == 'PRN' || frequency == 'OM' || frequency == 'ON' ||
-                //     frequency == 'STAT') {
-                //     var frequency = 1;
-                // } else if (frequency == 'BD') {
-
-                //     var frequency = 2;
-
-                // } else if (frequency == 'TDS') {
-
-                //     var frequecy = 3;
-
-                // } else {
-                //     var frequency = 4;
-                // }
-
-                //mcm mana nak retrieve formula_id dengan formula_value
-                if (formula_id == 1) {
-                    var quantity = dose_quantity * frequency * duration;
-                } else if (formula_id == 6) {
-                    var quantity = 1;
-
-                } else {
-
-                    var quantity = (dose_quantity * frequency * duration) / formula_value;
-
-                }
-
-                var sum = quantity * unit_price;
-
-                parseFloat($("input#quantity").val(quantity.toFixed(2)));
-                parseFloat($("input#price").val(sum.toFixed(2)));
+                thisParent = $(this).parent().parent().parent();
+                calculateQuantity(thisParent);
             });
 
+            $(document).on("change","#u_frequency",function(){
+                thisParent = $(this).parent().parent().parent();
+                uCalculateQuantity(thisParent);
+            });
 
             $('#item_id').change(function() {
                 $('#quantity').val('');
@@ -406,12 +607,10 @@
                     type: 'get',
                     dataType: 'json',
                     success: function(response) {
-                        console.log(response);
                         var len = 0;
                         if (response['data'] != null) {
                             len = response['data'].length;
                         }
-                        console.log(len);
 
                         if (len > 0) {
                             // Read data and create <option >
@@ -447,6 +646,44 @@
                     }
                 });
             });
+
+            $(document).on("click","#editItem",function(e){
+                e.preventDefault();
+                order_item_id = $(this).parent().parent().parent().find("#order_item_id");
+                item = $(this).parent().parent().parent().find("#i_item");
+                item_title = $(this).parent().parent().parent().find("#i_item_title");
+                quantity = $(this).parent().parent().parent().find("#i_quantity");
+                frequency = $(this).parent().parent().parent().find("#i_frequency");
+                intruction = $(this).parent().parent().parent().find("#i_intruction");
+                indication = $(this).parent().parent().parent().find("#i_indication");
+                total_price = $(this).parent().parent().parent().find("#i_total_price");
+                unit_price = $(this).parent().parent().parent().find("#i_unit_price");
+                dose_qty = $(this).parent().parent().parent().find("#i_dose_qty");
+                dose_duration = $(this).parent().parent().parent().find("#i_dose_duration");
+                dose_uom = $(this).parent().parent().parent().find("#i_dose_uom");
+
+                $("#u_item_id").val(item.val().replaceAll(/\s/g,''));
+                $("#u_order_item_id").val(order_item_id.val().replaceAll(/\s/g,''));
+                $("#u_item_title").val(item_title.val());
+                $("#u_indication").val(indication.val());
+                $("#u_instruction").val(intruction.val());
+                $("#u_frequency").val(frequency.val().replaceAll(/\s/g,''));
+                $("#u_dose_quantity").val(dose_qty.val());
+                $("#u_duration").val(dose_duration.val());
+                $("#u_quantity").val(dose_qty.val());
+                $("#u_selling_price").val(unit_price.val());
+                $("#u_price").val(total_price.val());
+                $("#u_selling_uom").val(dose_uom.val());
+
+                $('#u_quantity').val(quantity.val());
+                var id = item.val();
+                ajaxUpdateItem(id);
+
+                modalEdit = $("#modalEditItem");
+                modalEdit.modal("show");
+
+            });
+
         });
     </script>
 @endsection
