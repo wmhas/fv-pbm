@@ -5,59 +5,65 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <script type="text/javascript">
-        $(document).ready(function() {
+        function calculateQuantity(){
+            var dose_quantity = parseFloat($('.value_dq').val());
+            var frequency = $('.value_f').val();
+            // var frequency = $('.value_f').prop('selectedIndex',0);
+            var duration = parseFloat($('.value_d').val());
+            var unit_price = parseFloat($('.price').val());
+            var uom = $('.uom').val();
+            var formula_id = $('.formula_id').val();
+            var formula_value = $('.formula_value').val();
 
+            // if (frequency == 'OD' || frequency == 'PRN' || frequency == 'OM' || frequency == 'ON' ||
+            //     frequency == 'STAT') {
+            //     var frequency = 1;
+            // } else if (frequency == 'BD') {
+
+            //     var frequency = 2;
+
+            // } else if (frequency == 'TDS') {
+
+            //     var frequecy = 3;
+
+            // } else {
+            //     var frequency = 4;
+            // }
+
+            //mcm mana nak retrieve formula_id dengan formula_value
+            if (formula_id == 1) {
+                var quantity = dose_quantity * frequency * duration;
+            } else if (formula_id == 6) {
+                var quantity = 1;
+
+            } else {
+
+                var quantity = (dose_quantity * frequency * duration) / formula_value;
+
+            }
+
+            var sum = quantity * unit_price;
+
+            ceilQ = Math.ceil(quantity.toFixed(2));
+            ceilS = Math.ceil(sum.toFixed(2));
+
+            parseFloat($("input#quantity").val(ceilQ));
+            parseFloat($("input#price").val(ceilS));
+        }
+
+        $(document).ready(function() {
             // calculate quantity based on f x dq x d
             $('input[type="number"] ,input[type="text"] ').keyup(function() {
+                calculateQuantity();
+            });
 
-                var dose_quantity = parseFloat($('.value_dq').val());
-                var frequency = $('.value_f').val();
-                // var frequency = $('.value_f').prop('selectedIndex',0);
-                var duration = parseFloat($('.value_d').val());
-                var unit_price = parseFloat($('.price').val());
-                var uom = $('.uom').val();
-                var formula_id = $('.formula_id').val();
-                var formula_value = $('.formula_value').val();
-
-                if (frequency == 'OD' || frequency == 'PRN' || frequency == 'OM' || frequency == 'ON' ||
-                    frequency == 'STAT') {
-                    var frequency = 1;
-                } else if (frequency == 'BD') {
-
-                    var frequency = 2;
-
-                } else if (frequency == 'TDS') {
-
-                    var frequecy = 3;
-
-                } else {
-                    var frequency = 4;
-                }
-
-                //mcm mana nak retrieve formula_id dengan formula_value
-                if (formula_id == '1') {
-                    var quantity = dose_quantity * frequency * duration;
-
-                } else if (formula_id == '6') {
-                    var quantity = 1;
-
-                } else {
-
-                    var quantity = (dose_quantity * frequency * duration) / formula_value;
-
-                }
-
-                var sum = quantity * unit_price;
-
-                parseFloat($("input#quantity").val(quantity.toFixed(2)));
-                parseFloat($("input#price").val(sum.toFixed(2)));
+            $(document).on("change","#frequency",function(){
+                calculateQuantity();
             });
 
 
-            // Department Change
             $('#item_id').change(function() {
                 $('#quantity').val('');
-                // Department id
                 var id = $(this).val();
                 // console.log(id);
                 // Empty the dropdown
@@ -66,18 +72,16 @@
                 $('#instruction').find('option').not(':first').remove();
                 $('#indication').find('option').not(':first').remove();
 
-                // AJAX request 
+                // AJAX request
                 $.ajax({
                     url: '/getItemDetails/' + id,
                     type: 'get',
                     dataType: 'json',
                     success: function(response) {
-                        console.log(response);
                         var len = 0;
                         if (response['data'] != null) {
                             len = response['data'].length;
                         }
-                        console.log(len);
 
                         if (len > 0) {
                             // Read data and create <option >
@@ -93,8 +97,9 @@
                                 var formula_id = response['data'][i].formula_id;
                                 var formula_value = response['data'][i].value;
 
+
                                 // console.log(frequency);
-                                // var option = "<option value='"+id+"'>"+amount+"</option>"; 
+                                // var option = "<option value='"+id+"'>"+amount+"</option>";
 
                                 // $("#unit_price").append(option);
                                 $("#selling_price").val(selling_price);
