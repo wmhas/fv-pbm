@@ -15,20 +15,20 @@
             var formula_id = $('.formula_id').val();
             var formula_value = $('.formula_value').val();
 
-            // if (frequency == 'OD' || frequency == 'PRN' || frequency == 'OM' || frequency == 'ON' ||
-            //     frequency == 'STAT') {
-            //     var frequency = 1;
-            // } else if (frequency == 'BD') {
+            if (frequency == 1 || frequency == 5 || frequency == 6 || frequency == 7 ||
+                frequency == 8) {
+                var frequency = 1;
+            } else if (frequency == 2) {
 
-            //     var frequency = 2;
+                var frequency = 2;
 
-            // } else if (frequency == 'TDS') {
+            } else if (frequency == 3) {
 
-            //     var frequecy = 3;
+                var frequecy = 3;
 
-            // } else {
-            //     var frequency = 4;
-            // }
+            } else {
+                var frequency = 4;
+            }
 
             //mcm mana nak retrieve formula_id dengan formula_value
             if (formula_id == 1) {

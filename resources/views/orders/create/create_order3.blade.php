@@ -182,7 +182,7 @@
                                         <select name="frequency" id="frequency" class="value_f form-control">
                                             <option value="0">-</option>
                                             @foreach ($frequencies as $freq)
-                                                <option value="{{ $freq->value }}"  >{{ $freq->name }}</option>
+                                                <option value="{{ $freq->id }}"  >{{ $freq->name }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -311,20 +311,20 @@
             var formula_id = $('.formula_id').val();
             var formula_value = $('.formula_value').val();
 
-            // if (frequency == 'OD' || frequency == 'PRN' || frequency == 'OM' || frequency == 'ON' ||
-            //     frequency == 'STAT') {
-            //     var frequency = 1;
-            // } else if (frequency == 'BD') {
+            if (frequency == 1 || frequency == 5 || frequency == 6 || frequency == 7 ||
+                frequency == 8) {
+                var frequency = 1;
+            } else if (frequency == 2) {
 
-            //     var frequency = 2;
+                var frequency = 2;
 
-            // } else if (frequency == 'TDS') {
+            } else if (frequency == 3) {
 
-            //     var frequecy = 3;
+                var frequecy = 3;
 
-            // } else {
-            //     var frequency = 4;
-            // }
+            } else {
+                var frequency = 4;
+            }
 
             //mcm mana nak retrieve formula_id dengan formula_value
             if (formula_id == 1) {
@@ -361,12 +361,13 @@
             $('#item_id').change(function() {
                 $('#quantity').val('');
                 var id = $(this).val();
+                parent = $(this).parent().parent().parent();
                 // console.log(id);
                 // Empty the dropdown
-                $('#selling_price').find('option').not(':first').remove();
-                $('#selling_uom').find('option').not(':first').remove();
-                $('#instruction').find('option').not(':first').remove();
-                $('#indication').find('option').not(':first').remove();
+                parent.find('#selling_price').find('option').not(':first').remove();
+                parent.find('#selling_uom').find('option').not(':first').remove();
+                parent.find('#instruction').find('option').not(':first').remove();
+                parent.find('#indication').find('option').not(':first').remove();
 
                 // AJAX request
                 $.ajax({
@@ -382,7 +383,7 @@
                         if (len > 0) {
                             // Read data and create <option >
                             for (var i = 0; i < len; i++) {
-
+                                console.log(response['data']);
                                 var id = response['data'][i].id;
                                 var selling_price = response['data'][i].selling_price;
                                 var selling_uom = response['data'][i].selling_uom;
@@ -398,14 +399,13 @@
                                 // var option = "<option value='"+id+"'>"+amount+"</option>";
 
                                 // $("#unit_price").append(option);
-                                $("#selling_price").val(selling_price);
-                                $("#selling_uom").val(selling_uom);
-                                $("#instruction").val(instruction);
-                                $("#indication").val(indication);
-                                $("#frequency option[value='" + frequency_id + "']").attr(
-                                    'selected', 'selected');
-                                $("#formula_id").val(formula_id);
-                                $("#formula_value").val(formula_value);
+                                parent.find("#selling_price").val(selling_price);
+                                parent.find("#selling_uom").val(selling_uom);
+                                parent.find("#instruction").val(instruction);
+                                parent.find("#indication").val(indication);
+                                parent.find("#frequency").val(frequency_id).trigger("change");
+                                parent.find("#formula_id").val(formula_id);
+                                parent.find("#formula_value").val(formula_value);
                                 // $("#gst").val(0.00);
                             }
                         }
