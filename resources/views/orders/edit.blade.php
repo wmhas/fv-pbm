@@ -72,7 +72,7 @@
                     <h5>Update Order Entry</h5>
                 </div>
                 <div class="card-body" style="overflow-x:auto;">
-                    table class="table table-bordered">
+                    <table class="table table-bordered">
                         <thead>
                         <tr>
                             <th>Item</th>
@@ -203,7 +203,7 @@
                                         <select name="frequency" id="frequency" class="value_f form-control">
                                             <option value="0">-</option>
                                             @foreach ($frequencies as $freq)
-                                                <option value="{{ $freq->value }}"  >{{ $freq->name }}</option>
+                                                <option value="{{ $freq->id }}"  @php (isset($o_i) && $o_i->frequency==$freq->id) ? "selected":"" @endphp>{{ $freq->name }}</option>
                                             @endforeach
                                         </select>
                                     </div>
