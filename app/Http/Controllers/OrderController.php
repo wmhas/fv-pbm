@@ -137,8 +137,6 @@ class OrderController extends Controller
 
     public function edit($id)
     {
-        ini_set('max_execution_time', 0);
-        ini_set('memory_limit', 0);
         $states = State::all();
         $hospitals = Hospital::all();
         $clinics = Clinic::all();
@@ -534,6 +532,10 @@ class OrderController extends Controller
         $record->quantity = $request->input('quantity');
         $record->price = $request->input('price');
         $record->save();
+
+        $item = Item::find($order_item->myob_product_id);
+        $item->frequency_id = $request->input('frequency');
+        $item->save();
 
         $stock = new Stock();
         $stock->item_id = $request->input('item_id');

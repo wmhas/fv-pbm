@@ -195,7 +195,7 @@
                                         <select name="frequency" id="frequency" class="value_f form-control">
                                             <option value="0">-</option>
                                             @foreach ($frequencies as $freq)
-                                                <option value="{{ $freq->value }}"  >{{ $freq->name }}</option>
+                                                <option value="{{ $freq->id }}" @php (isset($o_i) && $o_i->frequency==$freq->id) ? "selected":"" @endphp>{{ $freq->name }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -371,7 +371,7 @@
                                             <select name="frequency" id="u_frequency" class="u_value_f form-control">
                                                 <option value="0">-</option>
                                                 @foreach ($frequencies as $freq)
-                                                    <option value="{{ $freq->value }}"  >{{ $freq->name }}</option>
+                                                    <option value="{{ $freq->id }}" >{{ $freq->name }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -444,20 +444,20 @@
             var formula_id = thisParent.find('.formula_id').val();
             var formula_value = thisParent.find('.formula_value').val();
 
-            // if (frequency == 'OD' || frequency == 'PRN' || frequency == 'OM' || frequency == 'ON' ||
-            //     frequency == 'STAT') {
-            //     var frequency = 1;
-            // } else if (frequency == 'BD') {
+            if (frequency == 1 || frequency == 5 || frequency == 6 || frequency == 7 ||
+                frequency == 8) {
+                var frequency = 1;
+            } else if (frequency == 2) {
 
-            //     var frequency = 2;
+                var frequency = 2;
 
-            // } else if (frequency == 'TDS') {
+            } else if (frequency == 3) {
 
-            //     var frequecy = 3;
+                var frequecy = 3;
 
-            // } else {
-            //     var frequency = 4;
-            // }
+            } else {
+                var frequency = 4;
+            }
 
             //mcm mana nak retrieve formula_id dengan formula_value
             if (formula_id == 1) {
@@ -490,20 +490,20 @@
             var formula_id = thisParent.find('.u_formula_id').val();
             var formula_value = thisParent.find('.u_formula_value').val();
 
-            // if (frequency == 'OD' || frequency == 'PRN' || frequency == 'OM' || frequency == 'ON' ||
-            //     frequency == 'STAT') {
-            //     var frequency = 1;
-            // } else if (frequency == 'BD') {
+            if (frequency == 1 || frequency == 5 || frequency == 6 || frequency == 7 ||
+                frequency == 8) {
+                var frequency = 1;
+            } else if (frequency == 2) {
 
-            //     var frequency = 2;
+                var frequency = 2;
 
-            // } else if (frequency == 'TDS') {
+            } else if (frequency == 3) {
 
-            //     var frequecy = 3;
+                var frequecy = 3;
 
-            // } else {
-            //     var frequency = 4;
-            // }
+            } else {
+                var frequency = 4;
+            }
 
             //mcm mana nak retrieve formula_id dengan formula_value
             if (formula_id == 1) {
