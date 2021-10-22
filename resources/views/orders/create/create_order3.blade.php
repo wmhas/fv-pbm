@@ -195,7 +195,11 @@
                                         <select name="frequency" id="frequency" class="value_f form-control">
                                             <option value="0">-</option>
                                             @foreach ($frequencies as $freq)
+<<<<<<< HEAD
                                                 <option value="{{ $freq->id }}" @php (isset($o_i) && $o_i->frequency==$freq->id) ? "selected":"" @endphp>{{ $freq->name }}</option>
+=======
+                                                <option value="{{ $freq->id }}"  >{{ $freq->name }}</option>
+>>>>>>> d679e011847346776659717e96e6516ebf35e4c0
                                             @endforeach
                                         </select>
                                     </div>
@@ -594,12 +598,13 @@
             $('#item_id').change(function() {
                 $('#quantity').val('');
                 var id = $(this).val();
+                parent = $(this).parent().parent().parent();
                 // console.log(id);
                 // Empty the dropdown
-                $('#selling_price').find('option').not(':first').remove();
-                $('#selling_uom').find('option').not(':first').remove();
-                $('#instruction').find('option').not(':first').remove();
-                $('#indication').find('option').not(':first').remove();
+                parent.find('#selling_price').find('option').not(':first').remove();
+                parent.find('#selling_uom').find('option').not(':first').remove();
+                parent.find('#instruction').find('option').not(':first').remove();
+                parent.find('#indication').find('option').not(':first').remove();
 
                 // AJAX request
                 $.ajax({
@@ -615,7 +620,7 @@
                         if (len > 0) {
                             // Read data and create <option >
                             for (var i = 0; i < len; i++) {
-
+                                console.log(response['data']);
                                 var id = response['data'][i].id;
                                 var selling_price = response['data'][i].selling_price;
                                 var selling_uom = response['data'][i].selling_uom;
@@ -631,14 +636,13 @@
                                 // var option = "<option value='"+id+"'>"+amount+"</option>";
 
                                 // $("#unit_price").append(option);
-                                $("#selling_price").val(selling_price);
-                                $("#selling_uom").val(selling_uom);
-                                $("#instruction").val(instruction);
-                                $("#indication").val(indication);
-                                $("#frequency option[value='" + frequency_id + "']").attr(
-                                    'selected', 'selected');
-                                $("#formula_id").val(formula_id);
-                                $("#formula_value").val(formula_value);
+                                parent.find("#selling_price").val(selling_price);
+                                parent.find("#selling_uom").val(selling_uom);
+                                parent.find("#instruction").val(instruction);
+                                parent.find("#indication").val(indication);
+                                parent.find("#frequency").val(frequency_id).trigger("change");
+                                parent.find("#formula_id").val(formula_id);
+                                parent.find("#formula_value").val(formula_value);
                                 // $("#gst").val(0.00);
                             }
                         }
