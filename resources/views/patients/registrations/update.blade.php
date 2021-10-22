@@ -53,9 +53,9 @@
                             <div class="form-group">
                                 <label>Gender</label>
                                 <select name="gender" class="form-control" required>
-                                    <option value="{{ $patient->gender }}" selected >@if ($patient->gender == 'M') Male @else Female @endif</option>
-                                    <option value="M">Male</option>
-                                    <option value="F">Female</option>
+                                    {{-- <option value="{{ $patient->gender }}" selected >@if ($patient->gender == 'M') Male @else Female @endif</option> --}}
+                                    <option value="M" @if ($patient->gender == 'M') selected @endif>Male</option>
+                                    <option value="F" @if ($patient->gender == 'F') selected @endif>Female</option>
                                 </select>
                             </div>
                         </div>

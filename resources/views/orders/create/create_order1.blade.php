@@ -83,6 +83,7 @@
                             <div class="col-4">
                                 <div class="form-group">
                                     <label>Dispensing By</label>
+                                    <input type="text" id="dispensing_by" class="form-control" name="dispensing_by" @if (!empty($order)) value="{{ $order->dispensing_by }}" @endif required readonly>
                                     @php 
                                         if (!empty($order)) {
                                             $dispensing_by = "FVKL";
@@ -90,12 +91,12 @@
                                             $dispensing_by = "FVKL";
                                         }
                                     @endphp
-                                    <select id="dispensing_by" name="dispensing_by" class="form-control" required readonly>
+                                    {{-- <select id="dispensing_by" name="dispensing_by" class="form-control" required readonly>
                                         <option>Please select</option>
                                         <option value="FVKL" @if (!empty($order) && $order->dispensing_by == 'FVKL') selected @endif>FVKL</option>
-                                        {{-- <option value="FVT" @if (!empty($order) && $order->dispensing_by == 'FVT') selected @endif>FVT</option> --}}
-                                        {{-- <option value="FVL" @if (!empty($order) && $order->dispensing_by == 'FVL') selected @endif>FVL</option> --}}
-                                    </select>
+                                        <option value="FVT" @if (!empty($order) && $order->dispensing_by == 'FVT') selected @endif>FVT</option>
+                                        <option value="FVL" @if (!empty($order) && $order->dispensing_by == 'FVL') selected @endif>FVL</option>
+                                    </select> --}}
                                 </div>
                             </div>
                             <div class="col-4">
@@ -271,7 +272,7 @@
 @section('script')
     @include('orders.js')
     <script type="text/javascript">
-       dispensing_by = "{{ $dispensing_by }}"
+        dispensing_by = "{{ $dispensing_by }}"
         $('#dispensing_by').val(dispensing_by).change(); 
         $('#dispensing_by').attr('readonly', true);
         // $('#dispensing_by').change(function() {

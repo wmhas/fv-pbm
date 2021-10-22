@@ -99,7 +99,7 @@ class ReportController extends Controller
         if ($date) {
             $items = $items->with(['order_items.order' => function ($order) use ($date) {
                  $order->whereDate('updated_at', $date);
-                 $order->where('status_id', 4);
+                //  $order->where('status_id', 4);
             }]);
         }
 

@@ -39,7 +39,7 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
             ->join("order_items","order_items.order_id","=","orders.id")
             ->join("items","items.id","=","order_items.myob_product_id")
             ->join("states","states.id","=","patients.state_id")
-            ->where('status_id', 4);
+            ->whereIn('status_id', [4, 5]);
 
         if ($this->startDate && $this->endDate){
             $order = $order->whereDate('orders.updated_at', '>=', $this->startDate)

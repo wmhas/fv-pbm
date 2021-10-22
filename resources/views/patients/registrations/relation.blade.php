@@ -86,8 +86,8 @@
                                     <label>Gender</label>
                                     <select name="gender" class="form-control" required>
                                         <option value="">--Please select --</option>
-                                        <option value="Male">Male</option>
-                                        <option value="Female">Female</option>
+                                        <option value="M">Male</option>
+                                        <option value="F">Female</option>
                                     </select>
                                 </div>
                             </div>
@@ -96,9 +96,9 @@
                                     <label>Agency</label>
                                     <select name="tariff" class="form-control" required>
                                         <option value="">--Please select --</option>
-                                        <option value="1">JHEV</option>
-                                        <option value="2">JPA</option>
-                                        <option value="3">MINDEF</option>
+                                        @if ($patient->tariff_id == '1') <option value="1"  selected>JHEV</option>@endif
+                                        @if ($patient->tariff_id == '2') <option value="2" selected>JPA</option>@endif
+                                        @if ($patient->tariff_id == '3') <option value="3" selected>MINDEF</option>@endif
                                     </select>
                                 </div>
                             </div>
@@ -210,15 +210,14 @@
 
     $(document).ready(function(){
             $("#ictype").change(function(){
-                $( "select option:selected").each(function(){
+                $("#ictype option:selected").each(function(){
                     if($(this).attr("value")=="1"){
-                        console.log("test");
                         $("#username").attr({maxlength: '14', minlength: '14', type:'text', placeholder:'981343-93-2323', pattern:'(([0-9]{6}))-([0-9]{2})-([0-9]{4})', disabled:false});
                     }
                     if($(this).attr("value")=="2"){
                         $("#username").attr({maxlength: '20', minlength: '0', type:'text', placeholder:'A1231233', disabled:false});
                     }
-                    if($(this).attr("value")==" "){
+                    if($(this).attr("value")==""){
                         $("#username").attr('disabled', true);
                     }
                 });

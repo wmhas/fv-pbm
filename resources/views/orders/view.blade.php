@@ -475,7 +475,7 @@
 									 style="float:right; margin-left:3px; margin-right:3px;">Dispense Order</button>
 								</form>
 								<form method="get" action="{{ route('sticker.index') }}" target="_blank">
-									<button class="btn btn-secondary"  type="submit" style="float:right; margin-left:3px; margin-right:3px;"><i class="mdi mdi-printer"></i>Print Drug Order</button>
+									<button class="btn btn-secondary"  type="submit" style="float:right; margin-left:3px; margin-right:3px;"><i class="mdi mdi-printer"></i>Print Sticker</button>
 									<input type="hidden" name="do_number" value="{{ $order->do_number }}">
                             	</form>
 								<button class="btn btn-danger" data-toggle='modal' data-target='#deleteModalOrder' style="float:left; margin-left:3px; margin-right:3px;">Delete Order</button>

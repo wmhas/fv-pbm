@@ -132,7 +132,7 @@
                                 @if(!empty($cardchecking))
                                     <input type="text" name="army_type" class="form-control" @if (!empty($cardchecking)) value="{{ $cardchecking->army_type }}" disabled @else @endif >
                                 @else
-                                    <select  name="army_type" class="form-control" placeholder="Relation">
+                                    <select  name="army_type" class="form-control" placeholder="Relation" required>
                                         <option  value="">--Please select Army Type--</option>
                                         <option  value="ATM">ATM</option>
                                         <option value="Kerahan Sepenuh Masa">Kerahan Sepenuh Masa</option>

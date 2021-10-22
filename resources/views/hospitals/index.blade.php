@@ -81,11 +81,11 @@
                                                     </div>
                                                     <div class="modal-body">
                                                         <label for="name">Hospital Name :</label>
-                                                        <input type="text" name="name" class="form-control" placeholder="{{$hospital->hospital_name}}">
+                                                        <input type="text" name="name" class="form-control" value="{{$hospital->name}}">
                                                     </div>
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                                        <button type="submit" class="btn btn-primary">Add</button>
+                                                        <button type="submit" class="btn btn-primary">Update</button>
                                                     </div>
                                                 </form>
                                             </div>

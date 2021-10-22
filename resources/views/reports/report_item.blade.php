@@ -34,7 +34,7 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-md-5 mt-2">
-                                            <select class="form-control" name="method">
+                                            <select class="form-control" name="method" required>
                                                 <option value="">Please Choose</option>
                                                 <option {{($method === 'ItemNumber') ? 'selected' : ''}} value="ItemNumber">Search Item Code</option>
                                                 <option {{($method === 'ItemName') ? 'selected' : ''}} value="ItemName">Search Item Name </option>
