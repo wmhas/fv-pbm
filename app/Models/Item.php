@@ -37,6 +37,11 @@ class Item extends Model
         return $stock_level;
     }
 
+    public function stocks ()
+    {
+        return $this->hasMany(Stock::class, 'item_id', 'id');
+    }
+
     public function used_stock(){
         // $used_stock = Stock::selectRaw("SUM(quantity) as quantity, item_id")
         //     ->join

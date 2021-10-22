@@ -57,44 +57,51 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @if (!empty($item_name))
-                                            @foreach ($list_items as $item)
-                                                <form
-                                                    action="{{ route('location.edit', [$item['item_id'], $item['on_hand']]) }}"
+                                    @if(isset($locations))
+                                        @foreach ($locations as $location)
+                                            <form
+                                                    action="{{ route('location.edit', [$location->item_id, $location->item->stocks()->sum('Quantity')]) }}"
                                                     method="POST">
-                                                    @csrf
-                                                    <tr>
-                                                        <td>{{ $loop->iteration }}</td>
-                                                        <td>{{ $item['item_name'] }}</td>
-                                                        <td>{{ $item['on_hand'] }}</td>
-                                                        <td>
-                                                            <input type="text" name="store" value="{{ $item['store'] }}"
-                                                                class="form-control form-control-sm" readonly>
-                                                        </td>
-                                                        <td>
-                                                            <input type=" text" name="counter"
-                                                                value="{{ $item['counter'] }}"
-                                                                class="form-control form-control-sm">
-                                                        </td>
-                                                        <td>
-                                                            <input type=" text" name="courier"
-                                                                value="{{ $item['courier'] }}"
-                                                                class="form-control form-control-sm">
-                                                        </td>
-                                                        <td>
-                                                            <input type=" text" name="staff" value="{{ $item['staff'] }}"
-                                                                class="form-control form-control-sm">
-                                                        </td>
-                                                        <td>
-                                                            <button type=" submit"
+                                                @csrf
+                                                <tr>
+                                                    <td>{{ $loop->iteration }}</td>
+                                                    <td>{{ $location->item->brand_name }}</td>
+                                                    <td>{{ $location->item->stocks()->sum('Quantity') }}</td>
+                                                    <td>
+                                                        <input type="text" name="store" value="{{ $location->store }}"
+                                                               class="form-control form-control-sm" readonly>
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" name="counter"
+                                                               value="{{ $location->counter }}"
+                                                               class="form-control form-control-sm">
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" name="courier"
+                                                               value="{{ $location->courier }}"
+                                                               class="form-control form-control-sm">
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" name="staff" value="{{ $location->staff }}"
+                                                               class="form-control form-control-sm">
+                                                    </td>
+                                                    <td>
+                                                        <button type="submit"
                                                                 class="btn btn-sm btn-primary">Move</button>
-                                                        </td>
-                                                    </tr>
-                                                </form>
-                                            @endforeach
-                                        @endif
+                                                    </td>
+                                                </tr>
+                                            </form>
+                                        @endforeach
+                                    @endif
                                     </tbody>
                                 </table>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="float-right">
+                                @if (isset($locations))
+                                    {{ $locations->withQueryString()->links() }}
+                                @endif
                             </div>
                         </div>
                     </div>
