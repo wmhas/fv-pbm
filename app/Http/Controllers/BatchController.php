@@ -25,8 +25,8 @@ class BatchController extends Controller
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
         return view('batch.index', [
             'roles' => $roles,
-            'unbatches' => Batch::where('batch_status', 'unbatch')->paginate(5),
-            'batches' => Batch::where('batch_status', 'batched')->paginate(5),
+            'unbatches' => Batch::where('batch_status', 'unbatch')->with(['batchOrder'])->paginate(5),
+            'batches' => Batch::where('batch_status', 'batched')->with(['batchOrder'])->paginate(5),
             'keyword' => $keyword,
         ]);
     }

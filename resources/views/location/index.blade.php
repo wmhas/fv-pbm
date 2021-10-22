@@ -60,13 +60,13 @@
                                     @if(isset($locations))
                                         @foreach ($locations as $location)
                                             <form
-                                                    action="{{ route('location.edit', [$location->item_id, $location->item->stocks()->sum('Quantity')]) }}"
+                                                    action="{{ route('location.edit', [$location->item_id, $location->item->stocks->sum('Quantity')]) }}"
                                                     method="POST">
                                                 @csrf
                                                 <tr>
                                                     <td>{{ $loop->iteration }}</td>
                                                     <td>{{ $location->item->brand_name }}</td>
-                                                    <td>{{ $location->item->stocks()->sum('Quantity') }}</td>
+                                                    <td>{{ $location->item->stocks->sum('Quantity') }}</td>
                                                     <td>
                                                         <input type="text" name="store" value="{{ $location->store }}"
                                                                class="form-control form-control-sm" readonly>
