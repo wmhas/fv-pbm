@@ -488,13 +488,12 @@
             var sum = quantity * unit_price;
 
             ceilQ = Math.ceil(quantity.toFixed(2));
-            ceilS = Math.ceil(sum.toFixed(2));
 
             if (!except.includes('quantity')) {
                 parseFloat(thisParent.find("input#quantity").val(ceilQ));
             }
             if (!except.includes('price')) {
-                parseFloat(thisParent.find("input#price").val(ceilS));
+                parseFloat(thisParent.find("input#price").val(sum.toFixed(2)));
             }
         }
 
@@ -539,13 +538,12 @@
             var sum = quantity * unit_price;
 
             ceilQ = Math.ceil(quantity.toFixed(2));
-            ceilS = Math.ceil(sum.toFixed(2));
 
             if (!except.includes('quantity')) {
                 parseFloat(thisParent.find("input#u_quantity").val(ceilQ));
             }
             if (!except.includes('price')) {
-                parseFloat(thisParent.find("input#u_price").val(ceilS));
+                parseFloat(thisParent.find("input#u_price").val(sum.toFixed(2)));
             }
         }
 
