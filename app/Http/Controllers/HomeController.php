@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Card;
 use App\Models\Patient;
 use App\Models\Order;
 use App\Models\Prescription;
@@ -61,13 +62,33 @@ class HomeController extends Controller
     public function search_patient(Request $request)
     {
         $keyword = $request->get('keyword');
+        $method = $request->get('method');
         // $keyword = preg_replace("/[^a-zA-Z0-9 ]/", "", $keyword);
         $cards = null;
-        $patients = Patient::with('card')->where('identification', 'like', '%' . strtoupper($keyword) . '%')
-            ->orderBy('identification', 'asc')->limit(500)
+        $patients = Patient::query();
+        switch ($method) {
+            case "identification":
+                $patients = $patients
+                    ->where('identification', 'like', '%' . strtoupper($keyword) . '%')
+                    ->orderBy('identification', 'asc');
+                break;
+            case "army_pension":
+                $cards = Card::where('army_pension', 'like', '%' . strtoupper($keyword) . '%')
+                    ->orderBy('army_pension', 'asc')
+                    ->pluck('id');
+
+                $patients = $patients
+                    ->whereIn('card_id', $cards)
+                    ->orderBy('id', 'asc');
+                break;
+        }
+
+        $patients = $patients
+            ->with('card')
+            ->limit(500)
             ->paginate(15);
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
-        return view('patients.index', compact('keyword', 'patients', 'cards', 'roles'));
+        return view('patients.index', compact('keyword', 'patients', 'cards', 'roles', 'method'));
     }
 
     public function search_order(Request $request)
