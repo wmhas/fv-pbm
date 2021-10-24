@@ -61,7 +61,7 @@
                                             <option  value="">--Please Select--</option>
                                             <option  value="Veteran Berpencen" @if (!empty($patient) && $patient->card->type == 'Veteran Berpencen') selected @endif>Pensionable Veteran</option>
                                             <option value="Veteran Tidak Berpencen"  @if (!empty($patient) && $patient->card->type == 'Veteran Tidak Berpencen') selected @endif>Non-Pensionable Veteran</option>
-                                            <option value="Tidak Berpencen" @if (!empty($patient) && $patient->card->type == 'Tidak Berpencen') selected @endif>Non-Pensionable</option>
+                                            {{-- <option value="Tidak Berpencen" @if (!empty($patient) && $patient->card->type == 'Tidak Berpencen') selected @endif>Non-Pensionable</option> --}}
                                             <option value="Berpencen" @if (!empty($patient) && $patient->card->type == 'Berpencen') selected @endif >Pensionable</option>
                                         </select>
                                     </div>
