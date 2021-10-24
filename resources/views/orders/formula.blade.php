@@ -6,7 +6,7 @@
 
     <script type="text/javascript">
 
-        function calculateQuantity(thisParent){
+        function calculateQuantity(thisParent, except = [], quantity = null){
             var dose_quantity = parseFloat(thisParent.find('.value_dq').val());
             var frequency = thisParent.find('.value_f').val();
             // var frequency = $('.value_f').prop('selectedIndex',0);
@@ -32,15 +32,16 @@
             }
 
             //mcm mana nak retrieve formula_id dengan formula_value
-            if (formula_id == 1) {
-                var quantity = dose_quantity * frequency * duration;
-            } else if (formula_id == 6) {
-                var quantity = 1;
-
+            if (quantity === null) {
+                if (formula_id == 1) {
+                    quantity = dose_quantity * frequency * duration;
+                } else if (formula_id == 6) {
+                    quantity = 1;
+                } else {
+                    quantity = (dose_quantity * frequency * duration) / formula_value;
+                }
             } else {
-
-                var quantity = (dose_quantity * frequency * duration) / formula_value;
-
+                quantity = parseFloat(quantity);
             }
 
             var sum = quantity * unit_price;
@@ -48,11 +49,15 @@
             ceilQ = Math.ceil(quantity.toFixed(2));
             ceilS = Math.ceil(sum.toFixed(2));
 
-            parseFloat(thisParent.find("input#quantity").val(ceilQ));
-            parseFloat(thisParent.find("input#price").val(ceilS));
+            if (!except.includes('quantity')) {
+                parseFloat(thisParent.find("input#quantity").val(ceilQ));
+            }
+            if (!except.includes('price')) {
+                parseFloat(thisParent.find("input#price").val(ceilS));
+            }
         }
 
-        function uCalculateQuantity(thisParent){
+        function uCalculateQuantity(thisParent, except = [], quantity = null){
             var dose_quantity = parseFloat(thisParent.find('.u_value_dq').val());
             var frequency = thisParent.find('.u_value_f').val();
             // var frequency = $('.value_f').prop('selectedIndex',0);
@@ -78,15 +83,16 @@
             }
 
             //mcm mana nak retrieve formula_id dengan formula_value
-            if (formula_id == 1) {
-                var quantity = dose_quantity * frequency * duration;
-            } else if (formula_id == 6) {
-                var quantity = 1;
-
+            if (quantity === null) {
+                if (formula_id == 1) {
+                    quantity = dose_quantity * frequency * duration;
+                } else if (formula_id == 6) {
+                    quantity = 1;
+                } else {
+                    quantity = (dose_quantity * frequency * duration) / formula_value;
+                }
             } else {
-
-                var quantity = (dose_quantity * frequency * duration) / formula_value;
-
+                quantity = parseFloat(quantity);
             }
 
             var sum = quantity * unit_price;
@@ -94,8 +100,12 @@
             ceilQ = Math.ceil(quantity.toFixed(2));
             ceilS = Math.ceil(sum.toFixed(2));
 
-            parseFloat(thisParent.find("input#u_quantity").val(ceilQ));
-            parseFloat(thisParent.find("input#u_price").val(ceilS));
+            if (!except.includes('quantity')) {
+                parseFloat(thisParent.find("input#u_quantity").val(ceilQ));
+            }
+            if (!except.includes('price')) {
+                parseFloat(thisParent.find("input#u_price").val(ceilS));
+            }
         }
 
         function ajaxUpdateItem(id){
@@ -149,8 +159,14 @@
         // calculate quantity based on f x dq x d
             $('input[type="number"] ,input[type="text"] ').keyup(function() {
                 thisParent = $(this).parent().parent().parent();
-                calculateQuantity(thisParent);
-                uCalculateQuantity(thisParent);
+                if ( this.id === 'quantity' || this.id === 'u_quantity' ) {
+                    const quantity = $(this).val().trim();
+                    calculateQuantity(thisParent, ['quantity'], quantity);
+                    uCalculateQuantity(thisParent, ['quantity'], quantity);
+                } else {
+                    calculateQuantity(thisParent);
+                    uCalculateQuantity(thisParent);
+                }
             });
 
             $(document).on("change","#frequency",function(){
