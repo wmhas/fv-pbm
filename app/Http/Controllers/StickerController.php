@@ -37,9 +37,16 @@ class StickerController extends Controller
 
     public function print ($orderId)
     {
+        $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
         $order = Order::where('id', $orderId)->with(['patient', 'orderitem.items', 'orderitem.frequencies'])->first();
         if ($order) {
-            $data = [];
+            $data = new \stdClass();
+            $data->patient_name = $order->patient->full_name;
+            $data->salutation = $order->patient->salutation;
+            $data->identification = str_replace('-', '', substr($order->patient->identification, 6, 12));
+            $data->do_date = (new Carbon($order->updated_at))->translatedFormat('Y-m-d');
+            $data->items = [];
+
             foreach ($order->orderitem AS $orderItem) {
                 $instruction = '';
                 if (($orderItem->items->selling_uom === 'TAB' || $orderItem->items->selling_uom === 'CAP') && $orderItem->items->instruction !== 'INHALE/SEDUT') {
@@ -53,26 +60,43 @@ class StickerController extends Controller
                     $sellingUom = 'BIJI';
                 }
 
-                $data[] = [
-                    'salutation' => $order->patient->salutation,
-                    'name' => $order->patient->full_name,
-                    'identification' => str_replace('-', '', substr($order->patient->identification, 6, 12)),
-                    'item' => $orderItem->items->generic_name.' ('.$orderItem->items->brand_name.')',
-                    'instruction' => $instruction,
-                    'indication' => $orderItem->items->indikasi,
-                    'quantity_uom_duration' => $orderItem->quantity.' '.$sellingUom.' ('.$orderItem->duration.' HARI)',
-                    'do_date' => (new Carbon($order->updated_at))->translatedFormat('Y-m-d'),
-                    'created_at' => now(),
-                    'updated_at' => now()
-                ];
+                $item = new \stdClass();
+                $item->name = $orderItem->items->generic_name.' ('.$orderItem->items->brand_name.')';
+                $item->instruction = $instruction;
+                $item->indication = $orderItem->items->indikasi;
+                $item->quantity_uom_duration = $orderItem->quantity.' '.$sellingUom.' ('.$orderItem->duration.' HARI)';
+                $data->items[] = $item;
             }
-            $inserted = Label::insert($data);
-            if ($inserted) {
-                return back();
-            }
+
+            return view('sticker.print', compact('data', 'roles'));
         }
 
         return back()->with(['status' => false, 'message' => 'Please enter correct DO number']);
+    }
+
+    public function download (Request $request)
+    {
+        $items = $request->get('items');
+        if ($items) {
+            $data = [];
+            foreach ($items AS $item) {
+                $item['created_at'] = now();
+                $item['updated_at'] = now();
+                $data[] = $item;
+            }
+            $inserted = Label::insert($data);
+            if ($inserted) {
+                return response()->json([
+                    'status' => true,
+                    'meessage' => 'Data has been printed'
+                ]);
+            }
+        }
+
+        return response()->json([
+            'status' => false,
+            'message' => 'Failed to print data'
+        ], 403);
     }
 
     public function indexOld(Request $request, $order_id = null)
