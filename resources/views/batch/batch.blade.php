@@ -22,9 +22,6 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">B000{{ $group->id }}</h3>
-                    </div>
                     <div class="card-header" align="center">
                         <h3 class="card-title">RASUMI MEDIPHARMA SDN BHD</h3>
                         <p>Company No. 727958-A</p>
