@@ -42,7 +42,9 @@
                                     <th>RX Number</th>
                                     <th>Patient Detail</th>
                                     <th>Agency</th>
-                                    <th>Created Date</th>
+                                    <th>Quotation Date</th>
+                                    <th>Total Price</th>
+                                    <th>Status</th>
                                     <th>Batch Person</th>
                                 </tr>
                             </thead>
@@ -61,6 +63,8 @@
                                     </td>
                                     <td> @if (!empty($batch->order->patient->tariff_id)) {{ $batch->order->patient->tariff->name }} @else MINDEF @endif</td>
                                     <td>{{ date("d/m/Y", strtotime($batch->order->created_at))}}</td>
+                                    <td>{{ $batch->order->total_amount }}</td>
+                                    <td>{{ $batch->order->patient->card->type }}</td>
                                     <td>@if (!empty($batch->batchperson_id)) {{ $batch->batchperson->name}} @else @endif</td>
                                 </tr>
                                 @endforeach
