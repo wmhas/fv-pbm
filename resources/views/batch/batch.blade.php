@@ -22,16 +22,23 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="card">
-                    <div class="card-header" align="center">
-                        <h4>RASUMI MEDIPHARMA SDN BHD</h2>
-                        <p>Company No. 727958-A</p>
-                        <p>FARMASI VETERAN</p>
-                        <p>Lobi Utama</p>
-                        <p>Hospital Angkatan Tentera Tuanku Mizan</p>
-                        <p><strong>BATCH {{ $group->batch_no }}</strong></p>
-                        <p align="right"><strong>LAMPIRAN</strong></p>
-                        <p align="right">SUBMISSION DATE:</p>
-                        <p align="right">{{ $batchDate }}</p>
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-3"></div>
+                            <div class="col-6">
+                                <h4 class="text-center">RASUMI MEDIPHARMA SDN BHD</h4>
+                                <p class="text-center">Company No. 727958-A</p>
+                                <p class="text-center">FARMASI VETERAN</p>
+                                <p class="text-center">Lobi Utama</p>
+                                <p class="text-center">Hospital Angkatan Tentera Tuanku Mizan</p>
+                                <p class="text-center"><strong>BATCH {{ $group->batch_no }}</strong></p>
+                            </div>
+                            <div class="col-3 d-flex flex-column justify-content-end">
+                                <p class="text-right"><strong>LAMPIRAN</strong></p>
+                                <p class="text-right">SUBMISSION DATE:</p>
+                                <p class="text-right">{{ $batchDate }}</p>
+                            </div>
+                        </div>
                     </div>
                     <div class="card-body" style="overflow-x:auto;">
                         <table class="table table-bordered table-responsive">
@@ -87,7 +94,7 @@
                                             }
                                         @endphp
                                     </td>
-                                    <td align="right">{{ number_format((float)$batch->order->total_amount, 2, '.', '') }}</td>
+                                    <td class="text-right">{{ number_format((float)$batch->order->total_amount, 2, '.', '') }}</td>
                                     <td>{{ $batch->order->patient->card->type }}</td>
                                     <td>@if (!empty($batch->batchperson_id)) {{ $batch->batchperson->name}} @else @endif</td>
                                 </tr>
