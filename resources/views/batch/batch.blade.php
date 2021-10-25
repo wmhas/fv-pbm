@@ -25,6 +25,17 @@
                     <div class="card-header">
                         <h3 class="card-title">B000{{ $group->id }}</h3>
                     </div>
+                    <div class="card-header" align="center">
+                        <h3 class="card-title">RASUMI MEDIPHARMA SDN BHD</h3>
+                        <p>Company No. 727958-A</p>
+                        <p>FARMASI VETERAN</p>
+                        <p>Lobi Utama</p>
+                        <p>Hospital Angkatan Tentera Tuanku Mizan</p>
+                        <p>BATCH {{ $group->batch_no }}</p>
+                        <p align="right"><strong>LAMPIRAN</strong></p>
+                        <p align="right">SUBMISSION DATE:</p>
+                        <p align="right">{{ $batchDate }}</p>
+                    </div>
                     <div class="card-body" style="overflow-x:auto;">
                         <table class="table table-bordered">
                             <thead>
