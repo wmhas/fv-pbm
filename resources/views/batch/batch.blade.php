@@ -61,7 +61,8 @@
                                     <td>
                                         {{ $batch->order->patient->full_name }}
                                         <br><br>
-                                        (IC: {{ $batch->order->patient->identification }})
+                                        (IC: {{ $batch->order->patient->identification }})<br><br>
+                                        Pensioner No : {{ $batch->order->patient->card->army_pension }}
                                     </td>
                                     <td> @if (!empty($batch->order->patient->tariff_id)) {{ $batch->order->patient->tariff->name }} @else MINDEF @endif</td>
                                     <td>{{ date("d/m/Y", strtotime($batch->order->created_at))}}</td>
