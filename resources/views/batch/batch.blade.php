@@ -23,12 +23,12 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header" align="center">
-                        <h3 class="card-title">RASUMI MEDIPHARMA SDN BHD</h3>
+                        <h4>RASUMI MEDIPHARMA SDN BHD</h2>
                         <p>Company No. 727958-A</p>
                         <p>FARMASI VETERAN</p>
                         <p>Lobi Utama</p>
                         <p>Hospital Angkatan Tentera Tuanku Mizan</p>
-                        <p>BATCH {{ $group->batch_no }}</p>
+                        <p><strong>BATCH {{ $group->batch_no }}</strong></p>
                         <p align="right"><strong>LAMPIRAN</strong></p>
                         <p align="right">SUBMISSION DATE:</p>
                         <p align="right">{{ $batchDate }}</p>
