@@ -92,14 +92,13 @@ class ReportController extends Controller
         return view('reports.report_refill', compact('orders', 'order_lists', 'roles'));
     }
 
-    private function getItems ($date, $method, $keyword, $order = 'item_code', $direction = 'asc')
+    private function getItems ($startDate, $endDate, $method, $keyword, $order = 'item_code', $direction = 'asc')
     {
         $items = Item::query();
 
-        if ($date) {
-            $items = $items->with(['order_items.order' => function ($order) use ($date) {
-                 $order->whereDate('updated_at', $date);
-                //  $order->where('status_id', 4);
+        if ($startDate && $endDate) {
+            $items = $items->with(['order_items.order' => function ($order) use ($startDate, $endDate) {
+                $order->whereBetween('updated_at', [$startDate, $endDate]);
             }]);
         }
 
@@ -120,29 +119,31 @@ class ReportController extends Controller
 
     public function report_item(Request $request)
     {
-        // item(method): ItemName & ItemNumber
-        $date = $request->get('date', date('Y-m-d'));
+        $startDate = $request->get('start_date', date('Y-m-d'));
+        $endDate = $request->get('end_date', date('Y-m-d'));
         $method = $request->get('method');
         $keyword = $request->get('keyword');
         $keyword = preg_replace("/[^a-zA-Z0-9 ]/", "", $keyword);
+        if (!$method) { $keyword = null; }
         $order = $request->get('order', 'item_code');
         $direction = $request->get('direction', 'asc');
 
-        $items = $this->getItems($date, $method, $keyword, $order, $direction)->paginate(15);
+        $items = $this->getItems($startDate, $endDate, $method, $keyword, $order, $direction)->paginate(15);
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
-        return view('reports.report_item', compact('roles', 'items', 'keyword', 'method', 'date', 'order', 'direction'));
+        return view('reports.report_item', compact('roles', 'items', 'keyword', 'method', 'startDate', 'endDate', 'order', 'direction'));
     }
 
     public function report_item_export (Request $request) {
-        $date = $request->get('date', date('Y-m-d'));
+        $startDate = $request->get('start_date', date('Y-m-d'));
+        $endDate = $request->get('end_date', date('Y-m-d'));
         $method = $request->get('method');
         $keyword = $request->get('keyword');
         $keyword = preg_replace("/[^a-zA-Z0-9 ]/", "", $keyword);
         $order = $request->get('order', 'item_code');
         $direction = $request->get('direction', 'asc');
 
-        $items = $this->getItems($date, $method, $keyword, $order, $direction)->get();
-        $export = new ItemExport($items, $date);
+        $items = $this->getItems($startDate, $endDate, $method, $keyword, $order, $direction)->get();
+        $export = new ItemExport($items);
         return Excel::download($export, 'items.xlsx');
     }
 

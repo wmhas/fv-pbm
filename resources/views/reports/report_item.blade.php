@@ -28,14 +28,17 @@
                             <div class="row">
                                 <div class="col-md-10">
                                     <div class="row">
-                                        <div class="col-12 mt-2">
-                                            <input class="form-control" type="date" placeholder="Date" name="date" value="{{$date}}" />
+                                        <div class="col-12 col-sm-6 mt-2">
+                                            <input class="form-control" type="date" placeholder="Start Date" name="start_date" value="{{$startDate}}" />
+                                        </div>
+                                        <div class="col-12 col-sm-6 mt-2">
+                                            <input class="form-control" type="date" placeholder="End Date" name="end_date" value="{{$endDate}}" />
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-5 mt-2">
-                                            <select class="form-control" name="method" required>
-                                                <option value="">Please Choose</option>
+                                            <select class="form-control" name="method">
+                                                <option value="">Show All Items</option>
                                                 <option {{($method === 'ItemNumber') ? 'selected' : ''}} value="ItemNumber">Search Item Code</option>
                                                 <option {{($method === 'ItemName') ? 'selected' : ''}} value="ItemName">Search Item Name </option>
                                             </select>
@@ -53,7 +56,7 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-12 text-right mt-2">
-                                            <a href="{{url('/report/report_item_export?date='.$date.'&method='.$method.'&keyword='.$keyword)}}" class="btn btn-success text-white w-100" style="height: 32px;">Export</a>
+                                            <a href="{{url('/report/report_item_export?start_date='.$startDate.'&endDate='.$endDate.'&method='.$method.'&keyword='.$keyword)}}" class="btn btn-success text-white w-100" style="height: 32px;">Export</a>
                                         </div>
                                     </div>
                                 </div>
