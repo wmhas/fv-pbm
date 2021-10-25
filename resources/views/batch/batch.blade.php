@@ -65,24 +65,24 @@
                                     </td>
                                     <td> @if (!empty($batch->order->patient->tariff_id)) {{ $batch->order->patient->tariff->name }} @else MINDEF @endif</td>
                                     <td>{{ date("d/m/Y", strtotime($batch->order->created_at))}}</td>
-                                    <td>
+                                    <td style="padding: 0px;">
                                         @php 
                                             $oitems = $batch->order->orderitem; 
                                             if (count($oitems)>0) {
                                                 foreach($oitems as $oi){
                                                     if (isset($oi->items->brand_name)){
-                                                        echo $oi->items->brand_name."<br/>";
+                                                        echo "<table  width='100%'><tr><td>".$oi->items->brand_name."</td></tr></table>";
                                                     }
                                                 }
                                             }
                                         @endphp
                                     </td>
-                                    <td>
+                                    <td style="padding: 0px;">
                                         @php 
                                             $oitems = $batch->order->orderitem; 
                                             if (count($oitems)>0) {
                                                 foreach($oitems as $oi){
-                                                    echo $oi->quantity."<br/>";
+                                                    echo "<table width='100%'><tr><td>".$oi->quantity."</td></tr></table>";
                                                 }
                                             }
                                         @endphp
