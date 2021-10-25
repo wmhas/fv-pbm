@@ -43,6 +43,8 @@
                                     <th>Patient Detail</th>
                                     <th>Agency</th>
                                     <th>Quotation Date</th>
+                                    <th>Item</th>
+                                    <th>Qty</th>
                                     <th>Total Price (RM)</th>
                                     <th>Status</th>
                                     <th>Batch Person</th>
@@ -63,6 +65,28 @@
                                     </td>
                                     <td> @if (!empty($batch->order->patient->tariff_id)) {{ $batch->order->patient->tariff->name }} @else MINDEF @endif</td>
                                     <td>{{ date("d/m/Y", strtotime($batch->order->created_at))}}</td>
+                                    <td>
+                                        @php 
+                                            $oitems = $batch->order->orderitem; 
+                                            if (count($oitems)>0) {
+                                                foreach($oitems as $oi){
+                                                    if (isset($oi->items->brand_name)){
+                                                        echo $oi->items->brand_name."<br/>";
+                                                    }
+                                                }
+                                            }
+                                        @endphp
+                                    </td>
+                                    <td>
+                                        @php 
+                                            $oitems = $batch->order->orderitem; 
+                                            if (count($oitems)>0) {
+                                                foreach($oitems as $oi){
+                                                    echo $oi->quantity."<br/>";
+                                                }
+                                            }
+                                        @endphp
+                                    </td>
                                     <td align="right">{{ number_format((float)$batch->order->total_amount, 2, '.', '') }}</td>
                                     <td>{{ $batch->order->patient->card->type }}</td>
                                     <td>@if (!empty($batch->batchperson_id)) {{ $batch->batchperson->name}} @else @endif</td>
