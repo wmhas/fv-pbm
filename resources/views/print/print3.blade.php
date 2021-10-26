@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+{{-- <!DOCTYPE html>
 <html>
 
 <style>
@@ -82,7 +82,7 @@
     </table>
     <hr>
     <div class="div1"><strong>Ship To:</strong><br>
-        <div class="div3"> SSJB (B) {{-- >ni apa < --}}<br>
+        <div class="div3"> SSJB (B)<br>
             {{ $order->patient->full_name }}<br>
             {{ $order->patient->address_1 }} <br>
             {{ $order->patient->address_2 }} {{ $order->patient->city }} <br>
@@ -151,4 +151,138 @@
 
 </body>
 
+</html> --}}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 10pt;
+        }
+    </style>
+</head>
+<body>
+    <table style="width: 100%;">
+        <tr>
+            <td>
+                <b>FARMASI VETERAN</b>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Hospital Angkatan Tentera Tuanku Mizan <br>
+                No. 3 Jalan 4/27A, Seksyen 2, Wangsa Maju 53000 Kuala Lumpur
+            </td>
+        </tr>
+        <tr>
+            <td>Tel: 03-4142 2445</td>
+        </tr>
+    </table>
+
+    <hr>
+
+    <table style="width: 100%;">
+        <tr>
+            <td>
+                <b>Ship To:</b>
+            </td>
+            <td rowspan="3">
+                <div style="border: 2px solid black; padding: 10px 0px;">
+                    <p style="text-align: center;"><b>DELIVERY ORDER</b></p>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                {{ strtoupper($order->patient->salutation) }} {{ strtoupper($order->patient->full_name) }}
+                @if ($order->patient->relation != 'CardOwner')
+                    <br> 
+                    @if ($order->patient->relation == 'Wife')
+                        ISTERI
+                    @elseif ($order->patient->relation == 'Husband')
+                        SUAMI
+                    @elseif ($order->patient->relation == 'Widowed')
+                        BALU
+                    @elseif ($order->patient->relation == 'Children')
+                        ANAK
+                    @else
+                        WARIS
+                    @endif
+                        KEPADA {{ strtoupper($order->patient->card->salutation) }} {{ strtoupper($order->patient->card->name) }}
+                @endif
+            </td>
+        </tr>
+        <tr>
+            <td>
+                @if (!empty($delivery->address_1)) {{ strtoupper($delivery->address_1) }} @endif
+                @if (!empty($delivery->address_2)) <br> {{ strtoupper($delivery->address_2) }} @endif
+                @if (!empty($delivery->address_3)) <br> {{ strtoupper($delivery->address_3) }} @endif
+                @if (!empty($delivery->postcode)) <br> {{ strtoupper($delivery->postcode) }} @endif
+                @if (!empty($delivery->city)) {{ strtoupper($delivery->city) }} @endif
+                @if (!empty($delivery->state->name)) <br> {{ strtoupper($delivery->state->name) }} @endif
+            </td>
+        </tr>
+        <tr>
+            <td style="width: 60%;">
+                <table style="width: 100%;">
+                    <tr>
+                        <td><b>Pensioner's Detail</b></td>
+                        <td>: {{ $order->patient->card->army_pension }} {{ strtoupper($order->patient->card->type) }}</td>
+                    </tr>
+                    <tr>
+                        <td><b>NRIC</b></td>
+                        <td>: {{ $order->patient->identification }}</td>
+                    </tr>
+                    <tr>
+                        <td><b>Phone</b></td>
+                        <td>: {{ $order->patient->phone }}</td>
+                    </tr>
+                </table>
+            </td>
+            <td>
+                <table style="width: 100%;">
+                    <tr>
+                        <td><b>DO No.</b></td>
+                        <td>: {{ $order->do_number }}</td>
+                    </tr>
+                    @php
+                        $date = date_create($order->created_at);
+                        $date = date_format($date, 'd/m/Y');
+                    @endphp
+                    <tr>
+                        <td><b>Date</b></td>
+                        <td>: {{ $date }}</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+    <div style="border: 1px solid black; height: 400px; margin-top: 20px;">
+        <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+                <th style="border-bottom: 1px solid black;">QTY</th>
+                <th style="border-bottom: 1px solid black;">ITEM NO</th>
+                <th style="border-bottom: 1px solid black; text-align: left;">DESCRIPTION</th>
+                <th style="border-bottom: 1px solid black;">DURATION</th>
+                <th style="border-bottom: 1px solid black;">UNIT</th>
+            </tr>
+            @foreach ($order_item as $item)
+                <tr>
+                    <td style="text-align: center;">{{ number_format($item->quantity, 0) }}</td>
+                    <td style="text-align: center;">{{ $item->items->item_code }}</td>
+                    <td>{{ $item->items->brand_name }}</td>
+                    <td style="text-align: center;">{{ $item->duration }} HARI</td>
+                    <td style="text-align: center;">{{ $item->items->selling_uom }}</td>
+                </tr>
+            @endforeach
+        </table>
+    </div>
+    <p><i>Good sold are not returnable.</i></p>
+    <p><i>Received in good condition.</i></p>
+    <p><i>Received by (Name) :</i></p>
+    <p style="margin-top: 50px;"><i>Signature :</i></p>
+    <p><i>Date :</i></p>
+</body>
 </html>

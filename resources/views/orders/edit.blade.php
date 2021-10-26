@@ -409,25 +409,25 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Address 1</label>
-                                    <input type="text" class="form-control" name="dispensing_add1" @if (!empty($order->delivery)) value="{{ $order->delivery->address_1 }}" @endif>
+                                    <input type="text" class="form-control" name="dispensing_add1" @if (!empty($order->delivery)) value="{{ $order->delivery->address_1 }}" @else value="{{ $order->patient->address_1 }}" @endif>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Address 2</label>
-                                    <input type="text" class="form-control" name="dispensing_add2" @if (!empty($order->delivery)) value="{{ $order->delivery->address_2 }}" @endif>
+                                    <input type="text" class="form-control" name="dispensing_add2" @if (!empty($order->delivery)) value="{{ $order->delivery->address_2 }}" @else value="{{ $order->patient->address_2 }}" @endif>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label>Postcode</label>
-                                    <input type="text" class="form-control" name="dispensing_postcode" @if (!empty($order->delivery)) value="{{ $order->delivery->postcode }}" @endif>
+                                    <input type="text" class="form-control" name="dispensing_postcode" @if (!empty($order->delivery)) value="{{ $order->delivery->postcode }}" @else value="{{ $order->patient->postcode }}" @endif>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label>City</label>
-                                    <input type="text" class="form-control" name="dispensing_city" @if (!empty($order->delivery)) value="{{ $order->delivery->city }}" @endif>
+                                    <input type="text" class="form-control" name="dispensing_city" @if (!empty($order->delivery)) value="{{ $order->delivery->city }}" @else value="{{ $order->patient->city }}" @endif>
                                 </div>
                             </div>
                             <div class="col-md-4">
@@ -437,6 +437,9 @@
                                         @if (!empty($order->delivery))
                                             <option value="{{ $order->delivery->states_id }}" selected>
                                                 {{ $order->delivery->state->name }}</option>
+                                        @else
+                                            <option value="{{ $order->patient->state_id }}" selected>
+                                                {{ $order->patient->state->name }}</option>
                                         @endif
                                         @foreach ($states as $state)
                                             <option value="{{ $state->id }}">{{ $state->name }}</option>

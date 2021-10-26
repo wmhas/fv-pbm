@@ -16,6 +16,7 @@ use App\Models\Clinic;
 use App\Models\Frequency;
 use App\Models\SalesPerson;
 use App\Models\Stock;
+use App\Models\BatchOrder;
 use PDF;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
@@ -1011,9 +1012,11 @@ class OrderController extends Controller
 
     public function download_invoice($id)
     {
-        $order = Order::where('id', $id)->first();
+        // $order = Order::where('id', $id)->first();
         $date = Carbon::now()->format('d/m/Y');
-        $pdf = PDF::loadView('print.print2', compact('order', 'date'));
+        $batch = BatchOrder::where('order_id', $id)->first();
+        $order_item = OrderItem::where('order_id', $id)->get();
+        $pdf = PDF::loadView('print.print2', compact('batch', 'order_item', 'date'));
         return $pdf->stream('downloadInvoice.pdf');
     }
 
@@ -1026,7 +1029,9 @@ class OrderController extends Controller
     {
         $order = Order::where('id', $id)->first();
         $date = Carbon::now()->format('d/m/Y');
-        $pdf = PDF::loadView('print.print3', compact('order', 'date'));
+        $order_item = OrderItem::where('order_id', $id)->get();
+        $delivery = Delivery::where('order_id', $id)->first();
+        $pdf = PDF::loadView('print.print3', compact('order', 'delivery', 'order_item', 'date'));
         return $pdf->stream('downloadDO.pdf');
     }
     public function delivery_status(Request $request, $order)
