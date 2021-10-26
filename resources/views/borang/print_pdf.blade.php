@@ -189,7 +189,7 @@
                                 <td>Berpencen</td>
                                 <td style="vertical-align: center;">
                                     <div style="border: 1px solid black; height: 16px; width: 18px; text-align: center">
-                                        {{ $order->patient->card->type === 'Veteran tidak berpencen' ? '' : '/' }}
+                                        {{ $order->patient->card->type === 'Veteran Berpencen' ? '/' : '' }}
                                     </div>
                                 </td>
                             </tr>
@@ -201,7 +201,7 @@
                                 </td>
                                 <td style="vertical-align: center;">
                                     <div style="border: 1px solid black; height: 16px; width: 18px; text-align: center">
-                                        {{ $order->patient->card->type === 'Veteran tidak berpencen' ? '/' : '' }}
+                                        {{ $order->patient->card->type === 'Veteran Berpencen' ? '' : '/' }}
                                     </div>
                                 </td>
                             </tr>
@@ -218,44 +218,54 @@
                             <tr>
                                 <td></td>
                                 <td style="vertical-align: center; width: 25px; padding-top: 5px;">
-                                    <div style="border: 1px solid black; height: 16px; width: 20px;"></div>
+                                    <div style="border: 1px solid black; height: 16px; width: 20px; text-align: center">
+                                        {{ $order->patient->card->army_type === 'ATM' ? '/' : '' }}
+                                    </div>
                                 </td>
                                 <td style="padding-top: 5px;">ATM</td>
                             </tr>
                             <tr>
                                 <td></td>
                                 <td style="vertical-align: center;">
-                                    <div style="border: 1px solid black; height: 16px; width: 20px;"></div>
+                                    <div style="border: 1px solid black; height: 16px; width: 20px; text-align: center">
+                                        {{ $order->patient->card->army_type === 'Kerahan Sepenuh Masa' ? '/' : '' }}
+                                    </div>
                                 </td>
                                 <td>Kerahan Sepenuh Masa</td>
                             </tr>
                             <tr>
                                 <td></td>
                                 <td style="vertical-align: center;">
-                                    <div style="border: 1px solid black; height: 16px; width: 20px;"></div>
+                                    <div style="border: 1px solid black; height: 16px; width: 20px; text-align: center">
+                                        {{ $order->patient->card->army_type === 'Force 136' ? '/' : '' }}
+                                    </div>
                                 </td>
                                 <td>Force 136</td>
                             </tr>
                             <tr>
                                 <td></td>
                                 <td style="vertical-align: center;">
-                                    <div style="border: 1px solid black; height: 16px; width: 20px;"></div>
-                                </td>
-                                <td>Force 136</td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td style="vertical-align: center;">
-                                    <div style="border: 1px solid black; height: 16px; width: 20px;"></div>
+                                    <div style="border: 1px solid black; height: 16px; width: 20px; text-align: center">
+                                        {{ $order->patient->card->army_type === 'Tentera British' ? '/' : '' }}
+                                    </div>
                                 </td>
                                 <td>Tentera British</td>
                             </tr>
                             <tr>
                                 <td></td>
                                 <td style="vertical-align: center;">
-                                    <div style="border: 1px solid black; height: 16px; width: 20px;"></div>
+                                    <div style="border: 1px solid black; height: 16px; width: 20px; text-align: center">
+                                        {{ $order->patient->card->army_type === 'Sarawak Rangers' ? '/' : '' }}
+                                    </div>
                                 </td>
                                 <td>Sarawak Rangers</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td style="vertical-align: center;">
+                                    <div style="border: 1px solid black; height: 16px; width: 20px; text-align: center"></div>
+                                </td>
+                                <td>JPA</td>
                             </tr>
                         </table>
                     </td>
@@ -272,21 +282,30 @@
                     <td style="width: 40px;">6.</td>
                     <td colspan="3">
                         Nama Penuh <i>(seperti dalam kad pengenalan/passport/sijil kelahiran)</i>
-                        <div style="border: 1px solid black; height: 20px; margin-top: 5px;"></div>
+                        <div style="border: 1px solid black; height: 20px; margin-top: 5px;">
+                            @if (!empty($order->patient->full_name))
+                                {{ $order->patient->full_name }}
+                            @endif
+                        </div>
                     </td>
                 </tr>
                 <tr>
                     <td>7.</td>
                     <td colspan="3">
                         No. Kad Pengenalan/Pasport/Sijil Kelahiran
-                        <div style="border: 1px solid black; height: 16px; margin-top: 5px;"></div>
+                        <div style="border: 1px solid black; height: 16px; margin-top: 5px;">
+                            @if (!empty($order->patient->identification))
+                                {{ $order->patient->identification }}
+                            @endif
+                        </div>
                     </td>
                 </tr>
                 <tr>
                     <td>8.</td>
-                    <td colspan="3">
+                    <td colspan="2">
                         Hubungan Pesakit Dengan Veteran ATM
                     </td>
+                    <td style="width: 25%"><div style="border: 1px solid black; height: 16px; width: 40px; display: inline-block;"></div></td>
                 </tr>
                 <tr>
                     <td>9.</td>
@@ -717,7 +736,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td>Jawaban</td>
+                            <td>Jawatan</td>
                             <td style="text-align: center">__________________________</td>
                         </tr>
                         <tr>
