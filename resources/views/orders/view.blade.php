@@ -126,6 +126,26 @@
 					</div>
 					<div class="card-body">
 						<div class="row">
+							<div class="col-6">
+								<div class="form-group">
+									<label>Date of Issue</label>
+									@php
+										$date_issue = date_create($order->created_at);
+										$date_issue = date_format($date_issue, 'd/m/Y');
+									@endphp
+									<input type="text" class="form-control" value="{{ $date_issue }}" readonly>
+								</div>
+							</div>
+							<div class="col-6">
+								<div class="form-group">
+									<label>Dispensing Date</label>
+									@php
+										$dispense_date = date_create($order->dispense_date);
+										$dispense_date = date_format($dispense_date, 'd/m/Y');
+									@endphp
+									<input type="text" class="form-control" value="{{ $dispense_date }}" readonly>
+								</div>
+							</div>
 							<div class="col-12">
 								<div class="form-group">
 									<label>Salesperson</label>
@@ -138,13 +158,13 @@
 									<input type="text" class="form-control" value="{{$order->do_number}}" readonly>
 								</div>
 							</div>
-							<div class="col-12">
+							<div class="col-6">
 								<div class="form-group">
 									<label>Dispensing By</label>
 									<input type="text" class="form-control" value="{{$order->dispensing_by}}" readonly>
 								</div>
 							</div>
-							<div class="col-12">
+							<div class="col-6">
 								<div class="form-group">
 									<label>Dispensing Method</label>
 									<select id="dispensing_method" name="dispensing_method" class="form-control" disabled>
