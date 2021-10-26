@@ -43,7 +43,7 @@ class BatchExport implements FromCollection, WithHeadings, WithStyles, WithColum
 
             foreach ($order as $kv => $v) {
 
-                $oi = OrderItem::with("items")->where("order_id",$v->order->id)->get();
+                $oi = OrderItem::with("items")->where("order_id",222)->get();
                 
                 if (count($oi)>0) {
                     foreach ($oi as $k => $voi) {
@@ -90,8 +90,8 @@ class BatchExport implements FromCollection, WithHeadings, WithStyles, WithColum
                     $orders[$kv]['Patient Pensioner No']=$v->order->patient->card->army_pension;
                     $orders[$kv]['Agency']=$v->order->patient->tariff->name;
                     $orders[$kv]['Quotation Date']=$v->order->created_at;
-                    $orders[$kv]['Item']=$voi->items->brand_name;
-                    $orders[$kv]['Qty']=$voi->quantity;
+                    $orders[$kv]['Item']="";
+                    $orders[$kv]['Qty']="";
                     $orders[$kv]['Total Price (RM)'] = $v->order->total_amount;
                     $orders[$kv]['Status'] = $v->order->patient->card->type;
                     $orders[$kv]['Batch Person'] = (!empty($batch->batchperson_id)) ? $v->batchperson->name : "";
