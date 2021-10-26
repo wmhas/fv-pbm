@@ -8,6 +8,8 @@ use PDF;
 use App\Models\Order;
 use App\Models\Batch;
 use App\Models\BatchOrder;
+use App\Exports\BatchExport;
+use Excel;
 
 class BatchController extends Controller
 {
@@ -90,12 +92,39 @@ class BatchController extends Controller
     public function show_batch(Batch $batch)
     {
         $batch_orders = BatchOrder::where('batch_id', $batch->id)->get();
+        $batchDate = "";
+
+        if ($batch){
+            if (strlen($batch->created_at)>0) {
+                $split = explode(" ",$batch->created_at);
+                if (count($split) == 2) {
+                    $batchDate = str_replace("-", "/", $split[0]);
+                }
+            }
+        }
+
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
         return view('batch.batch', [
             'batches' => $batch_orders,
             'group' => $batch,
-            'roles' => $roles
+            'roles' => $roles,
+            'batchDate' => $batchDate
         ]);
+    }
+
+    public function export_batch_excel(Request $request)
+    {
+
+        if ($request->post('exportable') == "yes") {
+            $batch_id = $request->post('batch_id');
+            $export = new BatchExport($batch_id);
+            // if ($export->collection()->count() > 0) {
+                return Excel::download($export, 'batch.xlsx');
+            // }
+        }
+
+        $request->session()->flash('error', 'No Data to Export');
+        return redirect(url('/batch/'.$batch_id.'/batch_list'));
     }
 
     public function changeStatus(Batch $batch)
