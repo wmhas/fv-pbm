@@ -52,7 +52,12 @@
                 <td width="10">:</td>
                 <td>
                     <div style="border: 1px solid black; min-height:  90px;">
-                        {{ $order->patient->card->patient->full_name }}
+                        @if (!empty($order->patient->card->patient->address_1 )) {{ strtoupper($order->patient->card->patient->address_1) }} @endif
+                        @if (!empty($order->patient->card->patient->address_2 )) <br> {{ strtoupper($order->patient->card->patient->address_2) }} @endif
+                        @if (!empty($order->patient->card->patient->address_3 )) <br> {{ strtoupper($order->patient->card->patient->address_3) }} @endif
+                        @if (!empty($order->patient->card->patient->postcode )) <br> {{ strtoupper($order->patient->card->patient->postcode) }} @endif
+                        @if (!empty($order->patient->card->patient->city )) {{ strtoupper($order->patient->card->patient->city) }} @endif
+                        @if (!empty($order->patient->card->patient->state->name )) <br> {{ strtoupper($order->patient->card->patient->state->name) }} @endif
                     </div>
                 </td>
             </tr>
@@ -61,7 +66,7 @@
                 <td width="10">:</td>
                 <td>
                     <div style="border: 1px solid black; height: 25px;">
-                        
+                        @if (!empty($order->patient->card->patient->phone )) {{ $order->patient->card->patient->phone }} @endif
                     </div>
                 </td>
             </tr>
@@ -70,7 +75,7 @@
                 <td width="10">:</td>
                 <td>
                     <div style="border: 1px solid black; height: 25px;">
-                        
+                        @if (!empty($order->patient->card->patient->email )) {{ $order->patient->card->patient->email }} @endif
                     </div>
                 </td>
             </tr>
