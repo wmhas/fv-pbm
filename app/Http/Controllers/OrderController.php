@@ -776,6 +776,7 @@ class OrderController extends Controller
     public function dispense_order(Order $order)
     {
         $order->status_id = 3;
+        $order->dispense_date = now();
         $order->save();
         return redirect()->action('OrderController@show', ['order' => $order->id])
             ->with(['status' => true, 'message' => 'Status = Dispense Order']);
