@@ -336,7 +336,6 @@
                 <th style="border-bottom: 1px solid black;">ITEM NO</th>
                 <th style="border-bottom: 1px solid black; text-align: left;">DESCRIPTION</th>
                 <th style="border-bottom: 1px solid black; text-align: right;">PRICE (RM)</th>
-                <th style="border-bottom: 1px solid black;">TAX CODE</th>
                 <th style="border-bottom: 1px solid black;">UNIT</th>
                 <th style="border-bottom: 1px solid black; text-align: right;">AMOUNT (RM)</th>
             </tr>
@@ -347,7 +346,6 @@
                     <td style="text-align: center;">{{ $item->items->item_code }}</td>
                     <td>{{ $item->items->brand_name }}</td>
                     <td style="text-align: right;">{{ number_format($item->items->selling_price, 2) }}</td>
-                    <td style="text-align: center;">N-T</td>
                     <td style="text-align: center;">{{ $item->items->selling_uom }}</td>
                     <td style="text-align: right;">{{ number_format($item->price, 2) }}</td>
                 </tr>
@@ -357,7 +355,7 @@
     </div>
     <table style="width: 100%;">
         <tr>
-            <td rowspan="3" style="width: 60%;">
+            <td rowspan="4" style="width: 60%;">
                 <small>
                     All cheque should be made payable to "RASUMI MEDIPHARMA SDN BHD" <br>
                     Bank: MAYBANK BANK BERHAD <br>
@@ -376,7 +374,6 @@
             <td style="text-align: right; border: 1px solid black;">{{ number_format($batch->order->total_amount + 0, 2) }}</td>
         </tr>
         <tr>
-            <td>Memo: Quotation Date {{ $date }}</td>
             <td style="text-align: right;"><b>BALANCE DUE</b></td>
             <td style="text-align: right; border: 1px solid black;">{{ number_format($batch->order->total_amount, 2) }}</td>
         </tr>
