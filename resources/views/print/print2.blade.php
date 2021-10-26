@@ -310,7 +310,7 @@
                         <td>: {{ $batch->order->do_number }}</td>
                     </tr>
                     @php
-                        $date = date_create($batch->order->created_at);
+                        $date = date_create($batch->order->dispense_date);
                         $date = date_format($date, 'd/m/Y');
                     @endphp
                     <tr>
