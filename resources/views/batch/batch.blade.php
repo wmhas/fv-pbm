@@ -22,19 +22,26 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="card">
-                    <div class="card-header" align="center">
-                        <h4>RASUMI MEDIPHARMA SDN BHD</h2>
-                        <p>Company No. 727958-A</p>
-                        <p>FARMASI VETERAN</p>
-                        <p>Lobi Utama</p>
-                        <p>Hospital Angkatan Tentera Tuanku Mizan</p>
-                        <p><strong>BATCH {{ $group->batch_no }}</strong></p>
-                        <p align="right"><strong>LAMPIRAN</strong></p>
-                        <p align="right">SUBMISSION DATE:</p>
-                        <p align="right">{{ $batchDate }}</p>
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-3"></div>
+                            <div class="col-6">
+                                <h4 class="text-center">RASUMI MEDIPHARMA SDN BHD</h4>
+                                <p class="text-center">Company No. 727958-A</p>
+                                <p class="text-center">FARMASI VETERAN</p>
+                                <p class="text-center">Lobi Utama</p>
+                                <p class="text-center">Hospital Angkatan Tentera Tuanku Mizan</p>
+                                <p class="text-center"><strong>BATCH {{ $group->batch_no }}</strong></p>
+                            </div>
+                            <div class="col-3 d-flex flex-column justify-content-end">
+                                <p class="text-right"><strong>LAMPIRAN</strong></p>
+                                <p class="text-right">SUBMISSION DATE:</p>
+                                <p class="text-right">{{ $batchDate }}</p>
+                            </div>
+                        </div>
                     </div>
                     <div class="card-body" style="overflow-x:auto;">
-                        <table class="table table-bordered">
+                        <table class="table table-bordered table-responsive">
                             <thead>
                                 <tr>
                                     <th style="width: 10px">No</th>
@@ -53,42 +60,41 @@
                             <tbody>
                                 @foreach ($batches as $batch)
                                 <tr>
-                                    <td>{{ $loop->iteration }}</td>
+                                    <td class="text-center">{{ $loop->iteration }}</td>
                                     <td>
                                         <a href="{{ url('/order/'.$batch->order_id.'/view') }}" title="View Order"><i class="fas fa-folder-open"></i>{{ $batch->order->do_number }}</a> 
                                     </td>
                                     <td>{{ $batch->order->prescription->rx_number }}</td>
                                     <td>
-                                        {{ $batch->order->patient->full_name }}
-                                        <br><br>
-                                        (IC: {{ $batch->order->patient->identification }})<br><br>
-                                        Pensioner No : {{ $batch->order->patient->card->army_pension }}
+                                        {{ $batch->order->patient->full_name }} <br>
+                                        <small class="text-muted">(IC: {{ $batch->order->patient->identification }})</small><br>
+                                        <small class="text-muted">(Pensioner No : {{ $batch->order->patient->card->army_pension }})</small>
                                     </td>
                                     <td> @if (!empty($batch->order->patient->tariff_id)) {{ $batch->order->patient->tariff->name }} @else MINDEF @endif</td>
                                     <td>{{ date("d/m/Y", strtotime($batch->order->created_at))}}</td>
-                                    <td style="padding: 0px;">
+                                    <td class="p-0">
                                         @php 
                                             $oitems = $batch->order->orderitem; 
                                             if (count($oitems)>0) {
                                                 foreach($oitems as $oi){
                                                     if (isset($oi->items->brand_name)){
-                                                        echo "<table  width='100%'><tr><td>".$oi->items->brand_name."</td></tr></table>";
+                                                        echo "<table class='table-borderless' width='100%'><tr><td class='border-top border-bottom'>".$oi->items->brand_name."</td></tr></table>";
                                                     }
                                                 }
                                             }
                                         @endphp
                                     </td>
-                                    <td style="padding: 0px;">
+                                    <td class="p-0 text-center">
                                         @php 
                                             $oitems = $batch->order->orderitem; 
                                             if (count($oitems)>0) {
                                                 foreach($oitems as $oi){
-                                                    echo "<table width='100%'><tr><td>".$oi->quantity."</td></tr></table>";
+                                                    echo "<table class='table-borderless' width='100%'><tr><td class='border-top border-bottom'>".$oi->quantity."</td></tr></table>";
                                                 }
                                             }
                                         @endphp
                                     </td>
-                                    <td align="right">{{ number_format((float)$batch->order->total_amount, 2, '.', '') }}</td>
+                                    <td class="text-right">{{ number_format((float)$batch->order->total_amount, 2, '.', '') }}</td>
                                     <td>{{ $batch->order->patient->card->type }}</td>
                                     <td>@if (!empty($batch->batchperson_id)) {{ $batch->batchperson->name}} @else @endif</td>
                                 </tr>
