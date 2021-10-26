@@ -43,7 +43,7 @@ class BatchExport implements FromCollection, WithHeadings, WithStyles, WithColum
 
             foreach ($order as $kv => $v) {
 
-                $oi = OrderItem::with("items")->where("order_id",222)->get();
+                $oi = OrderItem::with("items")->where("order_id",$v->order->id)->get();
                 
                 if (count($oi)>0) {
                     foreach ($oi as $k => $voi) {
