@@ -59,7 +59,7 @@ class BatchExport implements FromCollection, WithHeadings, WithStyles, WithColum
                         $orders[$k]['Qty']=$voi->quantity;
                         $orders[$k]['Total Price (RM)'] = $v->order->total_amount;
                         $orders[$k]['Status'] = $v->order->patient->card->type;
-                        $orders[$k]['Batch Person'] = (!empty($batch->batchperson_id)) ? $v->batchperson->name : "";
+                        $orders[$k]['Batch Person'] = $v->batchperson->name;
                     }
                 }
                 $num++;
