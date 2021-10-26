@@ -98,7 +98,7 @@ class ReportController extends Controller
 
         if ($startDate && $endDate) {
             $items = $items->with(['order_items.order' => function ($order) use ($startDate, $endDate) {
-                $order->whereBetween('updated_at', [$startDate, $endDate]);
+                $order->whereBetween('dispense_date', [$startDate, $endDate]);
             }]);
         }
 
