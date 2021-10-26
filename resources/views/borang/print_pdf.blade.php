@@ -43,7 +43,7 @@
                 <td width="10">:</td>
                 <td>
                     <div style="border: 1px solid black; height: 25px;">
-                        {{$order->patient->identification}}
+                        {{ $order->patient->card->ic_no }}
                     </div>
                 </td>
             </tr>
@@ -52,10 +52,7 @@
                 <td width="10">:</td>
                 <td>
                     <div style="border: 1px solid black; min-height:  90px;">
-                        {{$order->patient->address_1}} <br/>
-                        {{$order->patient->address_2}} <br/>
-                        {{$order->patient->address_3}} <br/>
-                        {{$order->patient->postcode}} {{$order->patient->state->name}}
+                        {{ $order->patient->card->patient->full_name }}
                     </div>
                 </td>
             </tr>
@@ -64,7 +61,7 @@
                 <td width="10">:</td>
                 <td>
                     <div style="border: 1px solid black; height: 25px;">
-                        {{$order->patient->phone}}
+                        
                     </div>
                 </td>
             </tr>
@@ -73,7 +70,7 @@
                 <td width="10">:</td>
                 <td>
                     <div style="border: 1px solid black; height: 25px;">
-                        {{$order->patient->email}}
+                        
                     </div>
                 </td>
             </tr>
@@ -796,6 +793,85 @@
                             <td></td>
                             <td style="text-align: center">
                                 <i>(nama penuh)</i>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Jawatan</td>
+                            <td style="text-align: center">__________________________</td>
+                        </tr>
+                        <tr>
+                            <td>Tarikh</td>
+                            <td style="text-align: center">__________________________</td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    * <i>Potong mana yang tidak berkenaan</i>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="page-break"></div>
+
+    {{--Page 4--}}
+    <div style="text-align: right; font-size: 13px; font-family: roboto, sans-serif;">
+        BQ-BP-14 Borang Perubatan JHEV 1/09 (T) <br/>
+        Pindaan : 0
+    </div>
+    <div style="font-size: 11px; border: 1px solid black; margin-top: 20px; padding: 20px;">
+        <div style="background-color: darkgray; padding: 5px 10px; margin-top: 5px">
+            <strong>BAHAGIAN V</strong>
+        </div>
+        <table style="width: 100%">
+            <tr>
+                <td style="width: 40px;">21.</td>
+                <td>
+                    Pengesahan Dan Keputusan Ketua Jabatan <br>
+                    Saya dengan ini mengesahkan bahawa permohonan veteran ATM mematuhi syarat-syarat dan 
+                    peraturan-peraturan sebagaimana yang ditetapkan dalam Perintah Am Bab F Tahun 1974 dan 
+                    Pekeliling Perkhidmatan Bilangan 21 Tahun 2009. Berkaitan itu, permohonan perbelanjaan 
+                    bagi maksud kemudahan perubatan yang diperolehi sebanyak <b>RM</b> ________________ adalah 
+                    <b>*DILULUSKAN / TIDAK DILULUSKAN</b>.
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <table style="width: 100%;">
+                        <tr>
+                            <td style="width: 80px;">Tandatangan</td>
+                            <td style="text-align: center; width: 240px;">__________________________</td>
+                            <td colspan="2" rowspan="5">
+                                <span style="white-space: nowrap">
+                                    Nama & Cop Rasmi
+                                </span>
+                                <div style="border: 1px solid black; height: 70px;"></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td style="text-align: center">(
+                                @for($i = 0; $i < 25; $i++)
+                                    &nbsp;
+                                @endfor
+                            )</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td style="text-align: center">
+                                <i>(nama pegawai)</i>
                             </td>
                         </tr>
                         <tr>
