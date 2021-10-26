@@ -81,6 +81,20 @@ class BatchExport implements FromCollection, WithHeadings, WithStyles, WithColum
                     if (!empty($orders[$k]['NO'])){
                         $num+=1;
                     }
+                } else {
+                    $orders[$kv]['No'] = $num;
+                    $orders[$kv]['DO Number']=$v->order->do_number;
+                    $orders[$kv]['RX Number']=$v->order->prescription->rx_number;
+                    $orders[$kv]['Patient Name']=$v->order->patient->full_name;
+                    $orders[$kv]['Patient IC']=$v->order->patient->identification;
+                    $orders[$kv]['Patient Pensioner No']=$v->order->patient->card->army_pension;
+                    $orders[$kv]['Agency']=$v->order->patient->tariff->name;
+                    $orders[$kv]['Quotation Date']=$v->order->created_at;
+                    $orders[$kv]['Item']=$voi->items->brand_name;
+                    $orders[$kv]['Qty']=$voi->quantity;
+                    $orders[$kv]['Total Price (RM)'] = $v->order->total_amount;
+                    $orders[$kv]['Status'] = $v->order->patient->card->type;
+                    $orders[$kv]['Batch Person'] = (!empty($batch->batchperson_id)) ? $v->batchperson->name : "";
                 }
             }
 
