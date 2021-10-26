@@ -1032,8 +1032,9 @@ class OrderController extends Controller
         $date = Carbon::now()->format('d/m/Y');
         $order_item = OrderItem::where('order_id', $id)->get();
         $delivery = Delivery::where('order_id', $id)->first();
-        $pdf = PDF::loadView('print.print3', compact('order', 'delivery', 'order_item', 'date'));
-        return $pdf->stream('do_' .$order->do_number. '_.pdf');
+        $prescription = Prescription::where('order_id', $id)->first();
+        $pdf = PDF::loadView('print.print3', compact('order', 'delivery', 'prescription', 'order_item', 'date'));
+        return $pdf->stream('do_' .$order->do_number. '.pdf');
     }
     public function delivery_status(Request $request, $order)
     {

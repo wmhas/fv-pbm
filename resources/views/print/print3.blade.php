@@ -258,7 +258,7 @@
                         <td>: {{ $order->do_number }}</td>
                     </tr>
                     @php
-                        $date = date_create($order->created_at);
+                        $date = date_create($prescription->rx_start);
                         $date = date_format($date, 'd/m/Y');
                     @endphp
                     <tr>
