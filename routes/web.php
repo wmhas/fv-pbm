@@ -178,7 +178,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/search', 'PurchaseController@search');
         Route::get('/{item}/create_purchase', 'PurchaseController@create_purchase');
         Route::post('/store_purchase', 'PurchaseController@store_purchase');
-        Route::get('/history', 'PurchaseController@history');
+        Route::get('/history', 'PurchaseController@history')->name('purchase.history');
     });
 
     // Borang Jev

@@ -102,13 +102,29 @@ class PurchaseController extends Controller
         ]);
     }
 
-    public function history()
+    public function history(Request $request)
     {
-        $purchases = Purchase::with('item')->with('salespersons')->paginate(15);
+        $startDate = $request->get('start_date');
+        $endDate = $request->get('end_date');
+        $poNo = $request->get('po_no');
+        $purchases = Purchase::query();
+        if ($startDate) {
+            $purchases = $purchases->whereDate('created_at', '>=', $startDate);
+        }
+        if ($endDate) {
+            $purchases = $purchases->whereDate('created_at', '<=', $endDate);
+        }
+        if ($poNo) {
+            $purchases = $purchases->where('po_number', 'like', '%'.$poNo.'%');
+        }
+        $purchases = $purchases->with(['item', 'salespersons'])->paginate(15);
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
         return view('purchase.history', [
             'purchases' => $purchases,
             'roles' => $roles,
+            'startDate' => $startDate,
+            'endDate' => $endDate,
+            'poNo' => $poNo,
         ]);
     }
 }
