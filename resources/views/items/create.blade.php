@@ -123,7 +123,7 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label>Purchase Quantity</label>
+                                    <label>Packaging Information</label>
                                     <input type="text" class="form-control" name="purchase_quantity" value="" required>
                                 </div>
                             </div>
