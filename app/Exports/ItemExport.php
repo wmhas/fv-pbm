@@ -2,15 +2,11 @@
 
 namespace App\Exports;
 
-use App\Models\Order;
-use App\Models\Item;
-use App\Models\OrderItem;
+use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 use Maatwebsite\Excel\Concerns\WithHeadings;
-use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\Exportable;
-use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
@@ -21,12 +17,10 @@ class ItemExport implements FromCollection, WithHeadings, WithStyles, WithColumn
     use Exportable;
 
     private $items;
-    private $date;
 
-    public function __construct($items, $date)
+    public function __construct($items)
     {
         $this->items = $items;
-        $this->date = $date;
     }
 
     /**
@@ -39,15 +33,17 @@ class ItemExport implements FromCollection, WithHeadings, WithStyles, WithColumn
         foreach ($this->items AS $item) {
             $quantity = 0;
             $price = 0;
+            $date = '-';
             foreach($item->order_items AS $orderItem) {
                 if ($orderItem->order) {
                     $quantity += $orderItem->quantity;
                     $price += $orderItem->price;
+                    $date = (new Carbon($orderItem->order->updated_at))->translatedFormat('d-m-Y');
                 }
             }
             $data[] = [
                 'NO' => $no,
-                'DATE' => $this->date,
+                'DATE' => $date,
                 'ITEM CODE' => $item->item_code,
                 'ITEM NAME' => $item->brand_name,
                 'QUANTITY USED' => ($quantity === 0) ? '0' : $quantity,
