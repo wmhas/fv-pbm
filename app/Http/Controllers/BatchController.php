@@ -8,6 +8,8 @@ use PDF;
 use App\Models\Order;
 use App\Models\Batch;
 use App\Models\BatchOrder;
+use App\Exports\BatchExport;
+use Excel;
 
 class BatchController extends Controller
 {
@@ -108,6 +110,21 @@ class BatchController extends Controller
             'roles' => $roles,
             'batchDate' => $batchDate
         ]);
+    }
+
+    public function export_batch_excel(Request $request)
+    {
+
+        if ($request->post('exportable') == "yes") {
+            $batch_id = $request->post('batch_id');
+            $export = new BatchExport($batch_id);
+            // if ($export->collection()->count() > 0) {
+                return Excel::download($export, 'batch.xlsx');
+            // }
+        }
+
+        $request->session()->flash('error', 'No Data to Export');
+        return redirect(url('/batch/'.$batch_id.'/batch_list'));
     }
 
     public function changeStatus(Batch $batch)

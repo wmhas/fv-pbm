@@ -97,7 +97,12 @@
                         </table>
                     </div>
                     <div class="card-footer clearfix">
-                        
+                        <form method="POST" action="{{ route('batch.export.excel') }}">
+                            @csrf
+                            <input type="hidden" name="exportable" value="yes">
+                            <input type="hidden" name="batch_id" value="{{ $batch->id }}">
+                            <button class="btn btn-success" type="submit">Export Excel</button>
+                        </form>
                     </div>
                 </div>
             </div>
