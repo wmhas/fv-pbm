@@ -37,6 +37,6 @@ class BorangJevController extends Controller
             'order' => $order
         ]);
         $pdf = PDF::loadHTML($view);
-        return $pdf->download('Borang_JHEV_DO_' . $doNumber . '.pdf');
+        return $pdf->download('borang_jhev_' . $doNumber . '.pdf');
     }
 }

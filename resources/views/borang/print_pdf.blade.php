@@ -285,8 +285,8 @@
                     <td colspan="3">
                         Nama Penuh <i>(seperti dalam kad pengenalan/passport/sijil kelahiran)</i>
                         <div style="border: 1px solid black; height: 20px; margin-top: 5px;">
-                            @if (!empty($order->patient->full_name))
-                                {{ $order->patient->full_name }}
+                            @if ($order->patient->relation != 'CardOwner')
+                                @if (!empty($order->patient->full_name)) {{ $order->patient->full_name }} @endif
                             @endif
                         </div>
                     </td>
@@ -296,8 +296,8 @@
                     <td colspan="3">
                         No. Kad Pengenalan/Pasport/Sijil Kelahiran
                         <div style="border: 1px solid black; height: 16px; margin-top: 5px;">
-                            @if (!empty($order->patient->identification))
-                                {{ $order->patient->identification }}
+                            @if ($order->patient->relation != 'CardOwner')
+                                @if (!empty($order->patient->identification)) {{ $order->patient->identification }} @endif
                             @endif
                         </div>
                     </td>

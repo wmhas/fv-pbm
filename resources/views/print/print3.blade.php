@@ -216,12 +216,22 @@
         </tr>
         <tr>
             <td>
-                @if (!empty($delivery->address_1)) {{ strtoupper($delivery->address_1) }} @endif
-                @if (!empty($delivery->address_2)) <br> {{ strtoupper($delivery->address_2) }} @endif
-                @if (!empty($delivery->address_3)) <br> {{ strtoupper($delivery->address_3) }} @endif
-                @if (!empty($delivery->postcode)) <br> {{ strtoupper($delivery->postcode) }} @endif
-                @if (!empty($delivery->city)) {{ strtoupper($delivery->city) }} @endif
-                @if (!empty($delivery->state->name)) <br> {{ strtoupper($delivery->state->name) }} @endif
+                @if (!empty($delivery))
+                    @if (!empty($delivery->address_1)) {{ strtoupper($delivery->address_1) }} @endif
+                    @if (!empty($delivery->address_2)) <br> {{ strtoupper($delivery->address_2) }} @endif
+                    @if (!empty($delivery->address_3)) <br> {{ strtoupper($delivery->address_3) }} @endif
+                    @if (!empty($delivery->postcode)) <br> {{ strtoupper($delivery->postcode) }} @endif
+                    @if (!empty($delivery->city)) {{ strtoupper($delivery->city) }} @endif
+                    @if (!empty($delivery->state->name)) <br> {{ strtoupper($delivery->state->name) }} @endif
+                @else
+                    @if (!empty($order->patient->address_1)) {{ strtoupper($order->patient->address_1) }} @endif
+                    @if (!empty($order->patient->address_2)) <br> {{ strtoupper($order->patient->address_2) }} @endif
+                    @if (!empty($order->patient->address_3)) <br> {{ strtoupper($order->patient->address_3) }} @endif
+                    @if (!empty($order->patient->postcode)) <br> {{ strtoupper($order->patient->postcode) }} @endif
+                    @if (!empty($order->patient->city)) {{ strtoupper($order->patient->city) }} @endif
+                    @if (!empty($order->patient->state->name)) <br> {{ strtoupper($order->patient->state->name) }} @endif
+                @endif
+                
             </td>
         </tr>
         <tr>

@@ -1017,7 +1017,7 @@ class OrderController extends Controller
         $batch = BatchOrder::where('order_id', $id)->first();
         $order_item = OrderItem::where('order_id', $id)->get();
         $pdf = PDF::loadView('print.print2', compact('batch', 'order_item', 'date'));
-        return $pdf->stream('downloadInvoice.pdf');
+        return $pdf->stream('invoice_' .$batch->order->do_number. '.pdf');
     }
 
     public function print_do()
@@ -1032,7 +1032,7 @@ class OrderController extends Controller
         $order_item = OrderItem::where('order_id', $id)->get();
         $delivery = Delivery::where('order_id', $id)->first();
         $pdf = PDF::loadView('print.print3', compact('order', 'delivery', 'order_item', 'date'));
-        return $pdf->stream('downloadDO.pdf');
+        return $pdf->stream('do_' .$order->do_number. '_.pdf');
     }
     public function delivery_status(Request $request, $order)
     {
