@@ -23,20 +23,25 @@
                     <div class="card-body">
                         <form method="get" action="/item/search">
                             <div class="row">
-                                <div class="col-md-7">
-                                    <div class="form-group">
-                                        <input type="text" @if (!empty($keyword)) value="{{ $keyword }}" @endif
-                                            name="keyword" class="form-control" placeholder="Item Code / Item Name">
+                                <div class="col-md-4">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <label class="input-group-text" for="stock">Stock</label>
+                                        </div>
+                                        <select class="form-control" name="stock" id="stock">
+                                            <option value="">All</option>
+                                            <option {{ isset($stock) && $stock === 'low' ? 'selected' : ''  }} value="low">Low Stock</option>
+                                        </select>
                                     </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="text" @if (!empty($keyword)) value="{{ $keyword }}" @endif name="keyword" class="form-control" placeholder="Item Code / Item Name">
                                 </div>
                                 <div class="col-md-2">
-                                    <div class="form-group">
-                                        <button type="submit" class="btn btn-secondary" style="width:100%;">Search</button>
-                                    </div>
+                                    <button type="submit" class="btn btn-secondary w-100">Search</button>
                                 </div>
-                                <div class="col-md-3">
-                                    <button type="button" class="btn btn-primary" style="width:95%;"
-                                        onclick="location.href='/item/create'">Add New Item</button>
+                                <div class="col-md-2">
+                                    <button type="button" class="btn btn-primary w-100" onclick="location.href='/item/create'">Add New Item</button>
                                 </div>
                             </div>
                         </form>

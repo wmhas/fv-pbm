@@ -37,18 +37,25 @@ class ItemController extends Controller
         $keyword = $request->keyword;
         $keyword = preg_replace("/[^a-zA-Z0-9 ]/", "", $keyword);
         $tarif = $request->tarif;
+        $stock = $request->get('stock');
 
-        if($keyword != null)
-        {
-            $items = Item::where('item_code', 'like', '%'. strtoupper($keyword). '%')
+        $items = Item::query();
+
+        if ($stock === 'low') {
+            $items = $items->whereDoesntHave('stocks', function ($stocks) {
+                $stocks->havingRaw('SUM(Quantity) > items.stock_level');
+            })->whereNotNull('stock_level');
+        }
+
+        if ($keyword) {
+            $items = $items->where('item_code', 'like', '%'. strtoupper($keyword). '%')
                 ->orwhere('brand_name', 'like', '%'. strtoupper($keyword). '%')
-                ->orderBy('item_code', 'asc')->limit(500)
-                ->paginate(15);
+                ->orderBy('item_code', 'asc')
+                ->limit(500);
         }
-        else
-        {
-            $items = Item::paginate(15);
-        }
+
+        $items = $items->paginate(15);
+
         $purchase_prices = [];
         foreach ($items as $item){
             $price = $item->purchase_price;
@@ -60,7 +67,7 @@ class ItemController extends Controller
             ]);
         }
         $roles= DB::table('model_has_roles')->join('users','model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
-        return view('items.index', compact('keyword', 'items' , 'tarif', 'roles', 'purchase_prices'));
+        return view('items.index', compact('keyword', 'items' , 'tarif', 'roles', 'purchase_prices', 'stock'));
     }
 
     public function view($id)
