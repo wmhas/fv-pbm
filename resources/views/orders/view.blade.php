@@ -143,7 +143,7 @@
 										$dispense_date = date_create($order->dispense_date);
 										$dispense_date = date_format($dispense_date, 'd/m/Y');
 									@endphp
-									<input type="text" class="form-control" value="{{ $dispense_date }}" readonly>
+									<input type="text" class="form-control" value="@if (!empty($order->dispense_date)) {{ $dispense_date }} @else {{ '' }} @endif" readonly>
 								</div>
 							</div>
 							<div class="col-12">
