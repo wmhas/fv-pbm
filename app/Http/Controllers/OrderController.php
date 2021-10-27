@@ -269,19 +269,30 @@ class OrderController extends Controller
     public function create_order($patient, $order = null)
     {
         $states = DB::table('states')->select("id","name")->get();
-        $order = Order::where('id', $order)->first();
+
+        $order = Order::where('patient_id', $patient)->where('do_number', '')->first();
         $salesPersons = SalesPerson::all();
-        if ($order == null) {
-            $order = new Order();
-            $order->patient_id = $patient;
-            $order->total_amount = 0;
-            $order->status_id = 1;
-            $order->dispensing_method = 0;
-            $order->rx_interval = 0;
-            $order->save();
-        }
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
-        return view('orders.create.create_order1', compact('order', 'states', 'roles', 'salesPersons'));
+
+        if (empty($order)) {
+            $order = Order::where('id', $order)->first();
+            
+            if ($order == null) {
+                $order = new Order();
+                $order->patient_id = $patient;
+                $order->total_amount = 0;
+                $order->status_id = 1;
+                $order->dispensing_method = 0;
+                $order->rx_interval = 0;
+                $order->save();
+            }
+            
+            return view('orders.create.create_order1', compact('order', 'states', 'roles', 'salesPersons'));
+        } else {
+            return view('orders.create.create_order1', compact('order', 'states', 'roles', 'salesPersons'));
+        }
+
+        
     }
 
     public function store_dispense($patient, $order_id, Request $request)
