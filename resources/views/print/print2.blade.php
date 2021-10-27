@@ -217,7 +217,7 @@
     <table style="width: 100%;">
         <tr>
             <td colspan="2">
-                <b>RASUMI MEDIPHARMA SDN. BHD.</b>
+                <b>RASUMI MEDIPHARMA SDN. BHD.</b> <small>727958-A</small>
             </td>
         </tr>
         <tr>
