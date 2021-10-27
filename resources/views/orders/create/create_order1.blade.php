@@ -103,7 +103,7 @@
                                 <div class="form-group">
                                     <label>Dispensing Method</label>
                                     <select id="dispensing_method" name="dispensing_method" class="form-control">
-                                        <option value="Walkin" @if (!empty($order) && $order->dispensing_method == 'Walkin') selected @endif>Walk In</option>
+                                        <option value="Walkin" selected>Walk In</option>
                                         <option value="Delivery" @if (!empty($order) && $order->dispensing_method == 'Delivery') selected @endif>Delivery</option>
                                     </select>
                                 </div>

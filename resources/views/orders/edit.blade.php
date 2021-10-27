@@ -303,12 +303,14 @@
                                 <div class="form-group">
                                     <label>Salesperson</label>
                                     <select class="form-control" name="salesperson">
-                                        @if (!empty($order->salesperson_id))
-                                            <option value="{{ $order->salesperson_id }}" selected>
-                                                {{ $order->salesperson->name }}</option>
-                                        @endif
                                         @foreach ($salesPersons as $person)
-                                            <option value="{{ $person->id }}">{{ $person->name }}</option>
+                                            <option value="{{ $person->id }}"
+                                                @if (!empty($order->salesperson_id))
+                                                   @if ($order->salesperson_id == $person->id)
+                                                       selected
+                                                   @endif
+                                                @endif
+                                                >{{ $person->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -475,12 +477,16 @@
                                 <div class="form-group">
                                     <label>Hospital</label>
                                     <select class="form-control" name="rx_hospital">
-                                        @if (!empty($order->prescription))
-                                            <option value="{{ $order->prescription->hospital_id }}" selected>
-                                                {{ $order->prescription->hospital->name }}</option>
-                                        @endif
                                         @foreach ($hospitals as $hospital)
-                                            <option value="{{ $hospital->id }}">{{ $hospital->name }}</option>
+                                            <option value="{{ $hospital->id }}"
+                                                @if (!empty($order->prescription))
+                                                    @if ($order->prescription->hospital_id == $hospital->id)
+                                                        selected
+                                                    @endif
+                                                @else
+                                                    @if ($hospital->id == '2') selected @endif
+                                                @endif
+                                                >{{ $hospital->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -489,12 +495,18 @@
                                 <div class="form-group">
                                     <label>Clinic</label>
                                     <select class="form-control" name="rx_clinic">
-                                        @if (!empty($order->prescription))
-                                            <option value="{{ $order->prescription->clinic_id }}" selected>
-                                                {{ $order->prescription->clinic->name }}</option>
-                                        @endif
                                         @foreach ($clinics as $clinic)
-                                            <option value="{{ $clinic->id }}">{{ $clinic->name }}</option>
+                                            <option value="{{ $clinic->id }}"
+                                                @if (!empty($order->prescription))
+                                                @if ($order->prescription->clinic_id == $clinic->id)
+                                                    selected
+                                                @endif 
+                                                @else 
+                                                    @if ($clinic->id == '9')
+                                                        selected
+                                                    @endif
+                                                @endif
+                                                >{{ $clinic->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
