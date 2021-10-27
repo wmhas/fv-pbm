@@ -36,17 +36,21 @@
                             <div class="col-3 d-flex flex-column justify-content-end">
                                 <p class="text-right"><strong>LAMPIRAN</strong></p>
                                 <p class="text-right">SUBMISSION DATE:</p>
-                                <p class="text-right">{{ $batchDate }}</p>
+                                @php
+                                    $date = date_create($batchDate);
+                                    $date = date_format($date, 'd/m/Y');
+                                @endphp
+                                <p class="text-right">{{ $date }}</p>
                             </div>
                         </div>
                     </div>
                     <div class="card-body" style="overflow-x:auto;">
-                        <table class="table table-bordered table-responsive">
+                        <table class="table table-bordered w-100">
                             <thead>
                                 <tr>
                                     <th style="width: 10px">No</th>
                                     <th>DO Number</th>
-                                    <th>RX Number</th>
+                                    {{-- <th>RX Number</th> --}}
                                     <th>Patient Detail</th>
                                     <th>Agency</th>
                                     <th>Quotation Date</th>
@@ -54,7 +58,7 @@
                                     <th>Qty</th>
                                     <th>Total Price (RM)</th>
                                     <th>Status</th>
-                                    <th>Batch Person</th>
+                                    {{-- <th>Batch Person</th> --}}
                                 </tr>
                             </thead>
                             <tbody>
@@ -64,7 +68,7 @@
                                     <td>
                                         <a href="{{ url('/order/'.$batch->order_id.'/view') }}" title="View Order"><i class="fas fa-folder-open"></i>{{ $batch->order->do_number }}</a> 
                                     </td>
-                                    <td>{{ $batch->order->prescription->rx_number }}</td>
+                                    {{-- <td>{{ $batch->order->prescription->rx_number }}</td> --}}
                                     <td>
                                         {{ $batch->order->patient->full_name }} <br>
                                         <small class="text-muted">(IC: {{ $batch->order->patient->identification }})</small><br>
@@ -96,7 +100,7 @@
                                     </td>
                                     <td class="text-right">{{ number_format((float)$batch->order->total_amount, 2, '.', '') }}</td>
                                     <td>{{ $batch->order->patient->card->type }}</td>
-                                    <td>@if (!empty($batch->batchperson_id)) {{ $batch->batchperson->name}} @else @endif</td>
+                                    {{-- <td>@if (!empty($batch->batchperson_id)) {{ $batch->batchperson->name}} @else @endif</td> --}}
                                 </tr>
                                 @endforeach
                             </tbody>
