@@ -769,8 +769,8 @@
             if (start && end) {
                 const startDate = new Date(start);
                 const endDate = new Date(end);
-                if (startDate > endDate) {
-                    alert('RX Start must be less or equal to RX End');
+                if (startDate >= endDate) {
+                    alert('RX Start must be less than RX End');
                     if ($(this).attr('name') === 'rx_start_date') {
                         $('[name="rx_start_date"]').val(end);
                     } else {
