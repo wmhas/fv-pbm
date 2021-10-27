@@ -62,7 +62,13 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                @php $total_price = 0; @endphp
+
                                 @foreach ($batches as $batch)
+                                    @php
+                                        $total_price = $total_price + $batch->order->total_amount;
+                                    @endphp
+
                                 <tr>
                                     <td class="text-center">{{ $loop->iteration }}</td>
                                     <td>
@@ -103,6 +109,11 @@
                                     {{-- <td>@if (!empty($batch->batchperson_id)) {{ $batch->batchperson->name}} @else @endif</td> --}}
                                 </tr>
                                 @endforeach
+                                <tr>
+                                    <th colspan="7"><p class="text-right text-bold m-0">GRAND TOTAL (RM)</p></th>
+                                    <td><p class="text-right m-0"><b>{{ number_format($total_price, 2) }}</b></p></td>
+                                    <td></td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
