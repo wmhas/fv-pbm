@@ -89,8 +89,8 @@
                                         <td>{{ $v['DISPENSEDBY'] }}</td>
                                         <td>{{ $v['MEDICINE'] }}</td>
                                         <td>{{ $v['QTY'] }}</td>
-                                        <td>{{ $v['UNITPRICE'] }}</td>
-                                        <td>{{ $v['UNITPRICE'] }}</td>
+                                        <td class="text-right">{{ number_format($v['UNITPRICE'],2) }}</td>
+                                        <td class="text-right">{{ number_format($v['TOTALPRICE'],2) }}</td>
                                         <td>{{ $v['STATUS'] }}</td>
                                     </tr>
                                     @endforeach
