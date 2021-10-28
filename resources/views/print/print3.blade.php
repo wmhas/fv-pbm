@@ -177,7 +177,7 @@
             </td>
         </tr>
         <tr>
-            <td>Tel: 03-4142 2445</td>
+            <td>Tel: 03-4131 3214</td>
         </tr>
     </table>
 
@@ -196,21 +196,24 @@
         </tr>
         <tr>
             <td>
+                @if ($order->patient->relation != 'CardOwner')
+                    (K/P: {{ $order->patient->identification }})
+                @endif
                 {{ strtoupper($order->patient->salutation) }} {{ strtoupper($order->patient->full_name) }}
                 @if ($order->patient->relation != 'CardOwner')
                     <br> 
                     @if ($order->patient->relation == 'Wife')
-                        ISTERI
+                        ISTERI KEPADA
                     @elseif ($order->patient->relation == 'Husband')
-                        SUAMI
+                        SUAMI KEPADA
                     @elseif ($order->patient->relation == 'Widowed')
-                        BALU
+                        BALU KEPADA
                     @elseif ($order->patient->relation == 'Children')
-                        ANAK
+                        ANAK KEPADA
                     @else
-                        WARIS
+                        WARIS KEPADA
                     @endif
-                        KEPADA {{ strtoupper($order->patient->card->salutation) }} {{ strtoupper($order->patient->card->name) }}
+                         {{ strtoupper($order->patient->card->salutation) }} {{ strtoupper($order->patient->card->name) }}
                 @endif
             </td>
         </tr>
@@ -243,7 +246,7 @@
                     </tr>
                     <tr>
                         <td><b>NRIC</b></td>
-                        <td>: {{ $order->patient->identification }}</td>
+                        <td>: {{ $order->patient->card->patient->identification }}</td>
                     </tr>
                     <tr>
                         <td><b>Phone</b></td>
