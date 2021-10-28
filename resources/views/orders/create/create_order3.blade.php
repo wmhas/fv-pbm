@@ -227,8 +227,9 @@
                                 </td>
                                 <td>
                                     <div class="form-group">
+                                        <input type="hidden" name="hidden_duration" id="hidden_duration" value="{{ $duration }}">
                                         <input type="number" name="duration" id="duration" class="value_d form-control"
-                                               style="width:60px;" value="{{ $duration }}" readonly>
+                                               style="width:60px;">
                                     </div>
                                 </td>
                                 <td>
@@ -404,7 +405,7 @@
                                     <td>
                                         <div class="form-group">
                                             <input type="number" name="duration" id="u_duration" class="u_value_d form-control"
-                                                   style="width:60px;" value="{{ $duration }}" readonly>
+                                                   style="width:60px;" value="{{ $duration }}">
                                         </div>
                                     </td>
                                     <td>
@@ -620,6 +621,7 @@
 
             $('#item_id').change(function() {
                 $('#quantity').val('');
+                var hidden_duration = $('#hidden_duration').val();
                 var id = $(this).val();
                 parent = $(this).parent().parent().parent();
                 // console.log(id);
@@ -665,7 +667,8 @@
                                 parent.find("#indication").val(indication);
                                 parent.find("#frequency").val(frequency_id).trigger("change");
                                 parent.find("#formula_id").val(formula_id);
-                                parent.find("#formula_value").val(formula_value);
+                                parent.find("#formula_value").val(formula_value);                            
+                                $('#duration').val(hidden_duration);
                                 // $("#gst").val(0.00);
                             }
                         }

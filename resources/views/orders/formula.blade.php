@@ -178,6 +178,7 @@
             });
 
             $('#item_id').change(function() {
+                var hidden_duration = $('#hidden_duration').val();
                 $('#quantity').val('');
                 var id = $(this).val();
                 // console.log(id);
@@ -225,6 +226,7 @@
                                     'selected', 'selected');
                                 $("#formula_id").val(formula_id);
                                 $("#formula_value").val(formula_value);
+                                $('#duration').val(hidden_duration);
                                 // $("#gst").val(0.00);
                             }
                         }
@@ -352,6 +354,27 @@
                     $("#do_number").val(response);
                 }
             });
+        });
+
+        async function checkDate() {
+            const start = $('[name="rx_start_date"]').val();
+            const end = $('[name="rx_end_date"]').val();
+            if (start && end) {
+                const startDate = new Date(start);
+                const endDate = new Date(end);
+                if (startDate >= endDate) {
+                    alert('RX Start must be less than RX End');
+                    if ($(this).attr('name') === 'rx_start_date') {
+                        $('[name="rx_start_date"]').val(end);
+                    } else {
+                        $('[name="rx_end_date"]').val(start);
+                    }
+                }
+            }
+        }
+        $(document).ready(function () {
+            $('[name="rx_start_date"]').change(checkDate);
+            $('[name="rx_end_date"]').change(checkDate);
         });
     </script>
 @endsection

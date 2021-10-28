@@ -235,8 +235,9 @@
                                 </td>
                                 <td>
                                     <div class="form-group">
+                                        <input type="hidden" name="hidden_duration" id="hidden_duration" value="{{ $duration }}">
                                         <input type="number" name="duration" id="duration" class="value_d form-control"
-                                               style="width:60px;" value="{{ $duration }}" readonly>
+                                               style="width:60px;">
                                     </div>
                                 </td>
                                 <td>
@@ -723,7 +724,7 @@
                                     <td>
                                         <div class="form-group">
                                             <input type="number" name="duration" id="u_duration" class="u_value_d form-control"
-                                                   style="width:60px;" value="{{ $duration }}" readonly>
+                                                   style="width:60px;" value="{{ $duration }}">
                                         </div>
                                     </td>
                                     <td>
@@ -760,29 +761,5 @@
             </div>
         </div>
     </div>
-@endsection
-@section('script')
-    <script>
-        async function checkDate() {
-            const start = $('[name="rx_start_date"]').val();
-            const end = $('[name="rx_end_date"]').val();
-            if (start && end) {
-                const startDate = new Date(start);
-                const endDate = new Date(end);
-                if (startDate >= endDate) {
-                    alert('RX Start must be less than RX End');
-                    if ($(this).attr('name') === 'rx_start_date') {
-                        $('[name="rx_start_date"]').val(end);
-                    } else {
-                        $('[name="rx_end_date"]').val(start);
-                    }
-                }
-            }
-        }
-        $(document).ready(function () {
-            $('[name="rx_start_date"]').change(checkDate);
-            $('[name="rx_end_date"]').change(checkDate);
-        });
-    </script>
 @endsection
 @include('orders.formula')
