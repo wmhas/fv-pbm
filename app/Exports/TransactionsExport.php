@@ -57,7 +57,8 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
             "items.brand_name as med",
             "order_items.quantity",
             "items.selling_price as unit_price",
-            "order_items.price as total_price"
+            "order_items.price as total_price",
+            "cards.type as type",
         )->get();
 
         $orders = [];
@@ -80,10 +81,11 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
                         $orders[$k]['ADDRES']=$v->address;
                         $orders[$k]['RX NUMBER']=$v->rx_number;
                         $orders[$k]['DISPENSED BY']=$v->dispensing_by;
-                        $orders[$k]['MEDICINE']=$voi->items->brand_name;
+                        $orders[$k]['MEDICINE']=$v->med;
                         $orders[$k]['QTY'] = $voi->quantity;
                         $orders[$k]['UNIT PRICE'] = $v->unit_price;
                         $orders[$k]['TOTAL PRICE'] = $v->total_price;
+                        $orders[$k]['STATUS'] = $v->type;
                     }
 
                     if (!empty($orders[$k]['NO'])){
@@ -104,7 +106,7 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
             'DATE',
             'DO NUMBER',
             'IC',
-            'FULLANME',
+            'FULLNAME',
             'ADDRES',
             'RX NUMBER',
             'DISPENSED BY',
@@ -112,12 +114,42 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
             'QTY',
             'UNIT PRICE',
             'TOTAL PRICE',
+            'STATUS',
+            'REMARKS',
         ];
     }
 
     public function styles(Worksheet $sheet)
     {
-        $sheet->getStyle('A1:L1')->getFont()->setBold(true);
+        $sheet->getStyle('A1:N1')->getFont()->setBold(true);
+        $column = 'C';
+        $lastRow = $sheet->getHighestRow();
+        $start = 2;
+        $first = $sheet->getCell('C2')->getValue();
+        $x = $start;
+        $no = 1;
+        for ($row = 1; $row <= $lastRow; $row++) {
+            if($row > 1){
+                if($first != $sheet->getCell($column.$row)->getValue()){
+                    $z = $start-1;
+                    $sheet->mergeCells('A'.$x.':A'.$z);
+                    $sheet->mergeCells('B'.$x.':B'.$z);
+                    $sheet->mergeCells('C'.$x.':C'.$z);
+                    $sheet->mergeCells('D'.$x.':D'.$z);
+                    $sheet->mergeCells('E'.$x.':E'.$z);
+                    $sheet->mergeCells('F'.$x.':F'.$z);
+                    $sheet->mergeCells('G'.$x.':G'.$z);
+                    $sheet->mergeCells('H'.$x.':H'.$z);
+                    $sheet->mergeCells('M'.$x.':M'.$z);
+                    $sheet->mergeCells('N'.$x.':N'.$z);
+                    $x = $start;
+                    $first = $sheet->getCell($column.$row)->getValue();
+                    $no++;
+                    $sheet->setCellValue('A'.$x, $no);
+                }
+                $start++;
+            }
+        }
     }
 
     public function columnFormats(): array
