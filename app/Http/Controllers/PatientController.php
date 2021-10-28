@@ -483,7 +483,7 @@ class PatientController extends Controller
         $card->remark = $request->remark;
         $card->save();
 
-        $patient=Patient::where('id', $patient->id)->first();
+        $patient=Patient::where('id', $patient->card->patient->id)->first();
         $patient->salutation= $request->salutation;
         $patient->full_name = $request->full_name;
         $patient->identification  = $request->identification;
