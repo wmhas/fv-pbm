@@ -37,8 +37,13 @@
                                 <p class="text-right"><strong>LAMPIRAN</strong></p>
                                 <p class="text-right">SUBMISSION DATE:</p>
                                 @php
-                                    $date = date_create($batchDate);
-                                    $date = date_format($date, 'd/m/Y');
+                                    if (!empty($group->submission_date)) {
+                                        $date = date_create($group->submission_date);
+                                        $date = date_format($date, 'd/m/Y');
+                                    } else {
+                                        $date = "N/A";
+                                    }
+                                    
                                 @endphp
                                 <p class="text-right">{{ $date }}</p>
                             </div>

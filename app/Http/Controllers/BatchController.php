@@ -92,23 +92,12 @@ class BatchController extends Controller
     public function show_batch(Batch $batch)
     {
         $batch_orders = BatchOrder::where('batch_id', $batch->id)->get();
-        $batchDate = "";
-
-        if ($batch){
-            if (strlen($batch->created_at)>0) {
-                $split = explode(" ",$batch->created_at);
-                if (count($split) == 2) {
-                    $batchDate = str_replace("-", "/", $split[0]);
-                }
-            }
-        }
 
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
         return view('batch.batch', [
             'batches' => $batch_orders,
             'group' => $batch,
-            'roles' => $roles,
-            'batchDate' => $batchDate
+            'roles' => $roles
         ]);
     }
 
