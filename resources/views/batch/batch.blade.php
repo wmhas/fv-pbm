@@ -55,7 +55,6 @@
                                 <tr>
                                     <th style="width: 10px">No</th>
                                     <th>DO Number</th>
-                                    {{-- <th>RX Number</th> --}}
                                     <th>Patient Detail</th>
                                     <th>Agency</th>
                                     <th>Quotation Date</th>
@@ -63,7 +62,6 @@
                                     <th>Qty</th>
                                     <th>Total Price (RM)</th>
                                     <th>Status</th>
-                                    {{-- <th>Batch Person</th> --}}
                                 </tr>
                             </thead>
                             <tbody>
@@ -79,14 +77,13 @@
                                     <td>
                                         <a href="{{ url('/order/'.$batch->order_id.'/view') }}" title="View Order"><i class="fas fa-folder-open"></i>{{ $batch->order->do_number }}</a> 
                                     </td>
-                                    {{-- <td>{{ $batch->order->prescription->rx_number }}</td> --}}
                                     <td>
                                         {{ $batch->order->patient->full_name }} <br>
                                         <small class="text-muted">(IC: {{ $batch->order->patient->identification }})</small><br>
                                         <small class="text-muted">(Pensioner No : {{ $batch->order->patient->card->army_pension }})</small>
                                     </td>
                                     <td> @if (!empty($batch->order->patient->tariff_id)) {{ $batch->order->patient->tariff->name }} @else MINDEF @endif</td>
-                                    <td>{{ date("d/m/Y", strtotime($batch->order->created_at))}}</td>
+                                    <td>{{ date("d/m/Y", strtotime($batch->order->dispense_date))}}</td>
                                     <td class="p-0">
                                         @php 
                                             $oitems = $batch->order->orderitem; 
@@ -111,7 +108,6 @@
                                     </td>
                                     <td class="text-right">{{ number_format((float)$batch->order->total_amount, 2, '.', '') }}</td>
                                     <td>{{ $batch->order->patient->card->type }}</td>
-                                    {{-- <td>@if (!empty($batch->batchperson_id)) {{ $batch->batchperson->name}} @else @endif</td> --}}
                                 </tr>
                                 @endforeach
                                 <tr>
@@ -123,10 +119,10 @@
                         </table>
                     </div>
                     <div class="card-footer clearfix">
-                        <form method="POST" action="{{ route('batch.export.excel') }}">
+                        <form method="POST" enctype="multipart/form-data" action="{{ route('batch.export.excel') }}">
                             @csrf
                             <input type="hidden" name="exportable" value="yes">
-                            <input type="hidden" name="batch_id" value="{{ $batch->id }}">
+                            <input type="hidden" name="batch_id" value="{{ $group->id }}">
                             <button class="btn btn-success" type="submit">Export Excel</button>
                         </form>
                     </div>

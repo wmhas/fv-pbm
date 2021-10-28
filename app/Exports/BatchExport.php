@@ -33,7 +33,10 @@ class BatchExport implements FromCollection, WithHeadings, WithStyles, WithColum
     */
     public function collection()
     {
-        $order = BatchOrder::where("batch_id", $this->batch_id)->get();
+        $order = BatchOrder::join('order_items','order_items.order_id','=','batch_orders.order_id')
+            ->join('items','items.id','=','order_items.myob_product_id')
+            ->where("batch_id", $this->batch_id)
+            ->get();
 
         $orders = [];
 
@@ -41,61 +44,19 @@ class BatchExport implements FromCollection, WithHeadings, WithStyles, WithColum
 
         if (count($order)>0){
 
-            foreach ($order as $kv => $v) {
-
-                $oi = OrderItem::with("items")->where("order_id",$v->order->id)->get();
-                
-                if (count($oi)>0) {
-                    foreach ($oi as $k => $voi) {
-                        if ($k==0){ 
-                            $orders[$k]['No'] = $num;
-                            $orders[$k]['DO Number']=$v->order->do_number;
-                            $orders[$k]['RX Number']=$v->order->prescription->rx_number;
-                            $orders[$k]['Patient Name']=$v->order->patient->full_name;
-                            $orders[$k]['Patient IC']=$v->order->patient->identification;
-                            $orders[$k]['Patient Pensioner No']=$v->order->patient->card->army_pension;
-                            $orders[$k]['Agency']=$v->order->patient->tariff->name;
-                            $orders[$k]['Quotation Date']=$v->order->created_at;
-                            $orders[$k]['Item']=$voi->items->brand_name;
-                            $orders[$k]['Qty']=$voi->quantity;
-                            $orders[$k]['Total Price (RM)'] = $v->order->total_amount;
-                            $orders[$k]['Status'] = $v->order->patient->card->type;
-                            $orders[$k]['Batch Person'] = (!empty($batch->batchperson_id)) ? $v->batchperson->name : "";
-                        } else {
-                            $orders[$k]['No'] = "";
-                            $orders[$k]['DO Number']="";
-                            $orders[$k]['RX Number']="";
-                            $orders[$k]['Patient Name']="";
-                            $orders[$k]['Patient IC']="";
-                            $orders[$k]['Patient Pensioner No']="";
-                            $orders[$k]['Agency']="";
-                            $orders[$k]['Quotation Date']="";
-                            $orders[$k]['Item']=$voi->items->brand_name;
-                            $orders[$k]['Qty']=$voi->quantity;
-                            $orders[$k]['Total Price (RM)'] = "";
-                            $orders[$k]['Status'] = "";
-                            $orders[$k]['Batch Person'] = "";
-                        }
-                    }
-
-                    if (!empty($orders[$k]['NO'])){
-                        $num+=1;
-                    }
-                } else {
-                    $orders[$kv]['No'] = $num;
-                    $orders[$kv]['DO Number']=$v->order->do_number;
-                    $orders[$kv]['RX Number']=$v->order->prescription->rx_number;
-                    $orders[$kv]['Patient Name']=$v->order->patient->full_name;
-                    $orders[$kv]['Patient IC']=$v->order->patient->identification;
-                    $orders[$kv]['Patient Pensioner No']=$v->order->patient->card->army_pension;
-                    $orders[$kv]['Agency']=$v->order->patient->tariff->name;
-                    $orders[$kv]['Quotation Date']=$v->order->created_at;
-                    $orders[$kv]['Item']="";
-                    $orders[$kv]['Qty']="";
-                    $orders[$kv]['Total Price (RM)'] = $v->order->total_amount;
-                    $orders[$kv]['Status'] = $v->order->patient->card->type;
-                    $orders[$kv]['Batch Person'] = (!empty($batch->batchperson_id)) ? $v->batchperson->name : "";
-                }
+            foreach ($order as $k => $v) {
+                $orders[$k]['No'] = $num;
+                $orders[$k]['DO Number']=$v->order->do_number;
+                $orders[$k]['Patient Name']=$v->order->patient->full_name;
+                $orders[$k]['Patient IC']=$v->order->patient->identification;
+                $orders[$k]['Patient Pensioner No']=$v->order->patient->card->army_pension;
+                $orders[$k]['Agency']=$v->order->patient->tariff->name;
+                $orders[$k]['Quotation Date']=$v->order->dispense_date;
+                $orders[$k]['Item']= $v->brand_name;
+                $orders[$k]['Qty']= $v->quantity;
+                $orders[$k]['Total Price (RM)'] = $v->order->total_amount;
+                $orders[$k]['Status'] = $v->order->patient->card->type;
+                $num++;
             }
 
         }
@@ -108,7 +69,6 @@ class BatchExport implements FromCollection, WithHeadings, WithStyles, WithColum
         return [
             'NO',
             'DO Number',
-            'RX Number',
             'Patient Name',
             'Patient IC',
             'Patient Pensioner No',
@@ -117,14 +77,45 @@ class BatchExport implements FromCollection, WithHeadings, WithStyles, WithColum
             'Item',
             'Qty',
             'Total Price (RM)',
-            'Status',
-            'Batch Person'
+            'Status'
         ];
     }
 
     public function styles(Worksheet $sheet)
     {
         $sheet->getStyle('A1:M1')->getFont()->setBold(true);
+        $column = 'B';
+        $lastRow = $sheet->getHighestRow();
+        $start = 2;
+        $first = $sheet->getCell('B2')->getValue();
+        $x = $start;
+        $no = 1;
+        for ($row = 1; $row <= $lastRow; $row++) {
+            if($row > 1){
+                if($first != $sheet->getCell($column.$row)->getValue()){
+                    $z = $start-1;
+                    $sheet->mergeCells('A'.$x.':A'.$z);
+                    $sheet->mergeCells('B'.$x.':B'.$z);
+                    $sheet->mergeCells('C'.$x.':C'.$z);
+                    $sheet->mergeCells('D'.$x.':D'.$z);
+                    $sheet->mergeCells('E'.$x.':E'.$z);
+                    $sheet->mergeCells('F'.$x.':F'.$z);
+                    $sheet->mergeCells('G'.$x.':G'.$z);
+                    $sheet->mergeCells('J'.$x.':J'.$z);
+                    $sheet->mergeCells('K'.$x.':K'.$z);
+                    $x = $start;
+                    $first = $sheet->getCell($column.$row)->getValue();
+                    $no++;
+                    $sheet->setCellValue('A'.$x, $no);
+                }
+                $start++;
+            }
+        }
+        $sheet->setCellValue('A'.($lastRow+1), 'GRAND TOTAL (RM)');
+        $sheet->mergeCells('A'.($lastRow+1).':I'.($lastRow+1));
+
+        $sheet->setCellValue('J'.($lastRow+1), '=SUM(J2:J'.$lastRow.')');
+        $sheet->getStyle('A'.($lastRow+1).':J'.($lastRow+1))->getFont()->setBold(true);
     }
 
     public function columnFormats(): array
