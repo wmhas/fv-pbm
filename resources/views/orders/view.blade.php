@@ -513,6 +513,7 @@
 							@elseif ($order->status_id == 4)
 								<a href="{{action('OrderController@download_do',[$order->id])}}" style="float:right; margin-left:3px; margin-right:3px;" target="_blank"
 										class="btn btn-secondary"><i class="mdi mdi-printer"></i>Print DO</a>
+								<a class="btn btn-primary" type="button" href="{{ url('/order/'.$order->id.'/update') }}" style="float:left; margin-left:3px; margin-right:3px;">Edit Order</a>
 							@elseif ($order->status_id == 5)
 								<a href="{{action('OrderController@download_do',[$order->id])}}" style="float:right; margin-left:3px; margin-right:3px;" target="_blank"
 									class="btn btn-secondary"><i class="mdi mdi-printer"></i>Print DO</a>
