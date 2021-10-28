@@ -506,6 +506,8 @@
 									<button class="btn btn-primary" type="submit"
 									style="float:right; margin-left:3px; margin-right:3px;">Complete Order</button>
 								</form>
+								<a href="{{action('OrderController@download_justify',[$order->id])}}" style="float:right; margin-left:3px; margin-right:3px;" target="_blank" 
+									class="btn btn-secondary"><i class="mdi mdi-printer"></i>Print Justify</a>
 								<a href="{{action('OrderController@download_do',[$order->id])}}" style="float:right; margin-left:3px; margin-right:3px;" target="_blank"
 									class="btn btn-secondary"><i class="mdi mdi-printer"></i>Print DO</a>
 								<button class="btn btn-warning" data-toggle='modal' data-target='#returnModalOrder' style="float:left; margin-left:3px; margin-right:3px;">Return Order</button>

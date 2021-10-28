@@ -1032,6 +1032,18 @@ class OrderController extends Controller
         return $pdf->stream('invoice_' .$batch->order->do_number. '.pdf');
     }
 
+    public function download_justify($id)
+    {
+        $order = DB::table('orders as a')
+            ->join('patients as b', 'a.patient_id', 'b.id')
+            ->join('cards as c', 'c.id', 'b.card_id')
+            ->join('prescriptions as d', 'd.order_id', 'a.id')
+            ->select('b.full_name as full_name', 'b.identification as identification', 'c.army_pension as army_pension', 'a.do_number as do_number', 'a.dispense_date as dispense_date', 'd.rx_number as rx_number')
+            ->where('a.id', $id)->first();
+        $pdf = PDF::loadView('print.printjustify', compact('order'));
+        return $pdf->stream('justify_' .$order->do_number. '.pdf');
+    }
+
     public function print_do()
     {
         return view('print.print3');

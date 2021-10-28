@@ -107,6 +107,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/{order}/new_resubmission', 'OrderController@new_resubmission');
         Route::get('/downloadPDF2/{id}', 'OrderController@download_invoice');
         Route::get('/downloadPDF3/{id}', 'OrderController@download_do');
+        Route::get('/downloadPDF4/{id}', 'OrderController@download_justify');
         Route::post('/{order}/delivery', 'OrderController@delivery_status');
     });
     //report
