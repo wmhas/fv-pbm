@@ -477,7 +477,7 @@ class OrderController extends Controller
 
     public function store_item(Request $request)
     {
-        $order = Order::select("id","dispensing_method","patient_id")->where('id',  $request->input('order_id'))->first();
+        $order = Order::select("id","dispensing_method","patient_id", "total_amount")->where('id',  $request->input('order_id'))->first();
         $location = Location::where('item_id', $request->input('item_id'))->first();
         if ($order->dispensing_method == 'Walkin' && $location->counter >= $request->input('quantity')) {
             $location->counter = $location->counter - $request->input('quantity');
