@@ -130,6 +130,7 @@ class BatchController extends Controller
     public function changeStatus(Batch $batch)
     {
         $batch->batch_status = 'batched';
+        $batch->submission_date = now();
         $batch->save();
         return redirect()->action('BatchController@index')->with(['status' => true, 'message' => 'Order Batched!']);
     }
