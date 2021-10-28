@@ -228,7 +228,7 @@
             </td>
         </tr>
         <tr>
-            <td style="width: 70%;">Tel: 03-4142 2445</td>
+            <td style="width: 70%;">Tel: 03-4131 3214</td>
             <td><b>SST Reg. No.:</b></td>
         </tr>
     </table>
@@ -268,11 +268,14 @@
                     </tr>
                     <tr>
                         <td><b>NRIC</b></td>
-                        <td>: {{ $batch->order->patient->identification }}</td>
+                        <td>: {{ $batch->order->patient->card->patient->identification }}</td>
                     </tr>
                     <tr>
                         <td colspan="2">
-                            {{ strtoupper($batch->order->patient->salutation) }} {{ strtoupper($batch->order->patient->full_name) }}
+                            @if ($batch->order->patient->relation != 'CardOwner')
+                                (K/P: {{ $batch->order->patient->identification }})
+                            @endif
+                             {{ strtoupper($batch->order->patient->salutation) }} {{ strtoupper($batch->order->patient->full_name) }}
                             @if ($batch->order->patient->relation != 'CardOwner')
                                 <br> 
                                 @if ($batch->order->patient->relation == 'Wife')
