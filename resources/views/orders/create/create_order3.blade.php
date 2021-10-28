@@ -115,9 +115,9 @@
                                         @else @endif" style="width:200px;" disabled>
                                     </td>
                                     <td>
-                                        <input id="i_frequency" type="hidden" class="form-control" value="@if (!empty($o_i->items)) {{ $o_i->items->frequency->id }} @else @endif"
+                                        <input id="i_frequency" type="hidden" class="form-control" value="@if (!empty($o_i->frequencies)) {{ $o_i->frequencies->id }} @else @endif"
                                                style="width:50px;" disabled>
-                                        <input type="text" class="form-control" value="@if (!empty($o_i->items)) {{ $o_i->items->frequency->name }} @else @endif"
+                                        <input type="text" class="form-control" value="@if (!empty($o_i->frequencies)) {{ $o_i->frequencies->name }} @else @endif"
                                                style="width:50px;" disabled>
                                     </td>
                                     <td>

@@ -372,7 +372,7 @@
 									@else @endif" style="width:200px;" disabled>
 									</td>
 									<td>
-										<input type="text" class="form-control" value="@if (!empty($o_i->items)) {{ $o_i->items->frequency->name }} @else @endif"
+										<input type="text" class="form-control" value="@if (!empty($o_i)) {{ $o_i->frequencies->name }} @else @endif"
 										style="width:50px;" disabled>
 									</td>
 									<td>
