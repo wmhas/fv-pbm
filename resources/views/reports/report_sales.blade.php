@@ -22,24 +22,31 @@
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-body">
-                            <form method="GET" action="/report/search/report_sales">
+                            <form method="POST" enctype="multipart/form-data" action="{{ url('report/search/report_sales') }}">
                                 <div class="row">
+                                    @csrf
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Date From</label>
-                                            <input name="startDate" type="date" class="form-control" required>
+                                            <input name="startDate" type="date" class="form-control">
                                         </div>
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Date To</label>
-                                            <input name="endDate" type="date" class="form-control" required>
+                                            <input name="endDate" type="date" class="form-control">
                                         </div>
                                     </div>
                                     <div class="col-md-2">
                                         <label></label>
                                         <div class="form-group">
-                                            <button type="submit" class="btn btn-primary" style=" width:100%;">Search</button>
+                                            <button type="submit" class="btn btn-success" style=" width:100%;" name="filter" value="1">Search</button>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label></label>
+                                        <div class="form-group">
+                                            <button type="submit" class="btn btn-primary" style=" width:100%;" name="filter" value="2">Export</button>
                                         </div>
                                     </div>
                                     <!-- <div class="col-md-2">

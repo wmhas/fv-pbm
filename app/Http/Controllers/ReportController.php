@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Session;
 use PDF;
 use Excel;
 use App\Exports\TransactionsExport;
+use App\Exports\TransactionsSalesExport;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -52,6 +53,9 @@ class ReportController extends Controller
 
     public function search_sales(Request $request)
     {
+        if($request->filter == 2){
+            return $this->export_report($request);
+        }
         // ini_set('max_execution_time', 1000);
         if ($request->post('startDate') != null && $request->post('endDate') != null) {
             $orders= Order::with('patient.tariff')->whereIn('status_id', [4, 5])
@@ -62,6 +66,25 @@ class ReportController extends Controller
         }
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
         return view('reports.report_sales', ['orders' => $orders, 'roles' => $roles]);
+    }
+
+    public function export_report($request)
+    {   
+        $startDate = false;
+        $endDate = false;
+
+        if ($request->post('startDate') != null && $request->post('endDate') != null) {
+            $startDate = $request->startDate;
+            $endDate = $request->endDate;
+        }
+
+        $transaction = new TransactionsSalesExport($startDate, $endDate);
+        if ($transaction->collection()->count() > 0) {
+            return Excel::download($transaction, 'transactionssales.xlsx');
+        }
+
+        $request->session()->flash('error', 'No Data to Export');
+        return redirect(url('/report/report_sales'));
     }
 
     public function report_refill(Request $request)
