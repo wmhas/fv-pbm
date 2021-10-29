@@ -1002,6 +1002,11 @@ class OrderController extends Controller
         // $items = DB::table('myob_products as a')->join('myob_product_details as b', 'b.myob_product_id', 'a.ItemNumber')->where('IsInactive', 'N')->get();
         $item_lists = OrderItem::where('order_id', $id)->get();
         $resubmission = 1;
+        // Get rx_start and rx_end from table prescription
+        $prescription = Prescription::select('rx_start', 'rx_end')->where('order_id', $order->id)->first();
+        // Get duration in days
+        $duration = floor(abs(strtotime($prescription->rx_end) - strtotime($prescription->rx_start)) / (60 * 60 * 24));
+
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
         return view('orders.edit', compact(
             'states',
@@ -1013,6 +1018,7 @@ class OrderController extends Controller
             'items',
             'item_lists',
             'resubmission',
+            'duration',
             'roles'
         ));
     }
