@@ -118,13 +118,19 @@
                             </tbody>
                         </table>
                     </div>
-                    <div class="card-footer clearfix">
+                    <div class="card-footer clearfix d-flex">
                         <form method="POST" enctype="multipart/form-data" action="{{ route('batch.export.excel') }}">
                             @csrf
                             <input type="hidden" name="exportable" value="yes">
                             <input type="hidden" name="batch_id" value="{{ $group->id }}">
                             <button class="btn btn-success" type="submit">Export Excel</button>
                         </form>
+                        @if ($group->batch_status == "unbatch")
+                            <form action="{{ url('/batch/'.$group->id.'/batch_list') }}" method="POST" class="ml-auto">
+                                @csrf
+                                <button  class="btn btn-primary" type="submit" data-toggle="tooltip" title="Batch This Order">Batch This Order</button>
+                            </form>
+                        @endif
                     </div>
                 </div>
             </div>
