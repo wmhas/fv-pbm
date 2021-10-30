@@ -96,19 +96,11 @@
                                         <td></td>       
                                     @endif
                                     @if ($o->rx_interval == 2)
-                                    {{--<td style="text-align: center;">
+                                    <td style="text-align: center;">
                                         <a class="btn btn-primary" type="button" href="{{ url('/order/'.$o->id.'/new_resubmission') }}">
                                             <i class="mdi mdi-repeat"></i>
                                         </a>
-                                    </td>--}}
-                                        <td style="text-align: center;">
-                                            <form method="post" action="{{ url('/order/'.$o->id.'/resubmission') }}">
-                                                @csrf
-                                                <button class="btn btn-primary" type="submit">
-                                                    <i class="mdi mdi-repeat"></i>
-                                                </button>
-                                            </form>
-                                        </td>
+                                    </td>
                                     @elseif ($o->rx_interval == 3)
                                         <td style="text-align: center;">
                                             <span class="badge bg-success" style="font-size: 100%;">Complete</span>
