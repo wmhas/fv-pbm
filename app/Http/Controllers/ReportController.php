@@ -64,32 +64,25 @@ class ReportController extends Controller
     public function report_refill(Request $request)
     {
         // dd($request->all());
-        $orders = null;
-        $order_lists = null;
+        $startDate = $request->startDate;
+        $endDate = $request->endDate;
 
-        if ($request->startDate != null && $request->endDate != null) {
-            $order_lists = DB::table('orders')
-                ->select('orders.*', 'prescriptions.*', 'patients.*')
-                ->join('prescriptions', 'orders.id', '=', 'prescriptions.order_id')
-                ->join('patients', 'orders.patient_id', '=', 'patients.id')
-                ->whereIn('status_id', [4, 5])
-                ->where([
-                    ['prescriptions.next_supply_date', '>=', $request->startDate],
-                    ['prescriptions.next_supply_date', '<=', $request->endDate],
-                    ['orders.rx_interval', '>', '1'],
-                    ['orders.total_amount', '!=', '0'],
-                ])
-                ->whereNull('orders.deleted_at')
-                ->orderby('prescriptions.next_supply_date', 'asc')
-                ->paginate(15);
-        } else {
-            $orders = Order::with('prescription','patient')->where('rx_interval', '>', '1')
-                ->where('total_amount', '!=', '0')
-                ->whereIn('status_id', [4, 5])
-                ->paginate(15);
-        }
+        $orders = Order::query()
+            ->whereHas('prescription', function ($prescription) use ($startDate, $endDate) {
+                if ($startDate) {
+                    $prescription->where('next_supply_date', '>=', $startDate);
+                }
+                if ($endDate) {
+                    $prescription->where('next_supply_date', '<=', $endDate);
+                }
+            })->with(['prescription', 'patient'])
+            ->where('rx_interval', '>', '1')
+            ->where('total_amount', '!=', '0')
+            ->whereIn('status_id', [4, 5])
+            ->paginate(15);
+
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
-        return view('reports.report_refill', compact('orders', 'order_lists', 'roles'));
+        return view('reports.report_refill', compact('orders', 'roles'));
     }
 
     private function getItems ($startDate, $endDate, $method, $keyword, $order = 'item_code', $direction = 'asc')

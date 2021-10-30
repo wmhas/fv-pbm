@@ -62,54 +62,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @if (!empty($order_lists))
-                                @foreach ($order_lists as $o)
-                                <tr>
-                                    <td>{{ $loop->iteration}}</td>
-                                    <td>
-                                        <a href="{{ url('/order/'.$o->id.'/view') }}" title="View Order">
-                                            {{ $o->do_number }}
-                                        </a>
-                                        <div class="mt-2">
-                                            @if ($o->status_id == 4)
-                                                <span class="badge bg-success" style="font-size: 100%;">Complete Order</span>
-                                            @elseif ($o->status_id == 5)
-                                                <span class="badge bg-info" style="font-size: 100%;">Batch Order</span>
-                                            @endif
-                                        </div>
-                                    </td>
-                                    <td>
-                                        {{ $o->full_name }} <br><br>
-                                        {{ $o->identification }}
-                                    </td>
-                                    @if(!empty($o->rx_number))
-                                        <td>
-                                            {{ $o->rx_number }} <br><br>
-                                            ({{ date("d/m/Y", strtotime($o->rx_start))}}
-                                            - {{ date("d/m/Y", strtotime($o->rx_end))}})
-                                        </td>
-                                        <td>
-                                            {{ date("d/m/Y", strtotime($o->next_supply_date))}}
-                                        </td>    
-                                    @else
-                                        <td></td>
-                                        <td></td>       
-                                    @endif
-                                    @if ($o->rx_interval == 2)
-                                    <td style="text-align: center;">
-                                        <a class="btn btn-primary" type="button" href="{{ url('/order/'.$o->id.'/new_resubmission') }}">
-                                            <i class="mdi mdi-repeat"></i>
-                                        </a>
-                                    </td>
-                                    @elseif ($o->rx_interval == 3)
-                                        <td style="text-align: center;">
-                                            <span class="badge bg-success" style="font-size: 100%;">Complete</span>
-                                        </td>    
-                                    @endif
-                                </tr>
-                                @endforeach
-                                @else
-                                @foreach ($orders as $o)
+                            @foreach ($orders as $o)
                                 <tr>
                                     <td>{{ $loop->iteration  }}</td>
                                     <td>
@@ -136,28 +89,27 @@
                                         </td>
                                         <td>
                                             {{ date("d/m/Y", strtotime($o->prescription->next_supply_date))}}
-                                        </td>    
+                                        </td>
                                     @else
                                         <td></td>
-                                        <td></td>       
+                                        <td></td>
                                     @endif
                                     @if ($o->rx_interval == 2)
-                                    <td style="text-align: center;">
-                                        <form method="post" action="{{ url('/order/'.$o->id.'/resubmission') }}">
-                                            @csrf
-                                            <button class="btn btn-primary" type="submit">
-                                                <i class="mdi mdi-repeat"></i>
-                                            </button>
-                                        </form>
-                                    </td>  
+                                        <td style="text-align: center;">
+                                            <form method="post" action="{{ url('/order/'.$o->id.'/resubmission') }}">
+                                                @csrf
+                                                <button class="btn btn-primary" type="submit">
+                                                    <i class="mdi mdi-repeat"></i>
+                                                </button>
+                                            </form>
+                                        </td>
                                     @elseif ($o->rx_interval == 3)
                                         <td style="text-align: center;">
                                             <span class="badge bg-success" style="font-size: 100%;">Complete</span>
-                                        </td>    
+                                        </td>
                                     @endif
                                 </tr>
-                                @endforeach
-                                @endif
+                            @endforeach
                             </tbody>
                         </table>
                         <br>
