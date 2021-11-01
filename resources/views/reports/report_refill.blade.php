@@ -62,7 +62,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                            @foreach ($orders as $o)
+                            @foreach ($order_lists as $o)
                                 <tr>
                                     <td>{{ $loop->iteration  }}</td>
                                     <td>
@@ -78,8 +78,12 @@
                                         </div>
                                     </td>
                                     <td>
-                                        {{ $o->patient->full_name }} <br><br>
-                                        {{ $o->patient->identification }}
+                                        @php 
+                                        if (isset($o->patient)) {
+                                            echo $o->patient->full_name." <br><br>";
+                                            echo $o->patient->identification;
+                                        }
+                                        @endphp
                                     </td>
                                     @if(!empty($o->prescription))
                                         <td>
