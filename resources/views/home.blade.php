@@ -194,7 +194,7 @@
                             </div>
                             @if (!$refills->isEmpty())
                                 <div class="text-center">
-                                    <form action="{{ url('report/report_refill') }}" method="get" > 
+                                    <form action="{{ url('home/report') }}" method="get" > 
                                         <button type="submit" class="btn btn-link" > See More... </button>
                                     </form>
                                 </div>
