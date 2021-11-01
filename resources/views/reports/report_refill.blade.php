@@ -62,7 +62,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                            @foreach ($order_lists as $o)
+                            @foreach ($orders as $o)
                                 <tr>
                                     <td>{{ $loop->iteration  }}</td>
                                     <td>

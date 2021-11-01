@@ -124,7 +124,7 @@ class HomeController extends Controller
     public function see_more_refill()
     {
         $today = Carbon::now()->format('Y-m-d');
-        $order_lists = DB::table('orders')
+        $orders = DB::table('orders')
             ->select('orders.*', 'prescriptions.*', 'patients.*')
             ->join('prescriptions', 'orders.id', '=', 'prescriptions.order_id')
             ->join('patients', 'orders.patient_id', '=', 'patients.id')
@@ -138,7 +138,7 @@ class HomeController extends Controller
             ->whereNull('orders.deleted_at')
             ->paginate(15);
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
-        return view('reports.report_refill', compact('order_lists', 'roles'));
+        return view('reports.report_refill', compact('orders', 'roles'));
     }
 
     public function see_more_end()
