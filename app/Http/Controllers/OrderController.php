@@ -179,6 +179,8 @@ class OrderController extends Controller
     {
         $order = Order::where('id', $id)->first();
         $order->salesperson_id = $request->input('salesperson');
+        if ($order->status_id == 1)
+            $order->status_id = $order->status_id + 1;
         $order->do_number = $request->input('do_number');
         $order->dispensing_by = $request->input('dispensing_by');
         $order->dispensing_method = $request->input('dispensing_method');
@@ -883,7 +885,7 @@ class OrderController extends Controller
         $order = new Order();
         if (!empty($prev_order)) {
             $order->patient_id = $prev_order->patient_id;
-            $order->status_id = 2;
+            $order->status_id = 1;
             $order->dispensing_by = $prev_order->dispensing_by;
             $order->dispensing_method = $prev_order->dispensing_method;
             $order->rx_interval = 2;
