@@ -131,6 +131,7 @@ class HomeController extends Controller
             ->where('rx_interval', '>', '1')
             ->where('total_amount', '!=', '0')
             ->whereIn('status_id', [4, 5])
+            ->orderby('rx_interval', 'asc')
             ->paginate(15);
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
         return view('reports.report_refill', compact('orders', 'roles'));
