@@ -36,7 +36,7 @@ class HomeController extends Controller
         $today = Carbon::now()->format('Y-m-d');
 
         $refills = DB::table('prescriptions as A')
-            ->select('C.*', 'B.*', 'A.next_supply_date')
+            ->select('C.*', 'B.*', 'A.next_supply_date','A.order_id as order_id_submit')
             ->whereRaw('DATEDIFF(next_supply_date,?) >= 0', [$today])
             ->whereRaw('DATEDIFF(next_supply_date,?) <= 7', [$today])
             ->where('B.rx_interval', '>', '1')

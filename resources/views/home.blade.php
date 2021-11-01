@@ -167,12 +167,13 @@
                         </div>
                         <div class="card-body">
                             <div class="form-group">
-                                <table class="table table-bordered table-hover">
+                                <table class="table table-bordered table-hover table-responsive">
                                     <thead>
                                             <tr>
                                                 <td>Patient Name </td>
                                                 <td>Next Supply Date</td>
                                                 <td>By</td>
+                                                <td>Resubmission</td>
                                             </tr>
                                     </thead>
                                     <tbody>
@@ -187,6 +188,20 @@
                                             <td>
                                             {{ $refill->dispensing_method}}
                                             </td>
+                                            @if ($refill->rx_interval == 2)
+                                                <td style="text-align: center;">
+                                                    <form method="post" action="{{ url('/order/'.$refill->order_id_submit.'/resubmission') }}">
+                                                        @csrf
+                                                        <button class="btn btn-primary" type="submit">
+                                                            <i class="mdi mdi-repeat"></i>
+                                                        </button>
+                                                    </form>
+                                                </td>
+                                            @elseif ($refill->rx_interval == 3)
+                                                <td style="text-align: center;">
+                                                    <span class="badge bg-success" style="font-size: 100%;">Complete</span>
+                                                </td>
+                                            @endif
                                         </tr>
                                         @endforeach
                                     </tbody>
