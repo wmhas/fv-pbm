@@ -124,18 +124,13 @@ class HomeController extends Controller
     public function see_more_refill()
     {
         $today = Carbon::now()->format('Y-m-d');
-        $orders = DB::table('orders')
-            ->select('orders.*', 'prescriptions.*', 'patients.*')
-            ->join('prescriptions', 'orders.id', '=', 'prescriptions.order_id')
-            ->join('patients', 'orders.patient_id', '=', 'patients.id')
+        $orders = Order::query()
+            ->whereHas('prescription', function ($prescription) use ($today) {
+                $prescription->where('next_supply_date', '>=', $today);
+            })->with(['prescription', 'patient'])
+            ->where('rx_interval', '>', '1')
+            ->where('total_amount', '!=', '0')
             ->whereIn('status_id', [4, 5])
-            ->where([
-                ['prescriptions.next_supply_date', '=', $today],
-                ['orders.rx_interval', '>', '1'],
-                ['orders.total_amount', '!=', '0'],
-            ])
-            ->orderby('prescriptions.next_supply_date', 'asc')
-            ->whereNull('orders.deleted_at')
             ->paginate(15);
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
         return view('reports.report_refill', compact('orders', 'roles'));
