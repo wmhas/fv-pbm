@@ -126,7 +126,7 @@ class HomeController extends Controller
         $today = Carbon::now()->format('Y-m-d');
         $orders = Order::query()
             ->whereHas('prescription', function ($prescription) use ($today) {
-                $prescription->where('next_supply_date', '>=', $today);
+                $prescription->where('next_supply_date', '=', $today);
             })->with(['prescription', 'patient'])
             ->where('rx_interval', '>', '1')
             ->where('total_amount', '!=', '0')
