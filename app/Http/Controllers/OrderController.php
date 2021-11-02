@@ -77,13 +77,19 @@ class OrderController extends Controller
                 ->paginate(15);
         } elseif ($method != null && $status_id == null && $keyword != null) {
             $orders = Order::with('prescription')->with('patient')->with('delivery')->where('dispensing_method', 'like', '%' . strtoupper($method) . '%')
-                ->where('do_number', 'like', '%' . strtoupper($keyword) . '%')
+                ->whereHas('patient', function ($patient) use ($keyword) {
+                    $patient->where('full_name', 'like', '%' . strtoupper($keyword) . '%');
+                })
+                ->orWhere('do_number', 'like', '%' . strtoupper($keyword) . '%')
                 ->orderBy('status_id', 'asc')
                 ->orderBy('created_at', 'desc')->limit(500)
                 ->paginate(15);
         } elseif ($method == null && $status_id != null && $keyword != null) {
             $orders = Order::with('prescription')->with('patient')->with('delivery')->where('status_id', 'like', '%' . strtoupper($status_id) . '%')
-                ->where('do_number', 'like', '%' . strtoupper($keyword) . '%')
+                ->whereHas('patient', function ($patient) use ($keyword) {
+                    $patient->where('full_name', 'like', '%' . strtoupper($keyword) . '%');
+                })
+                ->orWhere('do_number', 'like', '%' . strtoupper($keyword) . '%')
                 ->orderBy('status_id', 'asc')
                 ->orderBy('created_at', 'desc')->limit(500)
                 ->paginate(15);
@@ -98,7 +104,11 @@ class OrderController extends Controller
                 ->orderBy('created_at', 'desc')->limit(500)
                 ->paginate(15);
         } elseif ($method == null && $status_id == null && $keyword != null) {
-            $orders = Order::with('prescription')->with('patient')->with('delivery')->where('do_number', 'like', '%' . strtoupper($keyword) . '%')
+            $orders = Order::with('prescription')->with('patient')->with('delivery')
+                ->whereHas('patient', function ($patient) use ($keyword) {
+                    $patient->where('full_name', 'like', '%' . strtoupper($keyword) . '%');
+                })
+                ->orWhere('do_number', 'like', '%' . strtoupper($keyword) . '%')
                 ->orderBy('status_id', 'asc')
                 ->orderBy('created_at', 'desc')->limit(500)
                 ->paginate(15);

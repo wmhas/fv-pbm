@@ -52,7 +52,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-3">
-                                        <input type="text" name="keyword" class="form-control" placeholder="DO Number" @if ($keyword != null ) value="{{$keyword}}" @endif>
+                                        <input type="text" name="keyword" class="form-control" placeholder="DO Number or Patient Name" @if ($keyword != null ) value="{{$keyword}}" @endif>
                                     </div>
                                     <div>
                                         <button type="submit" class="btn btn-primary" style="width:100%;">Search</button>
@@ -110,8 +110,11 @@
                                         <td></td>       
                                     @endif
                                     <td>
-                                        {{ $o->patient->full_name }}<br>
-                                        (IC: {{ $o->patient->identification }})<br>
+                                        @php if (isset($o->patient)) { 
+                                                echo $o->patient->full_name."<br>";
+                                                echo "(IC: ".$o->patient->identification.")<br>";
+                                            }
+                                        @endphp
                                         @if($o->status_id !== 1 && $o->do_number)
                                          <a class="btn btn-primary" href="{{ route('borangjhev.print',$o->do_number) }}">JHEV FORM</a>
                                         @endif
