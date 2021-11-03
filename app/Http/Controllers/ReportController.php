@@ -14,6 +14,10 @@ use Illuminate\Support\Facades\Session;
 use PDF;
 use Excel;
 use App\Exports\TransactionsExport;
+use App\Exports\TransactionsSalesExport;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class ReportController extends Controller
 {
@@ -49,6 +53,9 @@ class ReportController extends Controller
 
     public function search_sales(Request $request)
     {
+        if($request->filter == 2){
+            return $this->export_report($request);
+        }
         // ini_set('max_execution_time', 1000);
         if ($request->post('startDate') != null && $request->post('endDate') != null) {
             $orders= Order::with('patient.tariff')->whereIn('status_id', [4, 5])
@@ -59,6 +66,25 @@ class ReportController extends Controller
         }
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
         return view('reports.report_sales', ['orders' => $orders, 'roles' => $roles]);
+    }
+
+    public function export_report($request)
+    {   
+        $startDate = false;
+        $endDate = false;
+
+        if ($request->post('startDate') != null && $request->post('endDate') != null) {
+            $startDate = $request->startDate;
+            $endDate = $request->endDate;
+        }
+
+        $transaction = new TransactionsSalesExport($startDate, $endDate);
+        if ($transaction->collection()->count() > 0) {
+            return Excel::download($transaction, 'transactionssales.xlsx');
+        }
+
+        $request->session()->flash('error', 'No Data to Export');
+        return redirect(url('/report/report_sales'));
     }
 
     public function report_refill(Request $request)
@@ -250,12 +276,47 @@ class ReportController extends Controller
         $orders = Order::with('patient')->whereIn('status_id', [4, 5])
             ->orderBy('created_at', 'DESC')
             ->paginate(10);
+        $ord = Order::getorder(null,null);
+        $order = $this->paginate($ord);
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
-        return view('reports.sales_report', ['months' => $months, 'no_orders' => $no_orders, 'totalAll' => $totalAll, 'orders' => $orders, 'roles' => $roles]);
+        return view('reports.sales_report', ['months' => $months, 'no_orders' => $no_orders, 'totalAll' => $totalAll, 'orders' => $orders, 'roles' => $roles, 'order'=>$order]);
+    }
+
+    public function search_report_sales($request)
+    {
+        $months = ['Jan', 'Feb', 'Mar', 'April', 'May', 'Jun', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        $totalAll = Order::whereIn('status_id', [4, 5])->sum('total_amount');
+        $monthsNo = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+        $no_orders = [];
+        foreach ($monthsNo as $no) {
+            $itemSale = Order::whereMonth('created_at', '=', $no)
+                ->whereIn('status_id', [4, 5])
+                ->sum('total_amount');
+
+            array_push($no_orders, (int)$itemSale);
+        }
+
+        $orders = Order::with('patient')->whereIn('status_id', [4, 5])
+            ->orderBy('created_at', 'DESC')
+            ->paginate(10);
+        $ord = Order::getorder($request->startDate,$request->endDate);
+        $order = $this->paginate($ord);
+        $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
+        return view('reports.sales_report', ['months' => $months, 'no_orders' => $no_orders, 'totalAll' => $totalAll, 'orders' => $orders, 'roles' => $roles, 'order'=>$order]);
+    }
+
+    public function paginate($items, $perPage = 10, $page = null, $options = [])
+    {
+        $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
+        $items = $items instanceof Collection ? $items : Collection::make($items);
+        return new LengthAwarePaginator($items->forPage($page, $perPage), $items->count(), $perPage, $page, $options);
     }
 
     public function export_sales_item_excel(Request $request)
     {
+        if($request->filter == 1){
+            return $this->search_report_sales($request);
+        }
         
         $startDate = false;
         $endDate = false;

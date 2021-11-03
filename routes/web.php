@@ -113,7 +113,7 @@ Route::group(['middleware' => ['auth']], function () {
     //report
     Route::group(['prefix' => 'report'], function () {
         Route::get('/report_sales', 'ReportController@report_sales');
-        Route::get('/search/report_sales', 'ReportController@search_sales');
+        Route::post('/search/report_sales', 'ReportController@search_sales');
         Route::get('/report_refill', 'ReportController@report_refill');
         Route::get('/report_item', 'ReportController@report_item');
         Route::get('/report_item_export', 'ReportController@report_item_export');

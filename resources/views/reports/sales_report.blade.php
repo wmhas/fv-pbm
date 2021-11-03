@@ -40,7 +40,13 @@
                                     <div class="col-md-2">
                                         <label></label>
                                         <div class="form-group">
-                                            <button type="submit" class="btn btn-primary" style=" width:100%;">Export</button>
+                                            <button type="submit" class="btn btn-success" style=" width:100%;" name="filter" value="1">Search</button>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label></label>
+                                        <div class="form-group">
+                                            <button type="submit" class="btn btn-primary" style=" width:100%;" name="filter" value="2">Export</button>
                                         </div>
                                     </div>
                                     <!-- <div class="col-md-2">
@@ -48,6 +54,53 @@
                                     </div> -->
                                 </div>
                             </form>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body" style="overflow-x:auto;">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th style="width:10px">No</th>
+                                        <th>Date</th>
+                                        <th>DO Number</th>
+                                        <th>IC</th>
+                                        <th>Fullname</th>
+                                        <th>Address</th>
+                                        <th>RX Number</th>
+                                        <th>Dispensed By</th>
+                                        <th>Medicine</th>
+                                        <th>Qty</th>
+                                        <th>Unit Price</th>
+                                        <th>Total Price</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($order as $v)
+                                    <tr>
+                                        <td>{{ $v['NO'] }}</td>
+                                        <td>{{ $v['DATE'] }}</td>
+                                        <td>{{ $v['DONUMBER'] }}</td>
+                                        <td>{{ $v['IC'] }}</td>
+                                        <td>{{ $v['FULLANME'] }}</td>
+                                        <td>{{ $v['ADDRES'] }}</td>
+                                        <td>{{ $v['RXNUMBER'] }}</td>
+                                        <td>{{ $v['DISPENSEDBY'] }}</td>
+                                        <td>{{ $v['MEDICINE'] }}</td>
+                                        <td>{{ $v['QTY'] }}</td>
+                                        <td class="text-right">{{ number_format($v['UNITPRICE'],2) }}</td>
+                                        <td class="text-right">{{ number_format($v['TOTALPRICE'],2) }}</td>
+                                        <td>{{ $v['STATUS'] }}</td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="card-body clearfix">
+                            <ul class="pagination pagination-sm m-0 float-right">
+                              {{ $orders->links() }}
+                            </ul>
                         </div>
                     </div>
                     
