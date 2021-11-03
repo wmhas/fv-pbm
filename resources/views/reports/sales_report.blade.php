@@ -99,7 +99,7 @@
                         </div>
                         <div class="card-body clearfix">
                             <ul class="pagination pagination-sm m-0 float-right">
-                              {{ $order->links() }}
+                              {{ $orders->links() }}
                             </ul>
                         </div>
                     </div>
