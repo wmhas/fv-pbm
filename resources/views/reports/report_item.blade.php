@@ -29,9 +29,11 @@
                                 <div class="col-md-10">
                                     <div class="row">
                                         <div class="col-12 col-sm-6 mt-2">
+                                            <label>Date From</label>
                                             <input class="form-control" type="date" placeholder="Start Date" name="start_date" value="{{$startDate}}" />
                                         </div>
                                         <div class="col-12 col-sm-6 mt-2">
+                                            <label>Date To</label>
                                             <input class="form-control" type="date" placeholder="End Date" name="end_date" value="{{$endDate}}" />
                                         </div>
                                     </div>
