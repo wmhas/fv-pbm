@@ -67,7 +67,9 @@ class Order extends Model
             "patients.identification as ic",
             "patients.full_name",
             DB::raw('CONCAT(patients.address_1,", ",patients.address_2,", ",patients.postCode,", ",states.name) as address'),
-            "prescriptions.rx_number", 
+            "prescriptions.rx_number",
+            "prescriptions.rx_start",
+            "prescriptions.rx_end", 
             "orders.dispensing_by",
             "items.brand_name as med",
             "order_items.quantity",
@@ -84,6 +86,8 @@ class Order extends Model
 
             foreach ($order as $k => $v) {
 
+                $duration = floor(abs(strtotime($v->rx_end) - strtotime($v->rx_start)) / (60 * 60 * 24));
+
                 $oi = OrderItem::with("items")->where("order_id",$v->id)->get();
                 
                 if (count($oi)>0) {
@@ -95,6 +99,7 @@ class Order extends Model
                         $orders[$k]['FULLANME']=$v->full_name;
                         $orders[$k]['ADDRES']=$v->address;
                         $orders[$k]['RXNUMBER']=$v->rx_number;
+                        $orders[$k]['RXDURATION']=$duration;
                         $orders[$k]['DISPENSEDBY']=$v->dispensing_by;
                         $orders[$k]['MEDICINE']=$v->med;
                         $orders[$k]['QTY'] = $voi->quantity;

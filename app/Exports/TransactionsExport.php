@@ -52,7 +52,9 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
             "patients.identification as ic",
             "patients.full_name",
             DB::raw('CONCAT(patients.address_1,", ",patients.address_2,", ",patients.postCode,", ",states.name) as address'),
-            "prescriptions.rx_number", 
+            "prescriptions.rx_number",
+            "prescriptions.rx_start",
+            "prescriptions.rx_end", 
             "orders.dispensing_by",
             "items.brand_name as med",
             "order_items.quantity",
@@ -69,6 +71,8 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
 
             foreach ($order as $k => $v) {
 
+                $duration = floor(abs(strtotime($v->rx_end) - strtotime($v->rx_start)) / (60 * 60 * 24));
+
                 $oi = OrderItem::with("items")->where("order_id",$v->id)->get();
                 
                 if (count($oi)>0) {
@@ -80,6 +84,7 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
                         $orders[$k]['FULLANME']=$v->full_name;
                         $orders[$k]['ADDRES']=$v->address;
                         $orders[$k]['RX NUMBER']=$v->rx_number;
+                        $orders[$k]['RXDURATION']=$duration;
                         $orders[$k]['DISPENSED BY']=$v->dispensing_by;
                         $orders[$k]['MEDICINE']=$v->med;
                         $orders[$k]['QTY'] = $voi->quantity;
@@ -109,6 +114,7 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
             'FULLNAME',
             'ADDRES',
             'RX NUMBER',
+            'RX DURATION',
             'DISPENSED BY',
             'MEDICINE',
             'QTY',

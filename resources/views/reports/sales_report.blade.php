@@ -68,6 +68,7 @@
                                         <th>Fullname</th>
                                         <th>Address</th>
                                         <th>RX Number</th>
+                                        <th>RX Duration</th>
                                         <th>Dispensed By</th>
                                         <th>Medicine</th>
                                         <th>Qty</th>
@@ -86,6 +87,7 @@
                                         <td>{{ $v['FULLANME'] }}</td>
                                         <td>{{ $v['ADDRES'] }}</td>
                                         <td>{{ $v['RXNUMBER'] }}</td>
+                                        <td>{{ $v['RXDURATION'] }}</td>
                                         <td>{{ $v['DISPENSEDBY'] }}</td>
                                         <td>{{ $v['MEDICINE'] }}</td>
                                         <td>{{ $v['QTY'] }}</td>
