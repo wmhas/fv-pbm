@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use Carbon\Carbon;
 
 class TransactionsExport implements FromCollection, WithHeadings, WithStyles, WithColumnFormatting
 {
@@ -39,11 +40,13 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
             ->join("order_items","order_items.order_id","=","orders.id")
             ->join("items","items.id","=","order_items.myob_product_id")
             ->join("states","states.id","=","patients.state_id")
-            ->whereIn('status_id', [4, 5]);
+            ->whereIn('orders.status_id', [4, 5]);
 
         if ($this->startDate && $this->endDate){
-            $order = $order->whereDate('orders.updated_at', '>=', $this->startDate)
-                    ->whereDate('orders.updated_at', '<=', $this->endDate);
+            $order = $order->whereDate('orders.created_at', '>=', $this->startDate)
+                    ->whereDate('orders.created_at', '<=', $this->endDate);
+        } else {
+            $order = $order->whereDate('orders.created_at', Carbon::today());
         }
 
         $order = $order->select("orders.id",
