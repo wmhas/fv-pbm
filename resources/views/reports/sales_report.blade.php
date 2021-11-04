@@ -28,25 +28,19 @@
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Date From</label>
-                                            <input name="startDate" type="date" class="form-control">
+                                            <input value="{{ $startDate }}" name="startDate" type="date" class="form-control">
                                         </div>
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Date To</label>
-                                            <input name="endDate" type="date" class="form-control">
+                                            <input value="{{ $endDate }}" name="endDate" type="date" class="form-control">
                                         </div>
                                     </div>
                                     <div class="col-md-2">
                                         <label></label>
                                         <div class="form-group">
                                             <button type="submit" class="btn btn-success" style=" width:100%;" name="filter" value="1">Search</button>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <label></label>
-                                        <div class="form-group">
-                                            <button type="submit" class="btn btn-primary" style=" width:100%;" name="filter" value="2">Export</button>
                                         </div>
                                     </div>
                                     <!-- <div class="col-md-2">
@@ -103,6 +97,24 @@
                             <ul class="pagination pagination-sm m-0 float-right">
                               {{ $orders->links() }}
                             </ul>
+                        </div>
+                        <div class="card-body" style="overflow-x:auto;">
+                            <form method="POST" enctype="multipart/form-data" action="{{ route('export.sales-item.excel') }}">
+                                <div class="row">
+                                    @csrf
+                                    <div class="col-md-2">
+                                        <label></label>
+                                        <input name="startDate" value="{{ $startDate }}" type="hidden" class="form-control">
+                                        <input name="endDate" value="{{ $endDate }}" type="hidden" class="form-control">
+                                        <div class="form-group">
+                                            <button type="submit" class="btn btn-primary" style=" width:100%;" name="filter" value="2">Export</button>
+                                        </div>
+                                    </div>
+                                    <!-- <div class="col-md-2">
+                                        <button type="button" class="btn btn-secondary" style="margin-top:32px; width:100%;">Export</button>
+                                    </div> -->
+                                </div>
+                            </form>
                         </div>
                     </div>
                     

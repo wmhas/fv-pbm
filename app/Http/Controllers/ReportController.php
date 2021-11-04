@@ -273,6 +273,9 @@ class ReportController extends Controller
             array_push($no_orders, (int)$itemSale);
         }
 
+        $startDate = date('Y-m-d');
+        $endDate = date('Y-m-d');
+
         $orders = Order::with('patient')->whereIn('status_id', [4, 5])
             ->whereDate('orders.created_at', Carbon::today())
             ->orderBy('created_at', 'DESC')
@@ -280,7 +283,7 @@ class ReportController extends Controller
         $ord = Order::getorder(null,null);
         $order = $this->paginate($ord);
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
-        return view('reports.sales_report', ['months' => $months, 'no_orders' => $no_orders, 'totalAll' => $totalAll, 'orders' => $orders, 'roles' => $roles, 'order'=>$order]);
+        return view('reports.sales_report', ['months' => $months, 'no_orders' => $no_orders, 'totalAll' => $totalAll, 'orders' => $orders, 'roles' => $roles, 'order'=>$order,'startDate'=>$startDate,'endDate'=>$endDate]);
     }
 
     public function search_report_sales($request)
@@ -312,7 +315,7 @@ class ReportController extends Controller
         $ord = Order::getorder($startDate, $endDate);
         $order = $this->paginate($ord);
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
-        return view('reports.sales_report', ['months' => $months, 'no_orders' => $no_orders, 'totalAll' => $totalAll, 'orders' => $orders, 'roles' => $roles, 'order'=>$order]);
+        return view('reports.sales_report', ['months' => $months, 'no_orders' => $no_orders, 'totalAll' => $totalAll, 'orders' => $orders, 'roles' => $roles, 'order'=>$order,'startDate'=>$startDate,'endDate'=>$endDate]);
     }
 
     public function paginate($items, $perPage = 10, $page = null, $options = [])
@@ -331,7 +334,7 @@ class ReportController extends Controller
         $startDate = false;
         $endDate = false;
 
-        if ($request->post('startDate') != null && $request->post('endDate') != null) {
+        if ($request->startDate != null && $request->endDate != null) {
             $startDate = $request->startDate;
             $endDate = $request->endDate;
         }
