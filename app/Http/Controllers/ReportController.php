@@ -274,6 +274,7 @@ class ReportController extends Controller
         }
 
         $orders = Order::with('patient')->whereIn('status_id', [4, 5])
+            ->whereDate('orders.created_at', Carbon::today())
             ->orderBy('created_at', 'DESC')
             ->paginate(10);
         $ord = Order::getorder(null,null);
@@ -296,10 +297,19 @@ class ReportController extends Controller
             array_push($no_orders, (int)$itemSale);
         }
 
-        $orders = Order::with('patient')->whereIn('status_id', [4, 5])
-            ->orderBy('created_at', 'DESC')
+        $startDate = $request->startDate;
+        $endDate = $request->endDate;
+
+        $orders = Order::with('patient')->whereIn('status_id', [4, 5]);
+        if ($startDate && $endDate){
+            $orders = $orders->whereDate('orders.updated_at', '>=', $startDate)
+                    ->whereDate('orders.updated_at', '<=', $endDate);
+        }   else {
+            $orders = $orders->whereDate('orders.created_at', Carbon::today());
+        }
+        $orders = $orders->orderBy('created_at', 'DESC')
             ->paginate(10);
-        $ord = Order::getorder($request->startDate,$request->endDate);
+        $ord = Order::getorder($startDate, $endDate);
         $order = $this->paginate($ord);
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
         return view('reports.sales_report', ['months' => $months, 'no_orders' => $no_orders, 'totalAll' => $totalAll, 'orders' => $orders, 'roles' => $roles, 'order'=>$order]);

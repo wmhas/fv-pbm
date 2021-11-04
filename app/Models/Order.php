@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use DB;
+use Carbon\Carbon;
 
 class Order extends Model
 {
@@ -57,8 +58,10 @@ class Order extends Model
             ->whereIn('status_id', [4, 5]);
 
         if ($startDate && $endDate){
-            $order = $order->whereDate('orders.updated_at', '>=', $startDate)
-                    ->whereDate('orders.updated_at', '<=', $endDate);
+            $order = $order->whereDate('orders.created_at', '>=', $startDate)
+                    ->whereDate('orders.created_at', '<=', $endDate);
+        }   else {
+            $order = $order->whereDate('orders.created_at', Carbon::today());
         }
 
         $order = $order->select("orders.id",
