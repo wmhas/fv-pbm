@@ -35,6 +35,7 @@ class TransactionsSalesExport implements FromCollection, WithHeadings, WithStyle
     public function collection()
     {
         $order = Order::join("patients","patients.id","=","orders.patient_id")
+            ->leftjoin("tariffs","tariffs.id","=","patients.tariff_id")
             ->join("cards","cards.id","=","patients.card_id")
             ->join("prescriptions","prescriptions.order_id","=","orders.id")
             ->join("order_items","order_items.order_id","=","orders.id")
