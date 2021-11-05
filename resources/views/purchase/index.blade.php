@@ -23,7 +23,18 @@
                     <div class="card-body">
                         <form method="get" action="/purchase/search">
                             <div class="row">
-                                <div class="col-md-7">
+                                <div class="col-md-3">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <label class="input-group-text" for="stock">Stock</label>
+                                        </div>
+                                        <select class="form-control" name="stock" id="stock">
+                                            <option value="">All</option>
+                                            <option {{ isset($stock) && $stock === 'low' ? 'selected' : ''  }} value="low">Low Stock</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
                                     <div class="form-group">
                                         <input type="text" @if (!empty($keyword)) value="{{ $keyword }}" @endif
                                         name="keyword" class="form-control" placeholder="Item Code / Item Name">

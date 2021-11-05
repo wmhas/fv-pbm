@@ -28,20 +28,30 @@ class PurchaseController extends Controller
             'roles' => $roles,
         ]);
     }
+
     public function search(Request $request)
     {
         $keyword = $request->keyword;
         $keyword = preg_replace("/[^a-zA-Z0-9 ]/", "", $keyword);
+        $stock = $request->get('stock');
+
+        $items = Item::query();
+        if ($stock === 'low') {
+            $items = $items->whereDoesntHave('stocks', function ($stocks) {
+                $stocks->havingRaw('SUM(Quantity) > items.stock_level');
+            })->whereNotNull('stock_level');
+        }
 
         if ($keyword != null) {
-            $items = Item::where('item_code', 'like', '%' . strtoupper($keyword) . '%')
+            $items = $items->where('item_code', 'like', '%' . strtoupper($keyword) . '%')
                 ->orwhere('brand_name', 'like', '%' . strtoupper($keyword) . '%')
-                ->orderBy('item_code', 'asc')->limit(500)->paginate(15);
-        } else {
-            $items = Item::paginate(15);
+                ->orderBy('item_code', 'asc')
+                ->limit(500);
         }
+
+        $items = $items->paginate(15);
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
-        return view('purchase.index', compact('roles', 'keyword', 'items'));
+        return view('purchase.index', compact('roles', 'keyword', 'items', 'stock'));
     }
     public function create_purchase($item)
     {
