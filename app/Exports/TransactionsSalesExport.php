@@ -22,10 +22,11 @@ class TransactionsSalesExport implements FromCollection, WithHeadings, WithStyle
     private $startDate = false;
     private $endDate = false;
 
-    public function __construct($startDate, $endDate) 
+    public function __construct($startDate, $endDate, $page) 
     {
         $this->startDate = $startDate;
         $this->endDate = $endDate;
+        $this->page = $page;
     }
 
     /**
@@ -40,7 +41,7 @@ class TransactionsSalesExport implements FromCollection, WithHeadings, WithStyle
             ->join("order_items","order_items.order_id","=","orders.id")
             ->join("items","items.id","=","order_items.myob_product_id")
             ->join("states","states.id","=","patients.state_id")
-            ->whereIn('status_id', [4, 5]);
+            ->whereIn('orders.status_id', [4, 5]);
         
         if ($this->startDate && $this->endDate){
             $order = $order->whereDate('orders.created_at', '>=', $this->startDate)
@@ -58,7 +59,7 @@ class TransactionsSalesExport implements FromCollection, WithHeadings, WithStyle
             DB::raw("(CASE WHEN patients.tariff_id IS NOT NULL THEN tariffs.name ELSE 'no panel' END) as panel"),
             "orders.total_amount",
             DB::raw("(CASE WHEN orders.status_id = 4 THEN 'Complete Order' ELSE 'Batch Order' END) as status"),
-        )->get();
+        )->orderBy('orders.created_at', 'DESC')->paginate(10, ['*'], 'page', $this->page);
 
         $orders = [];
 

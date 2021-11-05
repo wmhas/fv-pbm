@@ -22,19 +22,19 @@
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-body">
-                            <form method="POST" enctype="multipart/form-data" action="{{ url('report/search/report_sales') }}">
+                            <form method="GET" enctype="multipart/form-data" action="{{ url('report/search/report_sales') }}">
                                 <div class="row">
                                     @csrf
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Date From</label>
-                                            <input name="startDate" type="date" class="form-control">
+                                            <input value="{{ $startDate }}" name="startDate" type="date" class="form-control">
                                         </div>
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Date To</label>
-                                            <input name="endDate" type="date" class="form-control">
+                                            <input value="{{ $endDate }}" name="endDate" type="date" class="form-control">
                                         </div>
                                     </div>
                                     <div class="col-md-2">
@@ -43,15 +43,6 @@
                                             <button type="submit" class="btn btn-success" style=" width:100%;" name="filter" value="1">Search</button>
                                         </div>
                                     </div>
-                                    <div class="col-md-2">
-                                        <label></label>
-                                        <div class="form-group">
-                                            <button type="submit" class="btn btn-primary" style=" width:100%;" name="filter" value="2">Export</button>
-                                        </div>
-                                    </div>
-                                    <!-- <div class="col-md-2">
-                                        <button type="button" class="btn btn-secondary" style="margin-top:32px; width:100%;">Export</button>
-                                    </div> -->
                                 </div>
                             </form>
                         </div>
@@ -112,6 +103,20 @@
                               {{ $orders->links() }}
                             </ul>
                         </div>
+                        <div class="card-body" style="overflow-x:auto;">
+                            <form method="GET" enctype="multipart/form-data" action="{{ url('report/search/report_sales') }}">
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <input name="startDate" value="{{ $startDate }}" type="hidden" class="form-control">
+                                        <input name="endDate" value="{{ $endDate }}" type="hidden" class="form-control">
+                                        <input name="page" value="{{ $page }}" type="hidden" class="form-control">
+                                        <div class="form-group">
+                                            <button type="submit" class="btn btn-primary" style=" width:100%;" name="filter" value="2">Export</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                     {{-- <div class="card">
                         <div class="card-body">
@@ -149,6 +154,19 @@
         </div>
 </section>
 
+@if(\Illuminate\Support\Facades\Session::has('error'))
+<div class="toast bg-danger" data-delay="10000" role="alert" style="position: absolute; bottom: 20px; right: 20px;">
+    <div class="toast-header">
+        <strong class="mr-auto">Error</strong>
+        <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="toast-body text-white">
+        {{\Illuminate\Support\Facades\Session::get('error')}}
+    </div>
+</div>
+@endif
 
 
 
@@ -156,5 +174,11 @@
 
 @section('script')
 {{-- @include('reports.dashboard3') --}}
+<script type="text/javascript">
+    $(document).on("click",".page-link",function(){
+        href = $(this).attr("href");
+        $(this).attr("href", href+"&startDate={{ $startDate }}&endDate={{$endDate}}&filter=1");
+    });
+</script>
 @endsection
 
