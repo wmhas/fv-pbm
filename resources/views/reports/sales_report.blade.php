@@ -22,9 +22,8 @@
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-body">
-                            <form method="POST" enctype="multipart/form-data" action="{{ route('export.sales-item.excel') }}">
+                            <form method="GET" enctype="multipart/form-data" action="{{ route('export.sales-item.excel') }}">
                                 <div class="row">
-                                    @csrf
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Date From</label>
@@ -95,17 +94,16 @@
                         </div>
                         <div class="card-body clearfix">
                             <ul class="pagination pagination-sm m-0 float-right">
-                              {{ $orders->links() }}
+                              {!! $links !!}
                             </ul>
                         </div>
                         <div class="card-body" style="overflow-x:auto;">
-                            <form method="POST" enctype="multipart/form-data" action="{{ route('export.sales-item.excel') }}">
+                            <form method="GET" enctype="multipart/form-data" action="{{ route('export.sales-item.excel') }}">
                                 <div class="row">
-                                    @csrf
                                     <div class="col-md-2">
-                                        <label></label>
                                         <input name="startDate" value="{{ $startDate }}" type="hidden" class="form-control">
                                         <input name="endDate" value="{{ $endDate }}" type="hidden" class="form-control">
+                                        <input name="page" value="{{ $page }}" type="hidden" class="form-control">
                                         <div class="form-group">
                                             <button type="submit" class="btn btn-primary" style=" width:100%;" name="filter" value="2">Export</button>
                                         </div>
@@ -146,6 +144,11 @@
         $(document).ready(function () {
             $('.toast').toast('show');
         });
+
+        $(document).on("click",".page-link",function(){
+            href = $(this).attr("href");
+            $(this).attr("href", href+"&startDate={{ $startDate }}&endDate={{$endDate}}&filter=1");
+         });
     </script>
 @endsection
 

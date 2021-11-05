@@ -266,7 +266,7 @@ class ReportController extends Controller
         $monthsNo = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
         $no_orders = [];
         foreach ($monthsNo as $no) {
-            $itemSale = Order::whereMonth('created_at', '=', $no)
+            $itemSale = Order::whereMonth('updated_at', '=', $no)
                 ->whereIn('status_id', [4, 5])
                 ->sum('total_amount');
 
@@ -275,15 +275,11 @@ class ReportController extends Controller
 
         $startDate = date('Y-m-d');
         $endDate = date('Y-m-d');
-
-        $orders = Order::with('patient')->whereIn('status_id', [4, 5])
-            ->whereDate('orders.created_at', Carbon::today())
-            ->orderBy('created_at', 'DESC')
-            ->paginate(10);
-        $ord = Order::getorder(null,null);
-        $order = $this->paginate($ord);
+        $orders = Order::getorder(null,null,10);
+        $order = $orders["collectOrder"];
+        $links = $orders["links"];
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
-        return view('reports.sales_report', ['months' => $months, 'no_orders' => $no_orders, 'totalAll' => $totalAll, 'orders' => $orders, 'roles' => $roles, 'order'=>$order,'startDate'=>$startDate,'endDate'=>$endDate]);
+        return view('reports.sales_report', ['months' => $months, 'no_orders' => $no_orders, 'totalAll' => $totalAll, 'order' => $order, 'roles' => $roles, 'order'=>$order,'startDate'=>$startDate,'endDate'=>$endDate,'page'=>1,'links'=>$links]);
     }
 
     public function search_report_sales($request)
@@ -302,27 +298,13 @@ class ReportController extends Controller
 
         $startDate = $request->startDate;
         $endDate = $request->endDate;
+        $page = $request->page;
 
-        $orders = Order::with('patient')->whereIn('status_id', [4, 5]);
-        if ($startDate && $endDate){
-            $orders = $orders->whereDate('orders.updated_at', '>=', $startDate)
-                    ->whereDate('orders.updated_at', '<=', $endDate);
-        }   else {
-            $orders = $orders->whereDate('orders.created_at', Carbon::today());
-        }
-        $orders = $orders->orderBy('created_at', 'DESC')
-            ->paginate(10);
-        $ord = Order::getorder($startDate, $endDate);
-        $order = $this->paginate($ord);
+        $orders = Order::getorder($startDate, $endDate, $page);
+        $order = $orders["collectOrder"];
+        $links = $orders["links"];
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
-        return view('reports.sales_report', ['months' => $months, 'no_orders' => $no_orders, 'totalAll' => $totalAll, 'orders' => $orders, 'roles' => $roles, 'order'=>$order,'startDate'=>$startDate,'endDate'=>$endDate]);
-    }
-
-    public function paginate($items, $perPage = 10, $page = null, $options = [])
-    {
-        $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
-        $items = $items instanceof Collection ? $items : Collection::make($items);
-        return new LengthAwarePaginator($items->forPage($page, $perPage), $items->count(), $perPage, $page, $options);
+        return view('reports.sales_report', ['months' => $months, 'no_orders' => $no_orders, 'totalAll' => $totalAll, 'roles' => $roles, 'order'=>$order,'startDate'=>$startDate,'endDate'=>$endDate,'page'=>$page,'links'=>$links]);
     }
 
     public function export_sales_item_excel(Request $request)
@@ -333,13 +315,14 @@ class ReportController extends Controller
         
         $startDate = false;
         $endDate = false;
+        $page = $request->page;
 
         if ($request->startDate != null && $request->endDate != null) {
             $startDate = $request->startDate;
             $endDate = $request->endDate;
         }
 
-        $transaction = new TransactionsExport($startDate, $endDate);
+        $transaction = new TransactionsExport($startDate, $endDate, $page);
         if ($transaction->collection()->count() > 0) {
             return Excel::download($transaction, 'transactions.xlsx');
         }

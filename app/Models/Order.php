@@ -47,7 +47,7 @@ class Order extends Model
         return $this->belongsTo(SalesPerson::class , 'salesperson_id', 'id');
     }
 
-    public static function getorder($startDate,$endDate)
+    public static function getorder($startDate,$endDate,$page)
     {
         $order = Order::join("patients","patients.id","=","orders.patient_id")
             ->join("cards","cards.id","=","patients.card_id")
@@ -79,7 +79,7 @@ class Order extends Model
             "items.selling_price as unit_price",
             "order_items.price as total_price",
             "cards.type as type",
-        )->get();
+        )->orderBy('orders.created_at','DESC')->paginate(10, ['*'], 'page', $page);
 
         $orders = [];
 
@@ -118,8 +118,10 @@ class Order extends Model
             }
 
         }
-        
-        return collect($orders);
+
+        $data["collectOrder"] = collect($orders);
+        $data["links"] = $order->links();
+        return $data;
     }
 
 }

@@ -23,10 +23,11 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
     private $startDate = false;
     private $endDate = false;
 
-    public function __construct($startDate, $endDate) 
+    public function __construct($startDate, $endDate, $page) 
     {
         $this->startDate = $startDate;
         $this->endDate = $endDate;
+        $this->page = $page;
     }
 
     /**
@@ -50,7 +51,7 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
         }
 
         $order = $order->select("orders.id",
-            "orders.updated_at as dates",
+            "orders.created_at as dates",
             "orders.do_number", 
             "patients.identification as ic",
             "patients.full_name",
@@ -64,7 +65,7 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
             "items.selling_price as unit_price",
             "order_items.price as total_price",
             "cards.type as type",
-        )->get();
+        )->orderBy('orders.created_at','DESC')->paginate(10, ['*'], 'page', $this->page);
 
         $orders = [];
 
@@ -99,6 +100,21 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
                     if (!empty($orders[$k]['NO'])){
                         $num+=1;
                     }
+                } else {
+                    $orders[$k]['NO'] = $num;
+                        $orders[$k]['DATE']=$v->dates;
+                        $orders[$k]['DO NUMBER']=$v->do_number;
+                        $orders[$k]['IC']=$v->ic;
+                        $orders[$k]['FULLANME']=$v->full_name;
+                        $orders[$k]['ADDRES']=$v->address;
+                        $orders[$k]['RX NUMBER']=$v->rx_number;
+                        $orders[$k]['RXDURATION']=$duration;
+                        $orders[$k]['DISPENSED BY']=$v->dispensing_by;
+                        $orders[$k]['MEDICINE']=$v->med;
+                        $orders[$k]['QTY'] ="";
+                        $orders[$k]['UNIT PRICE'] = $v->unit_price;
+                        $orders[$k]['TOTAL PRICE'] = $v->total_price;
+                        $orders[$k]['STATUS'] = $v->type;
                 }
             }
 

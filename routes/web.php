@@ -121,7 +121,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/{item}/item_summary', 'ReportController@item_summary');
         Route::get('/exportsalesitem', 'ReportController@export_sales_item');
         Route::get('/sales_report', 'ReportController@sales_report');
-        Route::post('/exportsalesitemexcel', 'ReportController@export_sales_item_excel')->name('export.sales-item.excel');
+        Route::get('/exportsalesitemexcel', 'ReportController@export_sales_item_excel')->name('export.sales-item.excel');
     });
 
     //batch
