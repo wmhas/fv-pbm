@@ -51,17 +51,18 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
         }
 
         $order = $order->select("orders.id",
-            "orders.created_at as dates",
+            "orders.dispense_date as dates",
             "orders.do_number", 
             "patients.identification as ic",
             "patients.full_name",
-            DB::raw('CONCAT(patients.address_1,", ",patients.address_2,", ",patients.postCode,", ",states.name) as address'),
+            DB::raw('CONCAT(patients.address_1,", ",patients.address_2,", ",patients.postCode,", ",patients.city,", ",states.name) as address'),
             "prescriptions.rx_number",
             "prescriptions.rx_start",
             "prescriptions.rx_end", 
             "orders.dispensing_by",
             "items.brand_name as med",
             "order_items.quantity",
+            "order_items.duration",
             "items.selling_price as unit_price",
             "order_items.price as total_price",
             "cards.type as type",
@@ -75,31 +76,23 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
 
             foreach ($order as $k => $v) {
 
-                $duration = floor(abs(strtotime($v->rx_end) - strtotime($v->rx_start)) / (60 * 60 * 24));
-
-                $oi = OrderItem::with("items")->where("order_id",$v->id)->get();
+                $orders[$k]['NO'] = $num;
+                $orders[$k]['DATE']=$v->dates;
+                $orders[$k]['DO NUMBER']=$v->do_number;
+                $orders[$k]['IC']=$v->ic;
+                $orders[$k]['FULLANME']=$v->full_name;
+                $orders[$k]['ADDRESS']=$v->address;
+                $orders[$k]['DISPENSED BY']=$v->dispensing_by;
+                $orders[$k]['RX NUMBER']=$v->rx_number;
+                $orders[$k]['RX DURATION']=$v->duration;
+                $orders[$k]['MEDICINE']=$v->med;
+                $orders[$k]['QTY'] = $v->quantity;
+                $orders[$k]['UNIT PRICE'] = $v->unit_price;
+                $orders[$k]['TOTAL PRICE'] = $v->total_price;
+                $orders[$k]['STATUS'] = $v->type;
                 
-                if (count($oi)>0) {
-                    foreach ($oi as $koi => $voi) {
-                        $orders[$k]['NO'] = $num;
-                        $orders[$k]['DATE']=$v->dates;
-                        $orders[$k]['DO NUMBER']=$v->do_number;
-                        $orders[$k]['IC']=$v->ic;
-                        $orders[$k]['FULLANME']=$v->full_name;
-                        $orders[$k]['ADDRES']=$v->address;
-                        $orders[$k]['RX NUMBER']=$v->rx_number;
-                        $orders[$k]['RXDURATION']=$duration;
-                        $orders[$k]['DISPENSED BY']=$v->dispensing_by;
-                        $orders[$k]['MEDICINE']=$v->med;
-                        $orders[$k]['QTY'] = $voi->quantity;
-                        $orders[$k]['UNIT PRICE'] = $v->unit_price;
-                        $orders[$k]['TOTAL PRICE'] = $v->total_price;
-                        $orders[$k]['STATUS'] = $v->type;
-                    }
-
-                    if (!empty($orders[$k]['NO'])){
-                        $num+=1;
-                    }
+                if (!empty($orders[$k]['NO'])){
+                    $num+=1;
                 }
             }
         }
@@ -111,14 +104,14 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
     {
         return [
             'NO',
-            'DATE',
+            'DISPENSE DATE',
             'DO NUMBER',
             'IC',
             'FULLNAME',
-            'ADDRES',
+            'ADDRESS',
+            'DISPENSED BY',
             'RX NUMBER',
             'RX DURATION',
-            'DISPENSED BY',
             'MEDICINE',
             'QTY',
             'UNIT PRICE',
@@ -130,7 +123,7 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
 
     public function styles(Worksheet $sheet)
     {
-        $sheet->getStyle('A1:N1')->getFont()->setBold(true);
+        $sheet->getStyle('A1:O1')->getFont()->setBold(true);
         $column = 'C';
         $lastRow = $sheet->getHighestRow();
         $start = 2;
@@ -164,8 +157,8 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
     public function columnFormats(): array
     {
         return [
-            'K' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
             'L' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
+            'M' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
         ];
     }
 }

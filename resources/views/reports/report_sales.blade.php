@@ -53,7 +53,7 @@
                                     <tr>
                                         <th style="width:10px">No</th>
                                         <th>DO Number</th>
-                                        <th>Created Date</th>
+                                        <th>Dispense Date</th>
                                         <th>Patient Detail</th>
                                         <th>Panel</th>
                                         <th>Total Amount (RM)</th>
@@ -65,11 +65,11 @@
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>
-                                            <a href="{{ url('/order/'.$order->id.'/view') }}" data-toggle="tooltip" title="View Order">
+                                            <a href="{{ url('/order/'.$order->order_id.'/view') }}" data-toggle="tooltip" title="View Order">
                                                 {{ $order->do_number }}
                                             </a>
                                         </td>
-                                        <td>{{ date("d/m/Y", strtotime($order->created_at))}}</td>
+                                        <td>{{ date("d/m/Y", strtotime($order->dispense_date))}}</td>
                                         <td>
                                             <a href=" {{ url('/patient/' . $order->patient->id . '/view') }}" data-toggle="tooltip" title="View Patient" >
                                                {{ $order->patient->full_name }}

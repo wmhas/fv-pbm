@@ -65,17 +65,18 @@ class Order extends Model
         }
 
         $order = $order->select("orders.id",
-            "orders.updated_at as tanggal",
+            "orders.dispense_date as tanggal",
             "orders.do_number", 
             "patients.identification as ic",
             "patients.full_name",
-            DB::raw('CONCAT(patients.address_1,", ",patients.address_2,", ",patients.postCode,", ",states.name) as address'),
+            DB::raw('CONCAT(patients.address_1,", ",patients.address_2,", ",patients.postCode,", ",patients.city,", ",states.name) as address'),
             "prescriptions.rx_number",
             "prescriptions.rx_start",
             "prescriptions.rx_end", 
             "orders.dispensing_by",
             "items.brand_name as med",
             "order_items.quantity",
+            "order_items.duration",
             "items.selling_price as unit_price",
             "order_items.price as total_price",
             "cards.type as type",
@@ -89,31 +90,23 @@ class Order extends Model
 
             foreach ($order as $k => $v) {
 
-                $duration = floor(abs(strtotime($v->rx_end) - strtotime($v->rx_start)) / (60 * 60 * 24));
+                $orders[$k]['NO'] = $num;
+                $orders[$k]['DATE']=$v->tanggal;
+                $orders[$k]['DONUMBER']=$v->do_number;
+                $orders[$k]['IC']=$v->ic;
+                $orders[$k]['FULLANME']=$v->full_name;
+                $orders[$k]['ADDRES']=$v->address;
+                $orders[$k]['RXNUMBER']=$v->rx_number;
+                $orders[$k]['RXDURATION']=$v->duration;
+                $orders[$k]['DISPENSEDBY']=$v->dispensing_by;
+                $orders[$k]['MEDICINE']=$v->med;
+                $orders[$k]['QTY'] = $v->quantity;
+                $orders[$k]['UNITPRICE'] = $v->unit_price;
+                $orders[$k]['TOTALPRICE'] = $v->total_price;
+                $orders[$k]['STATUS'] = $v->type;
 
-                $oi = OrderItem::with("items")->where("order_id",$v->id)->get();
-                
-                if (count($oi)>0) {
-                    foreach ($oi as $koi => $voi) {
-                        $orders[$k]['NO'] = $num;
-                        $orders[$k]['DATE']=$v->tanggal;
-                        $orders[$k]['DONUMBER']=$v->do_number;
-                        $orders[$k]['IC']=$v->ic;
-                        $orders[$k]['FULLANME']=$v->full_name;
-                        $orders[$k]['ADDRES']=$v->address;
-                        $orders[$k]['RXNUMBER']=$v->rx_number;
-                        $orders[$k]['RXDURATION']=$duration;
-                        $orders[$k]['DISPENSEDBY']=$v->dispensing_by;
-                        $orders[$k]['MEDICINE']=$v->med;
-                        $orders[$k]['QTY'] = $voi->quantity;
-                        $orders[$k]['UNITPRICE'] = $v->unit_price;
-                        $orders[$k]['TOTALPRICE'] = $v->total_price;
-                        $orders[$k]['STATUS'] = $v->type;
-                    }
-
-                    if (!empty($orders[$k]['NO'])){
-                        $num+=1;
-                    }
+                if (!empty($orders[$k]['NO'])){
+                    $num+=1;
                 }
             }
 

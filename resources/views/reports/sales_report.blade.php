@@ -55,7 +55,7 @@
                                 <thead>
                                     <tr>
                                         <th style="width:10px">No</th>
-                                        <th>Date</th>
+                                        <th>Dispense Date</th>
                                         <th>DO Number</th>
                                         <th>IC</th>
                                         <th>Fullname</th>
