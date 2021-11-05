@@ -70,7 +70,7 @@ class ReportController extends Controller
             ->paginate(10, ['*'], 'page', $page);
 
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
-        // return view('reports.report_sales', ['months' => $months, 'no_orders' => $no_orders, 'totalAll' => $totalAll, 'orders' => $orders, 'roles' => $roles]);
+
         return view('reports.report_sales', ['orders' => $orders, 'roles' => $roles,'startDate'=>$startDate,'endDate'=>$endDate,'page'=>$page]);
     }
 
@@ -308,7 +308,7 @@ class ReportController extends Controller
 
         $startDate = date('Y-m-d');
         $endDate = date('Y-m-d');
-        $orders = Order::getorder(null,null,10);
+        $orders = Order::getorder($startDate, $endDate,1);
         $order = $orders["collectOrder"];
         $links = $orders["links"];
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();

@@ -100,24 +100,8 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
                     if (!empty($orders[$k]['NO'])){
                         $num+=1;
                     }
-                } else {
-                    $orders[$k]['NO'] = $num;
-                        $orders[$k]['DATE']=$v->dates;
-                        $orders[$k]['DO NUMBER']=$v->do_number;
-                        $orders[$k]['IC']=$v->ic;
-                        $orders[$k]['FULLANME']=$v->full_name;
-                        $orders[$k]['ADDRES']=$v->address;
-                        $orders[$k]['RX NUMBER']=$v->rx_number;
-                        $orders[$k]['RXDURATION']=$duration;
-                        $orders[$k]['DISPENSED BY']=$v->dispensing_by;
-                        $orders[$k]['MEDICINE']=$v->med;
-                        $orders[$k]['QTY'] ="";
-                        $orders[$k]['UNIT PRICE'] = $v->unit_price;
-                        $orders[$k]['TOTAL PRICE'] = $v->total_price;
-                        $orders[$k]['STATUS'] = $v->type;
                 }
             }
-
         }
         
         return collect($orders);
