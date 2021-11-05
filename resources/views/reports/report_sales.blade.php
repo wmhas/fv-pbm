@@ -24,7 +24,6 @@
                         <div class="card-body">
                             <form method="GET" enctype="multipart/form-data" action="{{ url('report/search/report_sales') }}">
                                 <div class="row">
-                                    @csrf
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Date From</label>

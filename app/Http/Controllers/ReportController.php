@@ -58,7 +58,6 @@ class ReportController extends Controller
         }
 
         $orders = Order::join("patients","patients.id","=","orders.patient_id")
-            ->leftjoin("tariffs","tariffs.id","=","patients.tariff_id")
             ->join("cards","cards.id","=","patients.card_id")
             ->join("prescriptions","prescriptions.order_id","=","orders.id")
             ->join("order_items","order_items.order_id","=","orders.id")
@@ -69,7 +68,7 @@ class ReportController extends Controller
             ->whereDate('orders.created_at', '<=', $endDate)
             ->orderBy('orders.created_at', 'DESC')
             ->paginate(10, ['*'], 'page', $page);
-            
+
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
         // return view('reports.report_sales', ['months' => $months, 'no_orders' => $no_orders, 'totalAll' => $totalAll, 'orders' => $orders, 'roles' => $roles]);
         return view('reports.report_sales', ['orders' => $orders, 'roles' => $roles,'startDate'=>$startDate,'endDate'=>$endDate,'page'=>$page]);
@@ -86,7 +85,6 @@ class ReportController extends Controller
         // ini_set('max_execution_time', 1000);
         if ($request->startDate != null && $request->endDate != null) {
             $orders= Order::join("patients","patients.id","=","orders.patient_id")
-            ->leftjoin("tariffs","tariffs.id","=","patients.tariff_id")
             ->join("cards","cards.id","=","patients.card_id")
             ->join("prescriptions","prescriptions.order_id","=","orders.id")
             ->join("order_items","order_items.order_id","=","orders.id")
