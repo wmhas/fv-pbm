@@ -22,7 +22,7 @@ class TransactionsSalesExport implements FromCollection, WithHeadings, WithStyle
     private $startDate = false;
     private $endDate = false;
 
-    public function __construct($startDate, $endDate, $page) 
+    public function __construct($startDate, $endDate, $page = null)
     {
         $this->startDate = $startDate;
         $this->endDate = $endDate;
@@ -59,7 +59,13 @@ class TransactionsSalesExport implements FromCollection, WithHeadings, WithStyle
             DB::raw("(CASE WHEN patients.tariff_id IS NOT NULL THEN tariffs.name ELSE 'no panel' END) as panel"),
             "orders.total_amount",
             DB::raw("(CASE WHEN orders.status_id = 4 THEN 'Complete Order' ELSE 'Batch Order' END) as status"),
-        )->orderBy('orders.created_at', 'DESC')->paginate(10, ['*'], 'page', $this->page);
+        )->orderBy('orders.created_at', 'DESC');
+
+        if ($this->page) {
+            $order = $order->paginate(10, ['*'], 'page', $this->page);
+        } else {
+            $order = $order->get();
+        }
 
         $orders = [];
 

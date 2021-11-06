@@ -106,14 +106,13 @@ class ReportController extends Controller
     {   
         $startDate = false;
         $endDate = false;
-        $page = $request->page;
 
         if ($request->startDate != null && $request->endDate != null) {
             $startDate = $request->startDate;
             $endDate = $request->endDate;
         }
 
-        $transaction = new TransactionsSalesExport($startDate, $endDate, $page);
+        $transaction = new TransactionsSalesExport($startDate, $endDate);
         if ($transaction->collection()->count() > 0) {
             return Excel::download($transaction, 'transactionssales.xlsx');
         }
@@ -350,14 +349,13 @@ class ReportController extends Controller
         
         $startDate = false;
         $endDate = false;
-        $page = $request->page;
 
         if ($request->startDate != null && $request->endDate != null) {
             $startDate = $request->startDate;
             $endDate = $request->endDate;
         }
 
-        $transaction = new TransactionsExport($startDate, $endDate, $page);
+        $transaction = new TransactionsExport($startDate, $endDate);
         if ($transaction->collection()->count() > 0) {
             return Excel::download($transaction, 'transactions.xlsx');
         }

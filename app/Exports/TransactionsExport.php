@@ -23,7 +23,7 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
     private $startDate = false;
     private $endDate = false;
 
-    public function __construct($startDate, $endDate, $page) 
+    public function __construct($startDate, $endDate, $page = null)
     {
         $this->startDate = $startDate;
         $this->endDate = $endDate;
@@ -66,7 +66,14 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
             "items.selling_price as unit_price",
             "order_items.price as total_price",
             "cards.type as type",
-        )->orderBy('orders.created_at','DESC')->paginate(10, ['*'], 'page', $this->page);
+        )->orderBy('orders.created_at','DESC');
+
+        if ($this->page) {
+            $order = $order->paginate(10, ['*'], 'page', $this->page);
+        } else {
+            $order = $order->get();
+        }
+
 
         $orders = [];
 
