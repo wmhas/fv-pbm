@@ -116,8 +116,8 @@ class PurchaseController extends Controller
 
     public function history(Request $request)
     {
-        $startDate = $request->get('start_date');
-        $endDate = $request->get('end_date');
+        $startDate = $request->get('start_date', date('Y-m-d'));
+        $endDate = $request->get('end_date', date('Y-m-d'));
         $poNo = $request->get('po_no');
         $export = $request->get('export', false);
 
