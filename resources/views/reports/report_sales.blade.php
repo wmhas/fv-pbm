@@ -174,6 +174,9 @@
 @section('script')
 {{-- @include('reports.dashboard3') --}}
 <script type="text/javascript">
+    $(document).ready(function(){
+        $('.toast').toast('show');
+    });
     $(document).on("click",".page-link",function(){
         href = $(this).attr("href");
         $(this).attr("href", href+"&startDate={{ $startDate }}&endDate={{$endDate}}&filter=1");
