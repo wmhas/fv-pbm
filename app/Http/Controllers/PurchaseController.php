@@ -139,6 +139,8 @@ class PurchaseController extends Controller
             if ($history->collection()->count() > 0) {
                 return Excel::download($history, 'purchase_history.xlsx');
             }
+
+            $request->session()->flash('error', 'No Data to Export');
         }
 
         $purchases = $purchases->paginate(15);
@@ -149,6 +151,7 @@ class PurchaseController extends Controller
             'startDate' => $startDate,
             'endDate' => $endDate,
             'poNo' => $poNo,
+            'export' => $export
         ]);
     }
 }
