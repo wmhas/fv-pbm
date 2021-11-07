@@ -27,23 +27,35 @@
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label>Date From</label>
-                                        <input type="date" name="startDate" class="form-control">
+                                        <input type="date" name="startDate" value="{{$startDate}}" class="form-control">
                                     </div>
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label>Date To</label>
-                                        <input type="date" name="endDate" class="form-control">
+                                        <input type="date" name="endDate" value="{{$endDate}}" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Keyword</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <select class="form-control" name="search_type">
+                                                    <option {{ $searchType === 'do_no' ? 'selected' : '' }} value="do_no">DO Number</option>
+                                                    <option {{ $searchType === 'patient_name' ? 'selected' : '' }} value="patient_name">Patient Name</option>
+                                                </select>
+                                            </div>
+                                            <input type="text" name="keyword" class="form-control" placeholder="DO Number or Patient Name" value="{{$keyword}}">
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-group">
-                                        <button type="submit" class="btn btn-primary" style="margin-top:32px; width:100%;">Search</button>
+                                        <label></label>
+                                        <button type="submit" class="btn btn-primary" style="width:100%;">Search</button>
                                     </div>
                                 </div>
-                                <!-- <div class="col-md-2">
-                                    <button type="button" class="btn btn-secondary" style="margin-top:32px; width:100%;">Export</button>
-                                </div> -->
                             </div>
                         </form>
                     </div>
@@ -125,8 +137,43 @@
                             @endif
                         </div>
                     </div>
+                    <div class="card-footer">
+                        <form action="{{ url('report/report_refill') }}" method="GET">
+                            <input type="hidden" name="startDate" value="{{$startDate}}" class="form-control">
+                            <input type="hidden" name="endDate" value="{{$endDate}}" class="form-control">
+                            <input type="hidden" name="search_type" value="{{$searchType}}" class="form-control">
+                            <input type="hidden" name="keyword" class="form-control" placeholder="DO Number or Patient Name" value="{{$keyword}}">
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <button type="submit" name="export" value="true" class="btn btn-primary w-100">Export</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
+    </div>
 </section>
+@if(\Illuminate\Support\Facades\Session::has('error') && $export)
+    <div class="toast bg-danger" data-delay="10000" role="alert" style="position: absolute; bottom: 20px; right: 20px;">
+        <div class="toast-header">
+            <strong class="mr-auto">Error</strong>
+            <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="toast-body text-white">
+            {{\Illuminate\Support\Facades\Session::get('error')}}
+        </div>
+    </div>
+@endif
+@endsection
+
+@section('script')
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('.toast').toast('show');
+        });
+    </script>
 @endsection

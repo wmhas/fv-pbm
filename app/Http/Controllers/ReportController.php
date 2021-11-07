@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\ItemExport;
+use App\Exports\ReportRefillExport;
 use App\Models\OrderItem;
 use App\Models\Status;
 use Illuminate\Http\Request;
@@ -124,8 +125,11 @@ class ReportController extends Controller
     public function report_refill(Request $request)
     {
         // dd($request->all());
-        $startDate = $request->startDate;
-        $endDate = $request->endDate;
+        $startDate = $request->get('startDate', date('Y-m-d'));
+        $endDate = $request->get('endDate', date('Y-m-d'));
+        $searchType = $request->get('search_type');
+        $keyword = $request->get('keyword');
+        $export = $request->get('export', false);
 
         $orders = Order::query()
             ->whereHas('prescription', function ($prescription) use ($startDate, $endDate) {
@@ -135,14 +139,33 @@ class ReportController extends Controller
                 if ($endDate) {
                     $prescription->where('next_supply_date', '<=', $endDate);
                 }
-            })->with(['prescription', 'patient'])
+            })
+            ->whereHas('patient', function ($patient) use ($keyword, $searchType) {
+                if ($keyword && $searchType === 'patient_name') {
+                    $patient->where('full_name', 'like', '%' . $keyword . '%');
+                }
+            })
+            ->with(['prescription', 'patient'])
             ->where('rx_interval', '>', '1')
             ->where('total_amount', '!=', '0')
-            ->whereIn('status_id', [4, 5])
-            ->paginate(15);
+            ->whereIn('status_id', [4, 5]);
+
+        if ($searchType === 'do_no' && $keyword) {
+            $orders->where('do_number', 'like', '%' . $keyword . '%');
+        }
+
+        if ($export) {
+            $refill = new ReportRefillExport($orders->get());
+            if ($refill->collection()->count() > 0) {
+                return \Maatwebsite\Excel\Facades\Excel::download($refill, 'refill.xlsx');
+            }
+            $request->session()->flash('error', 'No Data to Export');
+        }
+
+        $orders = $orders->paginate(15);
 
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
-        return view('reports.report_refill', compact('orders', 'roles'));
+        return view('reports.report_refill', compact('orders', 'roles', 'startDate', 'endDate', 'keyword', 'searchType', 'export'));
     }
 
     private function getItems ($startDate, $endDate, $method, $keyword, $order = 'item_code', $direction = 'asc')
