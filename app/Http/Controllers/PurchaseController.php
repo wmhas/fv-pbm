@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\PurchaseHistoryExport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\SalesPerson;
@@ -10,6 +11,7 @@ use App\Models\Item;
 use App\Models\Location;
 use App\Models\Stock;
 use Carbon\Carbon;
+use Maatwebsite\Excel\Facades\Excel;
 
 
 class PurchaseController extends Controller
@@ -117,6 +119,8 @@ class PurchaseController extends Controller
         $startDate = $request->get('start_date');
         $endDate = $request->get('end_date');
         $poNo = $request->get('po_no');
+        $export = $request->get('export', false);
+
         $purchases = Purchase::query();
         if ($startDate) {
             $purchases = $purchases->whereDate('created_at', '>=', $startDate);
@@ -127,7 +131,17 @@ class PurchaseController extends Controller
         if ($poNo) {
             $purchases = $purchases->where('po_number', 'like', '%'.$poNo.'%');
         }
-        $purchases = $purchases->with(['item', 'salespersons'])->paginate(15);
+
+        $purchases = $purchases->with(['item', 'salespersons']);
+
+        if ($export) {
+            $history = new PurchaseHistoryExport($purchases->get());
+            if ($history->collection()->count() > 0) {
+                return Excel::download($history, 'purchase_history.xlsx');
+            }
+        }
+
+        $purchases = $purchases->paginate(15);
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
         return view('purchase.history', [
             'purchases' => $purchases,

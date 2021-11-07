@@ -91,6 +91,16 @@
                     </div>
 
                     <div class="card-footer clearfix">
+                        <form method="get" action="{{route('purchase.history')}}">
+                            <input class="form-control" type="hidden" placeholder="Start Date" id="start-date" name="start_date" value="{{$startDate ?? ''}}" />
+                            <input class="form-control" type="hidden" placeholder="End Date" name="end_date" id="end-date" value="{{$endDate ?? ''}}" />
+                            <input type="hidden" value="{{ $poNo ?? '' }}" name="po_no" class="form-control" placeholder="PO Number">
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <button type="submit" class="btn btn-primary" style=" width:100%;" name="export" value="true">Export</button>
+                                </div>
+                            </div>
+                        </form>
                         <!-- <ul class="pagination pagination-sm m-0 float-right">
                             <li class="page-item"><a class="page-link" href="#">&laquo;</a></li>
                             <li class="page-item"><a class="page-link" href="#">1</a></li>
