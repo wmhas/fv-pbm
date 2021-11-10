@@ -83,6 +83,7 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
 
             foreach ($order as $k => $v) {
 
+                $orders[$k]['ORDER ID'] = $v->id;
                 $orders[$k]['NO'] = $num;
                 $orders[$k]['DATE']=$v->dates;
                 $orders[$k]['DO NUMBER']=$v->do_number;
@@ -110,6 +111,7 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
     public function headings(): array
     {
         return [
+            'ORDER ID',
             'NO',
             'DISPENSE DATE',
             'DO NUMBER',
@@ -130,42 +132,52 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
 
     public function styles(Worksheet $sheet)
     {
-        $sheet->getStyle('A1:O1')->getFont()->setBold(true);
-        $column = 'C';
-        $lastRow = $sheet->getHighestRow();
-        $start = 2;
-        $first = $sheet->getCell('C2')->getValue();
-        $x = $start;
-        $no = 1;
-        for ($row = 1; $row <= $lastRow; $row++) {
-            if($row > 1){
-                if($first != $sheet->getCell($column.$row)->getValue()){
-                    $z = $start-1;
-                    $sheet->mergeCells('A'.$x.':A'.$z);
-                    $sheet->mergeCells('B'.$x.':B'.$z);
-                    $sheet->mergeCells('C'.$x.':C'.$z);
-                    $sheet->mergeCells('D'.$x.':D'.$z);
-                    $sheet->mergeCells('E'.$x.':E'.$z);
-                    $sheet->mergeCells('F'.$x.':F'.$z);
-                    $sheet->mergeCells('G'.$x.':G'.$z);
-                    $sheet->mergeCells('H'.$x.':H'.$z);
-                    $sheet->mergeCells('M'.$x.':M'.$z);
-                    $sheet->mergeCells('N'.$x.':N'.$z);
-                    $x = $start;
-                    $first = $sheet->getCell($column.$row)->getValue();
-                    $no++;
-                    $sheet->setCellValue('A'.$x, $no);
-                }
-                $start++;
+        $sheet->getStyle('A1:P1')->getFont()->setBold(true);
+
+        $last_row = $sheet->getHighestRow();
+        $current_row = 2;
+        $start_row = 2;
+        $end_row = 2;
+        $num = 1;
+        $current_id = $sheet->getCell('A'.$current_row)->getValue();
+
+        for ($current_row = 2; $current_row <= $last_row; $current_row++) {
+            if ($sheet->getCell('A'.$current_row)->getValue() == $current_id) {
+                $end_row = $current_row;
+            } else {
+                $this->merge($sheet, $start_row, $end_row);
+
+                $sheet->setCellValue('B'.$start_row, $num);  
+                
+                $num++;
+                $start_row = $end_row = $current_row;
+                $current_id = $sheet->getCell('A' .$current_row)->getValue();
             }
+
+            $sheet->getColumnDimension('A')->setVisible(false);
         }
+        $this->merge($sheet, $start_row, $end_row);
+    }
+
+    public function merge($sheet, $start_row, $end_row) {
+        $sheet->mergeCells('A' .$start_row. ':A' .$end_row);
+        $sheet->mergeCells('B' .$start_row. ':B' .$end_row);
+        $sheet->mergeCells('C' .$start_row. ':C' .$end_row);
+        $sheet->mergeCells('D' .$start_row. ':D' .$end_row);
+        $sheet->mergeCells('E' .$start_row. ':E' .$end_row);
+        $sheet->mergeCells('F' .$start_row. ':F' .$end_row);
+        $sheet->mergeCells('G' .$start_row. ':G' .$end_row);
+        $sheet->mergeCells('H' .$start_row. ':H' .$end_row);
+        $sheet->mergeCells('I' .$start_row. ':I' .$end_row);
+        $sheet->mergeCells('O' .$start_row. ':O' .$end_row);
+        $sheet->mergeCells('P' .$start_row. ':P' .$end_row);
     }
 
     public function columnFormats(): array
     {
         return [
-            'L' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
             'M' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
+            'N' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
         ];
     }
 }

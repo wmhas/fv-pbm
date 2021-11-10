@@ -65,7 +65,7 @@
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>
-                                            <a href="{{ url('/order/'.$order->order_id.'/view') }}" data-toggle="tooltip" title="View Order">
+                                            <a href="{{ url('/order/'.$order->id.'/view') }}" data-toggle="tooltip" title="View Order">
                                                 {{ $order->do_number }}
                                             </a>
                                         </td>

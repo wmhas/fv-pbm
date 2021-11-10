@@ -58,14 +58,20 @@ class ReportController extends Controller
             $page = 1;
         }
 
-        $orders = Order::join("patients","patients.id","=","orders.patient_id")
-            ->leftjoin("tariffs","tariffs.id","=","patients.tariff_id")
-            ->join("cards","cards.id","=","patients.card_id")
-            ->join("prescriptions","prescriptions.order_id","=","orders.id")
-            ->join("order_items","order_items.order_id","=","orders.id")
-            ->join("items","items.id","=","order_items.myob_product_id")
-            ->join("states","states.id","=","patients.state_id")
-            ->whereIn('orders.status_id', [4, 5])
+        // $orders = Order::join("patients","patients.id","=","orders.patient_id")
+            // ->leftjoin("tariffs","tariffs.id","=","patients.tariff_id")
+            // ->join("cards","cards.id","=","patients.card_id")
+            // ->join("prescriptions","prescriptions.order_id","=","orders.id")
+            // ->join("order_items","order_items.order_id","=","orders.id")
+            // ->join("items","items.id","=","order_items.myob_product_id")
+            // ->join("states","states.id","=","patients.state_id")
+            // ->whereIn('orders.status_id', [4, 5])
+            // ->whereDate('orders.created_at', '>=', $startDate)
+            // ->whereDate('orders.created_at', '<=', $endDate)
+            // ->orderBy('orders.created_at', 'DESC')
+            // ->paginate(10, ['*'], 'page', $page);
+
+        $orders = Order::whereIn('orders.status_id', [4, 5])
             ->whereDate('orders.created_at', '>=', $startDate)
             ->whereDate('orders.created_at', '<=', $endDate)
             ->orderBy('orders.created_at', 'DESC')
@@ -86,20 +92,27 @@ class ReportController extends Controller
 
         // ini_set('max_execution_time', 1000);
         if ($request->startDate != null && $request->endDate != null) {
-            $orders= Order::join("patients","patients.id","=","orders.patient_id")
-            ->leftjoin("tariffs","tariffs.id","=","patients.tariff_id")
-            ->join("cards","cards.id","=","patients.card_id")
-            ->join("prescriptions","prescriptions.order_id","=","orders.id")
-            ->join("order_items","order_items.order_id","=","orders.id")
-            ->join("items","items.id","=","order_items.myob_product_id")
-            ->join("states","states.id","=","patients.state_id")
-            ->whereIn('orders.status_id', [4, 5])
-            ->whereDate('orders.created_at', '>=', $request->startDate)
-            ->whereDate('orders.created_at', '<=', $request->endDate)
-            ->orderBy('orders.created_at', 'DESC')
-            ->paginate(10, ['*'], 'page', $page);
+            // $orders= Order::join("patients","patients.id","=","orders.patient_id")
+            // ->leftjoin("tariffs","tariffs.id","=","patients.tariff_id")
+            // ->join("cards","cards.id","=","patients.card_id")
+            // ->join("prescriptions","prescriptions.order_id","=","orders.id")
+            // ->join("order_items","order_items.order_id","=","orders.id")
+            // ->join("items","items.id","=","order_items.myob_product_id")
+            // ->join("states","states.id","=","patients.state_id")
+            // ->whereIn('orders.status_id', [4, 5])
+            // ->whereDate('orders.created_at', '>=', $request->startDate)
+            // ->whereDate('orders.created_at', '<=', $request->endDate)
+            // ->orderBy('orders.created_at', 'DESC')
+            // ->paginate(10, ['*'], 'page', $page);
+
+            $orders = Order::whereIn('orders.status_id', [4, 5])
+                ->whereDate('orders.created_at', '>=', $request->startDate)
+                ->whereDate('orders.created_at', '<=', $request->endDate)
+                ->orderBy('orders.created_at', 'DESC')
+                ->paginate(10, ['*'], 'page', $page);
         }
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
+        // return view('reports.report_sales', ['orders' => $orders, 'roles' => $roles,'startDate'=>$request->startDate,'endDate'=>$request->endDate,'page'=>$page]);
         return view('reports.report_sales', ['orders' => $orders, 'roles' => $roles,'startDate'=>$request->startDate,'endDate'=>$request->endDate,'page'=>$page]);
     }
 
@@ -318,50 +331,84 @@ class ReportController extends Controller
 
     public function sales_report()
     {
-        $months = ['Jan', 'Feb', 'Mar', 'April', 'May', 'Jun', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        $totalAll = Order::whereIn('status_id', [4, 5])->sum('total_amount');
-        $monthsNo = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-        $no_orders = [];
-        foreach ($monthsNo as $no) {
-            $itemSale = Order::whereMonth('updated_at', '=', $no)
-                ->whereIn('status_id', [4, 5])
-                ->sum('total_amount');
+        // $months = ['Jan', 'Feb', 'Mar', 'April', 'May', 'Jun', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        // $totalAll = Order::whereIn('status_id', [4, 5])->sum('total_amount');
+        // $monthsNo = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+        // $no_orders = [];
+        // foreach ($monthsNo as $no) {
+        //     $itemSale = Order::whereMonth('updated_at', '=', $no)
+        //         ->whereIn('status_id', [4, 5])
+        //         ->sum('total_amount');
 
-            array_push($no_orders, (int)$itemSale);
+        //     array_push($no_orders, (int)$itemSale);
+        // }
+
+        // $startDate = date('Y-m-d');
+        // $endDate = date('Y-m-d');
+        // $orders = Order::getorder(null,null,1);
+        // $order = $orders["collectOrder"];
+        // $links = $orders["links"];
+        // $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
+        // return view('reports.sales_report', ['months' => $months, 'no_orders' => $no_orders, 'totalAll' => $totalAll, 'order' => $order, 'roles' => $roles, 'order'=>$order,'startDate'=>$startDate,'endDate'=>$endDate,'page'=>1,'links'=>$links]);
+            
+        $page = 1;
+
+        $startDate = $endDate = date('Y-m-d');
+
+        if ($startDate != null && $endDate != null) {
+            $orders = Order::whereIn('orders.status_id', [4, 5])
+                ->whereDate('orders.created_at', '>=', $startDate)
+                ->whereDate('orders.created_at', '<=', $endDate)
+                ->orderBy('orders.created_at', 'DESC')
+                ->paginate(10, ['*'], 'page', $page);
         }
 
-        $startDate = date('Y-m-d');
-        $endDate = date('Y-m-d');
-        $orders = Order::getorder(null,null,1);
-        $order = $orders["collectOrder"];
-        $links = $orders["links"];
+        $links = $orders->links();
+
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
-        return view('reports.sales_report', ['months' => $months, 'no_orders' => $no_orders, 'totalAll' => $totalAll, 'order' => $order, 'roles' => $roles, 'order'=>$order,'startDate'=>$startDate,'endDate'=>$endDate,'page'=>1,'links'=>$links]);
+
+        return view('reports.sales_report', ['orders' => $orders, 'links'=> $links, 'roles' => $roles,'startDate'=>$startDate,'endDate'=>$endDate,'page'=>$page]);
     }
 
     public function search_report_sales($request)
     {
-        $months = ['Jan', 'Feb', 'Mar', 'April', 'May', 'Jun', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        $totalAll = Order::whereIn('status_id', [4, 5])->sum('total_amount');
-        $monthsNo = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-        $no_orders = [];
-        foreach ($monthsNo as $no) {
-            $itemSale = Order::whereMonth('created_at', '=', $no)
-                ->whereIn('status_id', [4, 5])
-                ->sum('total_amount');
+        // $months = ['Jan', 'Feb', 'Mar', 'April', 'May', 'Jun', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        // $totalAll = Order::whereIn('status_id', [4, 5])->sum('total_amount');
+        // $monthsNo = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+        // $no_orders = [];
+        // foreach ($monthsNo as $no) {
+        //     $itemSale = Order::whereMonth('created_at', '=', $no)
+        //         ->whereIn('status_id', [4, 5])
+        //         ->sum('total_amount');
 
-            array_push($no_orders, (int)$itemSale);
-        }
+        //     array_push($no_orders, (int)$itemSale);
+        // }
 
-        $startDate = $request->startDate;
-        $endDate = $request->endDate;
+        // $startDate = $request->startDate;
+        // $endDate = $request->endDate;
+        // $page = $request->page;
+
+        // $orders = Order::getorder($startDate, $endDate, $page);
+        // $order = $orders["collectOrder"];
+        // $links = $orders["links"];
+        // $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
+        // return view('reports.sales_report', ['months' => $months, 'no_orders' => $no_orders, 'totalAll' => $totalAll, 'roles' => $roles, 'order'=>$order,'startDate'=>$startDate,'endDate'=>$endDate,'page'=>$page,'links'=>$links]);
+
         $page = $request->page;
 
-        $orders = Order::getorder($startDate, $endDate, $page);
-        $order = $orders["collectOrder"];
-        $links = $orders["links"];
+        if ($request->startDate != null && $request->endDate != null) {
+            $orders = Order::whereIn('orders.status_id', [4, 5])
+                ->whereDate('orders.created_at', '>=', $request->startDate)
+                ->whereDate('orders.created_at', '<=', $request->endDate)
+                ->orderBy('orders.created_at', 'DESC')
+                ->paginate(10, ['*'], 'page', $page);
+        }
+
+        $links = $orders->links();
+
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
-        return view('reports.sales_report', ['months' => $months, 'no_orders' => $no_orders, 'totalAll' => $totalAll, 'roles' => $roles, 'order'=>$order,'startDate'=>$startDate,'endDate'=>$endDate,'page'=>$page,'links'=>$links]);
+
+        return view('reports.sales_report', ['orders' => $orders, 'links'=> $links, 'roles' => $roles,'startDate'=>$request->startDate,'endDate'=>$request->endDate,'page'=>$page]);
     }
 
     public function export_sales_item_excel(Request $request)

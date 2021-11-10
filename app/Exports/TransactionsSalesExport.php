@@ -5,6 +5,7 @@ namespace App\Exports;
 use App\Models\Order;
 use App\Models\Item;
 use App\Models\OrderItem;
+use App\Models\Card;
 use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
@@ -42,24 +43,28 @@ class TransactionsSalesExport implements FromCollection, WithHeadings, WithStyle
             ->join("items","items.id","=","order_items.myob_product_id")
             ->join("states","states.id","=","patients.state_id")
             ->whereIn('orders.status_id', [4, 5]);
+
+        $order = Order::whereIn('orders.status_id', [4, 5]);
         
         if ($this->startDate && $this->endDate){
             $order = $order->whereDate('orders.created_at', '>=', $this->startDate)
                     ->whereDate('orders.created_at', '<=', $this->endDate);
         }
 
-        $order = $order->select("orders.id",
-            "orders.created_at as dates",
-            "orders.do_number", 
-            "patients.identification as ic",
-            "patients.full_name",
-            DB::raw('CONCAT(patients.address_1,", ",patients.address_2,", ",patients.postCode,", ",states.name) as address'),
-            "prescriptions.rx_number", 
-            "orders.dispensing_by",
-            DB::raw("(CASE WHEN patients.tariff_id IS NOT NULL THEN tariffs.name ELSE 'no panel' END) as panel"),
-            "orders.total_amount",
-            DB::raw("(CASE WHEN orders.status_id = 4 THEN 'Complete Order' ELSE 'Batch Order' END) as status"),
-        )->orderBy('orders.created_at', 'DESC');
+        // $order = $order->select("orders.id",
+        //     "orders.created_at as dates",
+        //     "orders.do_number", 
+        //     "patients.identification as ic",
+        //     "patients.full_name",
+        //     DB::raw('CONCAT(patients.address_1,", ",patients.address_2,", ",patients.postCode,", ",states.name) as address'),
+        //     "prescriptions.rx_number", 
+        //     "orders.dispensing_by",
+        //     DB::raw("(CASE WHEN patients.tariff_id IS NOT NULL THEN tariffs.name ELSE 'no panel' END) as panel"),
+        //     "orders.total_amount",
+        //     DB::raw("(CASE WHEN orders.status_id = 4 THEN 'Complete Order' ELSE 'Batch Order' END) as status"),
+        // )->orderBy('orders.created_at', 'DESC');
+
+        $order->orderBy('orders.created_at', 'DESC');
 
         if ($this->page) {
             $order = $order->paginate(10, ['*'], 'page', $this->page);
@@ -73,17 +78,35 @@ class TransactionsSalesExport implements FromCollection, WithHeadings, WithStyle
 
         if (count($order)>0){
             foreach ($order as $k => $v) {
+                
+                $address = "";
+                
+                if (!empty($v->patient->address_1))
+                    $address .= $v->patient->address_1;
+                if (!empty($v->patient->address_2))
+                    $address .= $v->patient->address_2;
+                if (!empty($v->patient->address_3))
+                    $address .= $v->patient->address_3;
+                if (!empty($v->patient->postcode))
+                    $address .= $v->patient->postcode;
+                if (!empty($v->patient->city))
+                    $address .= $v->patient->city;
+                if (!empty($v->patient->state->name))
+                    $address .= $v->patient->state->name;
+
+                $card = Card::where('id', '1113')->first();
+
                 $orders[$k]['NO'] = $num;
-                $orders[$k]['DATE']=$v->dates;
+                $orders[$k]['DISPENSING DATE']=$v->dispense_date;
                 $orders[$k]['DO NUMBER']=$v->do_number;
-                $orders[$k]['IC']=$v->ic;
-                $orders[$k]['FULLANME']=$v->full_name;
-                $orders[$k]['ADDRES']=$v->address;
-                $orders[$k]['RX NUMBER']=$v->rx_number;
+                $orders[$k]['IC']=$v->patient->identification;
+                $orders[$k]['FULLANME']=$v->patient->full_name;
+                $orders[$k]['ADDRESS']=$address;
+                $orders[$k]['RX NUMBER']=$v->prescription->rx_number;
                 $orders[$k]['DISPENSED BY']=$v->dispensing_by;
-                $orders[$k]['PANEL']=$v->panel;
+                $orders[$k]['PANEL']=$v->patient->tariff->name;
                 $orders[$k]['TOTAL AMOUNT'] = $v->total_amount;
-                $orders[$k]['STATUS'] = $v->status;
+                $orders[$k]['STATUS'] = $card->type;
 
                 $num++;
             }
@@ -96,22 +119,23 @@ class TransactionsSalesExport implements FromCollection, WithHeadings, WithStyle
     {
         return [
             'NO',
-            'DATE',
+            'DISPENSING DATE',
             'DO NUMBER',
             'IC',
             'FULLNAME',
-            'ADDRES',
+            'ADDRESS',
             'RX NUMBER',
             'DISPENSED BY',
             'PANEL',
             'TOTAL AMOUNT',
             'STATUS',
+            'REMARKS',
         ];
     }
 
     public function styles(Worksheet $sheet)
     {
-        $sheet->getStyle('A1:K1')->getFont()->setBold(true);
+        $sheet->getStyle('A1:L1')->getFont()->setBold(true);
     }
 
     public function columnFormats(): array

@@ -50,47 +50,105 @@
                         </div>
                     </div>
                     <div class="card">
-                        <div class="card-body" style="overflow-x:auto;">
-                            <table class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th style="width:10px">No</th>
-                                        <th>Dispense Date</th>
-                                        <th>DO Number</th>
-                                        <th>IC</th>
-                                        <th>Fullname</th>
-                                        <th>Address</th>
-                                        <th>RX Number</th>
-                                        <th>RX Duration</th>
-                                        <th>Dispensed By</th>
-                                        <th>Medicine</th>
-                                        <th>Qty</th>
-                                        <th>Unit Price</th>
-                                        <th>Total Price</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($order as $v)
-                                    <tr>
-                                        <td>{{ $v['NO'] }}</td>
-                                        <td>{{ $v['DATE'] }}</td>
-                                        <td>{{ $v['DONUMBER'] }}</td>
-                                        <td>{{ $v['IC'] }}</td>
-                                        <td>{{ $v['FULLANME'] }}</td>
-                                        <td>{{ $v['ADDRES'] }}</td>
-                                        <td>{{ $v['RXNUMBER'] }}</td>
-                                        <td>{{ $v['RXDURATION'] }}</td>
-                                        <td>{{ $v['DISPENSEDBY'] }}</td>
-                                        <td>{{ $v['MEDICINE'] }}</td>
-                                        <td>{{ $v['QTY'] }}</td>
-                                        <td class="text-right">{{ number_format($v['UNITPRICE'],2) }}</td>
-                                        <td class="text-right">{{ number_format($v['TOTALPRICE'],2) }}</td>
-                                        <td>{{ $v['STATUS'] }}</td>
-                                    </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:10px">No</th>
+                                            <th>Dispense Date</th>
+                                            <th>DO Number</th>
+                                            <th>IC</th>
+                                            <th>Fullname</th>
+                                            <th>Address</th>
+                                            <th>Dispensed By</th>
+                                            <th class="text-center">RX Number</th>
+                                            <th class="text-center">RX Duration</th>
+                                            <th>Medicine</th>
+                                            <th class="text-center">Qty</th>
+                                            <th class="text-right">Unit Price</th>
+                                            <th class="text-right">Total Price</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($orders as $order)
+                                            @php
+                                                $address = "";
+
+                                                if (!empty($order->patient->address_1))
+                                                    $address .= $order->patient->address_1;
+                                                if (!empty($order->patient->address_2))
+                                                    $address .= " " .$order->patient->address_2;
+                                                if (!empty($order->patient->address_3))
+                                                    $address .= " " .$order->patient->address_3;
+                                                if (!empty($order->patient->postcode))
+                                                    $address .= " " .$order->patient->postcode;
+                                                if (!empty($order->patient->city))
+                                                    $address .= " " .$order->patient->city;
+                                                if (!empty($order->patient->state->name))
+                                                    $address .= " " .$order->patient->state->name;
+                                            @endphp
+                                            <tr>
+                                                <td>{{ $loop->iteration }}</td>
+                                                <td>{{ $order->dispense_date }}</td>
+                                                <td>{{ $order->do_number }}</td>
+                                                <td>{{ $order->patient->identification }}</td>
+                                                <td>{{ $order->patient->full_name }}</td>
+                                                <td>{{ $address }}</td>
+                                                <td>{{ $order->dispensing_by }}</td>
+                                                <td>{{ $order->prescription->rx_number }}</td>
+                                                <td class="p-0 text-center">
+                                                    <table class="table table-borderless">
+                                                        @foreach ($order->orderitem as $orderitem)
+                                                            <tr>
+                                                                <td class="@if ($loop->iteration > 1) border-top @endif">{{ $orderitem->duration }}</td>
+                                                            </tr>
+                                                        @endforeach
+                                                    </table>
+                                                </td>
+                                                <td class="p-0">
+                                                    <table class="table table-borderless">
+                                                        @foreach ($order->orderitem as $orderitem)
+                                                            <tr>
+                                                                <td class="@if ($loop->iteration > 1) border-top @endif">{{ $orderitem->items->brand_name }}</td>
+                                                            </tr>
+                                                        @endforeach
+                                                    </table>
+                                                </td>
+                                                <td class="p-0 text-center">
+                                                    <table class="table table-borderless">
+                                                        @foreach ($order->orderitem as $orderitem)
+                                                            <tr>
+                                                                <td class="@if ($loop->iteration > 1) border-top @endif">{{ $orderitem->quantity }}</td>
+                                                            </tr>
+                                                        @endforeach
+                                                    </table>
+                                                </td>
+                                                <td class="p-0 text-right">
+                                                    <table class="table table-borderless">
+                                                        @foreach ($order->orderitem as $orderitem)
+                                                            <tr>
+                                                                <td class="@if ($loop->iteration > 1) border-top @endif">{{ number_format($orderitem->items->selling_price, 2) }}</td>
+                                                            </tr>
+                                                        @endforeach
+                                                    </table>
+                                                </td>
+                                                <td class="p-0 text-right">
+                                                    <table class="table table-borderless">
+                                                        @foreach ($order->orderitem as $orderitem)
+                                                            <tr>
+                                                                <td class="@if ($loop->iteration > 1) border-top @endif">{{ number_format($orderitem->price , 2)}}</td>
+                                                            </tr>
+                                                        @endforeach
+                                                    </table>
+                                                </td>
+                                                <td>{{ $order->patient->card->type }}</td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                         <div class="card-body clearfix">
                             <ul class="pagination pagination-sm m-0 float-right">
