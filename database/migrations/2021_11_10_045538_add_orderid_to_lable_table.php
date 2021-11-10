@@ -13,7 +13,7 @@ class AddOrderidToLableTable extends Migration
      */
     public function up()
     {
-        Schema::table('lable', function (Blueprint $table) {
+        Schema::table('labels', function (Blueprint $table) {
             $table->bigInteger('order_id')->after('do_date')->nullable();
         });
     }
@@ -25,7 +25,7 @@ class AddOrderidToLableTable extends Migration
      */
     public function down()
     {
-        Schema::table('lable', function (Blueprint $table) {
+        Schema::table('labels', function (Blueprint $table) {
             $table->dropColumn('order_id');
         });
     }
