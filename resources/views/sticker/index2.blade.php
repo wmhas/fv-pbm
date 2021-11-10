@@ -55,27 +55,52 @@
                             </tr>
                             </thead>
                             <tbody>
-                            @foreach($orders AS $order)
-                                @php($totalItem = count($order->orderitem))
-                                @php($totalPrice = 0)
-                                @foreach($order->orderitem AS $orderItem)
-                                    @php($totalPrice += $orderItem->price)
+                            @if ($doNumber == NULL)
+                                @foreach($labels AS $label)
+                                    @php($totalItem = count($label->order->orderitem))
+                                    @php($totalPrice = 0)
+                                    @foreach($label->order->orderitem AS $orderItem)
+                                        @php($totalPrice += $orderItem->price)
+                                    @endforeach
+                                    <tr>
+                                        <td>{{$loop->iteration}}</td>
+                                        <td>{{ ($label->order->patient) ? $label->order->patient->salutation : "" }}</td>
+                                        <td>{{ ($label->order->patient) ? $label->order->patient->full_name : "" }}</td>
+                                        <td>{{ ($label->order->patient) ? $label->order->patient->identification : "" }}</td>
+                                        <td>{{$label->order->do_number}}</td>
+                                        <td class="text-right">{{$totalItem}}</td>
+                                        <td class="text-right">{{number_format($totalPrice, 2)}}</td>
+                                        <td class="text-center">
+                                            <a href="{{route('sticker.print', $label->order->id)}}" title="Print">
+                                                <i class="mdi mdi-printer"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
                                 @endforeach
-                                <tr>
-                                    <td>{{$loop->iteration}}</td>
-                                    <td>{{ ($order->patient) ? $order->patient->salutation : "" }}</td>
-                                    <td>{{ ($order->patient) ? $order->patient->full_name : "" }}</td>
-                                    <td>{{ ($order->patient) ? $order->patient->identification : "" }}</td>
-                                    <td>{{$order->do_number}}</td>
-                                    <td class="text-right">{{$totalItem}}</td>
-                                    <td class="text-right">{{number_format($totalPrice, 2)}}</td>
-                                    <td class="text-center">
-                                        <a href="{{route('sticker.print', $order->id)}}" title="Print">
-                                            <i class="mdi mdi-printer"></i>
-                                        </a>
-                                    </td>
-                                </tr>
-                            @endforeach
+                            @else
+                                @foreach($orders AS $order)
+                                    @php($totalItem = count($order->orderitem))
+                                    @php($totalPrice = 0)
+                                    @foreach($order->orderitem AS $orderItem)
+                                        @php($totalPrice += $orderItem->price)
+                                    @endforeach
+                                    <tr>
+                                        <td>{{$loop->iteration}}</td>
+                                        <td>{{ ($order->patient) ? $order->patient->salutation : "" }}</td>
+                                        <td>{{ ($order->patient) ? $order->patient->full_name : "" }}</td>
+                                        <td>{{ ($order->patient) ? $order->patient->identification : "" }}</td>
+                                        <td>{{$order->do_number}}</td>
+                                        <td class="text-right">{{$totalItem}}</td>
+                                        <td class="text-right">{{number_format($totalPrice, 2)}}</td>
+                                        <td class="text-center">
+                                            <a href="{{route('sticker.print', $order->id)}}" title="Print">
+                                                <i class="mdi mdi-printer"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @endforeach 
+                            @endif
+                            
                             </tbody>
                         </table>
                     </div>
@@ -88,7 +113,7 @@
                     </div>
                     <div class="card-footer">
                         <div class="float-right">
-                            {{ $orders->withQueryString()->links() }}
+                            {{-- {{ $orders->withQueryString()->links() }} --}}
                         </div>
                     </div>
                 </div>
@@ -106,6 +131,9 @@
           </div>
           <div class="modal-body">
             <p>Queue data was successfully cleared !</p>
+          </div>
+          <div class="modal-footer">
+              <a href="" class="btn btn-primary">Ok</a>
           </div>
         </div>
 
@@ -141,8 +169,11 @@
             // Callback handler that will be called on success
             request.done(function (response, textStatus, jqXHR){
                 if (response.status) {
-                   $("#modalClearQueue").modal("show");
-                   setTimeout(function(){ window.location.reload(); }, 3000);
+                    $("#modalClearQueue").modal({
+                        show: true,
+                        backdrop: 'static',     
+                    });
+                    setTimeout(function(){ window.location.reload(); }, 3000);
                 }
             });
 
