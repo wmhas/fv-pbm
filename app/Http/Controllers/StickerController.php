@@ -39,6 +39,8 @@ class StickerController extends Controller
     {
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
         $order = Order::where('id', $orderId)->with(['patient', 'orderitem.items', 'orderitem.frequencies'])->first();
+        $order_id = $orderId;
+        
         if ($order) {
             $data = new \stdClass();
             $data->patient_name = $order->patient->full_name;
@@ -68,7 +70,7 @@ class StickerController extends Controller
                 $data->items[] = $item;
             }
 
-            return view('sticker.print', compact('data', 'roles'));
+            return view('sticker.print', compact('data', 'roles','order_id'));
         }
 
         return back()->with(['status' => false, 'message' => 'Please enter correct DO number']);
