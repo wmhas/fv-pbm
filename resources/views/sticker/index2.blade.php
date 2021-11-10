@@ -63,9 +63,9 @@
                                 @endforeach
                                 <tr>
                                     <td>{{$loop->iteration}}</td>
-                                    <td>{{$order->patient->salutation}}</td>
-                                    <td>{{$order->patient->full_name}}</td>
-                                    <td>{{$order->patient->identification}}</td>
+                                    <td>{{ ($order->patient) ? $order->patient->salutation : "" }}</td>
+                                    <td>{{ ($order->patient) ? $order->patient->full_name : "" }}</td>
+                                    <td>{{ ($order->patient) ? $order->patient->identification : "" }}</td>
                                     <td>{{$order->do_number}}</td>
                                     <td class="text-right">{{$totalItem}}</td>
                                     <td class="text-right">{{number_format($totalPrice, 2)}}</td>
@@ -79,6 +79,13 @@
                             </tbody>
                         </table>
                     </div>
+                    <div class="card-body" style="overflow-x:auto;">
+                        <form method="POST" id="formClearLabel">
+                            @csrf
+                            <input type="hidden" name="doClearLabel" value="1"/>
+                            <button class="btn btn-danger" type="submit">Clear Queue</button>
+                        </form>
+                    </div>
                     <div class="card-footer">
                         <div class="float-right">
                             {{ $orders->withQueryString()->links() }}
@@ -88,4 +95,72 @@
             </div>
         </div>
     </div>
+
+    <div id="modalClearQueue" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Success Clear Queue</h4>
+          </div>
+          <div class="modal-body">
+            <p>Queue data was successfully cleared !</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+@endsection
+
+@section('script')
+    <script type="text/javascript">
+        $("#formClearLabel").on("submit", function(e) {
+            e.preventDefault();
+            var $form = $(this);
+
+            // Let's select and cache all the fields
+            var $inputs = $form.find("input, select, button, textarea");
+
+            // Serialize the data in the form
+            var serializedData = $form.serialize();
+
+            // Let's disable the inputs for the duration of the Ajax request.
+            // Note: we disable elements AFTER the form data has been serialized.
+            // Disabled form elements will not be serialized.
+            $inputs.prop("disabled", true);
+
+            // Fire off the request to /form.php
+            request = $.ajax({
+                url: "{{ route('sticker.clear-queue') }}",
+                type: "post",
+                data: serializedData
+            });
+
+            // Callback handler that will be called on success
+            request.done(function (response, textStatus, jqXHR){
+                if (response.status) {
+                   $("#modalClearQueue").modal("show");
+                   setTimeout(function(){ window.location.reload(); }, 3000);
+                }
+            });
+
+            // Callback handler that will be called on failure
+            request.fail(function (jqXHR, textStatus, errorThrown){
+                // Log the error to the console
+                console.error(
+                    "The following error occurred: "+
+                    textStatus, errorThrown
+                );
+            });
+
+            // Callback handler that will be called regardless
+            // if the request failed or succeeded
+            request.always(function () {
+                // Reenable the inputs
+                $inputs.prop("disabled", false);
+            });
+        });
+    </script>
 @endsection

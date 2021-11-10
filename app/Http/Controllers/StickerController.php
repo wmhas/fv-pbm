@@ -159,4 +159,26 @@ class StickerController extends Controller
         $delete = Sticker::truncate();
         return redirect()->route('sticker.index');
     }
+
+    public function clearQueue (Request $request)
+    {
+        
+        if ((int) $request->doClearLabel == 1) {
+
+            $deleted = Label::truncate();
+            if ($deleted) {
+                return response()->json([
+                    'status' => true,
+                    'meessage' => 'Data has been cleared'
+                ], 200);
+            }
+
+        }
+
+        return response()->json([
+            'status' => false,
+            'message' => 'Failed to clear queue'
+        ], 400);
+    }
+
 }
