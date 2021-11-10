@@ -36,7 +36,7 @@ class TransactionsSalesExport implements FromCollection, WithHeadings, WithStyle
     public function collection()
     {
         $order = Order::join("patients","patients.id","=","orders.patient_id")
-            ->leftjoin("tariffs","tariffs.id","=","patients.tariff_id")
+            // ->leftjoin("tariffs","tariffs.id","=","patients.tariff_id")
             ->join("cards","cards.id","=","patients.card_id")
             ->join("prescriptions","prescriptions.order_id","=","orders.id")
             ->join("order_items","order_items.order_id","=","orders.id")
@@ -78,35 +78,34 @@ class TransactionsSalesExport implements FromCollection, WithHeadings, WithStyle
 
         if (count($order)>0){
             foreach ($order as $k => $v) {
-                
+
                 $address = "";
                 
                 if (!empty($v->patient->address_1))
                     $address .= $v->patient->address_1;
                 if (!empty($v->patient->address_2))
-                    $address .= $v->patient->address_2;
+                    $address .= " " .$v->patient->address_2;
                 if (!empty($v->patient->address_3))
-                    $address .= $v->patient->address_3;
+                    $address .= " " .$v->patient->address_3;
                 if (!empty($v->patient->postcode))
-                    $address .= $v->patient->postcode;
+                    $address .= " " .$v->patient->postcode;
                 if (!empty($v->patient->city))
-                    $address .= $v->patient->city;
+                    $address .= " " .$v->patient->city;
                 if (!empty($v->patient->state->name))
-                    $address .= $v->patient->state->name;
+                    $address .= " " .$v->patient->state->name;
 
-                $card = Card::where('id', '1113')->first();
-
+                $orders[$k]['ORDER ID'] = $v->id;
                 $orders[$k]['NO'] = $num;
                 $orders[$k]['DISPENSING DATE']=$v->dispense_date;
                 $orders[$k]['DO NUMBER']=$v->do_number;
                 $orders[$k]['IC']=$v->patient->identification;
                 $orders[$k]['FULLANME']=$v->patient->full_name;
-                $orders[$k]['ADDRESS']=$address;
+                $orders[$k]['ADDRESS']=trim($address);
                 $orders[$k]['RX NUMBER']=$v->prescription->rx_number;
                 $orders[$k]['DISPENSED BY']=$v->dispensing_by;
                 $orders[$k]['PANEL']=$v->patient->tariff->name;
                 $orders[$k]['TOTAL AMOUNT'] = $v->total_amount;
-                $orders[$k]['STATUS'] = $card->type;
+                $orders[$k]['STATUS'] = $v->patient->card->type;
 
                 $num++;
             }
@@ -118,6 +117,7 @@ class TransactionsSalesExport implements FromCollection, WithHeadings, WithStyle
     public function headings(): array
     {
         return [
+            'ORDER ID',
             'NO',
             'DISPENSING DATE',
             'DO NUMBER',
@@ -135,7 +135,8 @@ class TransactionsSalesExport implements FromCollection, WithHeadings, WithStyle
 
     public function styles(Worksheet $sheet)
     {
-        $sheet->getStyle('A1:L1')->getFont()->setBold(true);
+        $sheet->getStyle('A1:M1')->getFont()->setBold(true);
+        $sheet->getColumnDimension('A')->setVisible(false);
     }
 
     public function columnFormats(): array

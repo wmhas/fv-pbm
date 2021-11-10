@@ -123,6 +123,8 @@
                             @csrf
                             <input type="hidden" name="exportable" value="yes">
                             <input type="hidden" name="batch_id" value="{{ $group->id }}">
+                            <input type="hidden" name="batch_status" value="{{ $group->batch_status }}">
+                            <input type="hidden" name="batch_no" value="{{ $group->batch_no }}">
                             <button class="btn btn-success" type="submit">Export Excel</button>
                         </form>
                         @if ($group->batch_status == "unbatch")

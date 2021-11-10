@@ -106,9 +106,17 @@ class BatchController extends Controller
 
         if ($request->post('exportable') == "yes") {
             $batch_id = $request->post('batch_id');
+            $batch_status = $request->post('batch_status');
+            $batch_no = $request->post('batch_no');
+
+            if ($batch_status == "unbatch")
+                $file_name = 'Unbatch ' .$batch_no. '.xlsx';
+            else
+                $file_name = 'Batched ' .$batch_no. '.xlsx';
+
             $export = new BatchExport($batch_id);
             // if ($export->collection()->count() > 0) {
-                return Excel::download($export, 'batch.xlsx');
+                return Excel::download($export, $file_name);
             // }
         }
 

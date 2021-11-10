@@ -55,7 +55,12 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
             "orders.do_number", 
             "patients.identification as ic",
             "patients.full_name",
-            DB::raw('CONCAT(patients.address_1,", ",patients.address_2,", ",patients.postCode,", ",patients.city,", ",states.name) as address'),
+            "patients.address_1",
+            "patients.address_2",
+            "patients.address_3",
+            "patients.postcode",
+            "patients.city",
+            "states.name",
             "prescriptions.rx_number",
             "prescriptions.rx_start",
             "prescriptions.rx_end", 
@@ -83,13 +88,28 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
 
             foreach ($order as $k => $v) {
 
+                $address = "";
+
+                if (!empty($v->address_1))
+                    $address .= $v->address_1;
+                if (!empty($v->address_2))
+                    $address .= " " .$v->address_2;
+                if (!empty($v->address_3))
+                    $address .= " " .$v->address_3;
+                if (!empty($v->postcode))
+                    $address .= " " .$v->postcode;
+                if (!empty($v->city))
+                    $address .= " " .$v->city;
+                if (!empty($v->name))
+                    $address .= " " .$v->name;
+
                 $orders[$k]['ORDER ID'] = $v->id;
                 $orders[$k]['NO'] = $num;
                 $orders[$k]['DATE']=$v->dates;
                 $orders[$k]['DO NUMBER']=$v->do_number;
                 $orders[$k]['IC']=$v->ic;
                 $orders[$k]['FULLANME']=$v->full_name;
-                $orders[$k]['ADDRESS']=$v->address;
+                $orders[$k]['ADDRESS']= trim($address);
                 $orders[$k]['DISPENSED BY']=$v->dispensing_by;
                 $orders[$k]['RX NUMBER']=$v->rx_number;
                 $orders[$k]['RX DURATION']=$v->duration;
@@ -145,9 +165,9 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
             if ($sheet->getCell('A'.$current_row)->getValue() == $current_id) {
                 $end_row = $current_row;
             } else {
-                $this->merge($sheet, $start_row, $end_row);
+                $this->merge($sheet, $start_row, $end_row, $num);
 
-                $sheet->setCellValue('B'.$start_row, $num);  
+                 
                 
                 $num++;
                 $start_row = $end_row = $current_row;
@@ -156,10 +176,10 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
 
             $sheet->getColumnDimension('A')->setVisible(false);
         }
-        $this->merge($sheet, $start_row, $end_row);
+        $this->merge($sheet, $start_row, $end_row, $num);
     }
 
-    public function merge($sheet, $start_row, $end_row) {
+    public function merge($sheet, $start_row, $end_row, $num) {
         $sheet->mergeCells('A' .$start_row. ':A' .$end_row);
         $sheet->mergeCells('B' .$start_row. ':B' .$end_row);
         $sheet->mergeCells('C' .$start_row. ':C' .$end_row);
@@ -171,6 +191,8 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
         $sheet->mergeCells('I' .$start_row. ':I' .$end_row);
         $sheet->mergeCells('O' .$start_row. ':O' .$end_row);
         $sheet->mergeCells('P' .$start_row. ':P' .$end_row);
+
+        $sheet->setCellValue('B'.$start_row, $num); 
     }
 
     public function columnFormats(): array

@@ -128,7 +128,7 @@ class ReportController extends Controller
 
         $transaction = new TransactionsSalesExport($startDate, $endDate);
         if ($transaction->collection()->count() > 0) {
-            return Excel::download($transaction, 'transactionssales.xlsx');
+            return Excel::download($transaction, 'Sales Report Summary ('. $startDate . " to " . $endDate .').xlsx');
         }
 
         $request->session()->flash('error', 'No Data to Export');
@@ -427,7 +427,7 @@ class ReportController extends Controller
 
         $transaction = new TransactionsExport($startDate, $endDate);
         if ($transaction->collection()->count() > 0) {
-            return Excel::download($transaction, 'transactions.xlsx');
+            return Excel::download($transaction, 'Sales Report Details ('. $startDate . " to " . $endDate .').xlsx');
         }
 
         $request->session()->flash('error', 'No Data to Export');
