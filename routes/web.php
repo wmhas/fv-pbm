@@ -157,6 +157,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/', 'StickerController@index')->name('sticker.index');
         Route::get('/{orderId}/print', 'StickerController@print')->name('sticker.print');
         Route::post('/download', 'StickerController@download')->name('sticker.download');
+        Route::post('/clear-queue', 'StickerController@clearQueue')->name('sticker.clear-queue');
         // Route::get('/{order_id?}', 'StickerController@index')->name('sticker.index');
         // Route::post('/delete', 'StickerController@delete')->name('sticker.delete');
     });

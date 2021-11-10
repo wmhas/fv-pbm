@@ -19,26 +19,30 @@ class StickerController extends Controller
     public function index (Request $request)
     {
         $orders = Order::query();
+        $labels = null;
+
         $doNumber = $request->get('do_number');
         if ($doNumber !== null) {
             $orders = $orders
                 ->where('do_number', 'LIKE', '%'.$doNumber.'%')
-                ->where('status_id', '!=', 1);
+                ->where('status_id', '!=', 1)
+                ->orderBy('updated_at', 'desc')
+                ->with(['patient', 'orderitem.items'])
+                ->paginate(15);
         } else {
-            $orders = $orders->where('status_id', 2);
+            $labels = Label::groupBy('order_id')->get();
         }
-        $orders = $orders
-            ->orderBy('updated_at', 'desc')
-            ->with(['patient', 'orderitem.items'])
-            ->paginate(15);
+
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
-        return view('sticker.index2', compact('doNumber', 'roles', 'orders'));
+        return view('sticker.index2', compact('doNumber', 'roles', 'orders', 'labels'));
     }
 
     public function print ($orderId)
     {
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
         $order = Order::where('id', $orderId)->with(['patient', 'orderitem.items', 'orderitem.frequencies'])->first();
+        $order_id = $orderId;
+        
         if ($order) {
             $data = new \stdClass();
             $data->patient_name = $order->patient->full_name;
@@ -68,7 +72,7 @@ class StickerController extends Controller
                 $data->items[] = $item;
             }
 
-            return view('sticker.print', compact('data', 'roles'));
+            return view('sticker.print', compact('data', 'roles','order_id'));
         }
 
         return back()->with(['status' => false, 'message' => 'Please enter correct DO number']);
@@ -159,4 +163,26 @@ class StickerController extends Controller
         $delete = Sticker::truncate();
         return redirect()->route('sticker.index');
     }
+
+    public function clearQueue (Request $request)
+    {
+        
+        if ((int) $request->doClearLabel == 1) {
+
+            $deleted = Label::truncate();
+            if ($deleted) {
+                return response()->json([
+                    'status' => true,
+                    'meessage' => 'Data has been cleared'
+                ], 200);
+            }
+
+        }
+
+        return response()->json([
+            'status' => false,
+            'message' => 'Failed to clear queue'
+        ], 400);
+    }
+
 }
