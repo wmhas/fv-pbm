@@ -434,7 +434,7 @@ class ReportController extends Controller
         return redirect(url('/report/sales_report'));
     }
 
-    public function report_stocks()
+    public function report_stocks(Request $request)
     {
 
         if ($request->page){
