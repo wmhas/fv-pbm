@@ -105,11 +105,7 @@
                                             <td>{{ $item->staff }}</td>
                                             <td>{{ $item->store }}</td>
                                             <td>
-                                                @if ($item->on_hand != null)
-                                                    {{ $item->on_hand }}
-                                                @else
-                                                    0
-                                                @endif
+                                                {{ $item->counter + $item->counter + $item->staff + $item->store  }}
                                             </td>
                                             <td></td>
                                         </tr>
