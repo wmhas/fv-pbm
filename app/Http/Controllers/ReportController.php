@@ -499,6 +499,7 @@ class ReportController extends Controller
             'b.store',
             DB::raw("(select SUM(order_items.quantity) FROM order_items Where myob_product_id = a.id) as com_courier")
         )
+        ->distinct('a.brand_name')
         ->paginate(10, ['*'], 'page', $page);
 
         $links = $items->links();
