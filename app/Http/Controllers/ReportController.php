@@ -442,8 +442,7 @@ class ReportController extends Controller
         $startDate = $endDate = date('Y-m-d');
 
         $items = DB::table('items as a')
-            ->join('locations as b', 'b.item_id', 'a.id')
-            ->join('order_items as oi', 'oi.myob_product_id', 'a.id');
+            ->join('locations as b', 'b.item_id', 'a.id');
             
         // if ($startDate != null && $endDate != null) {
         //     $items = $items->whereDate('oi.created_at', '>=', $startDate)
@@ -459,8 +458,7 @@ class ReportController extends Controller
             'b.store',
             'b.counter',
             'b.courier',
-            'b.store',
-            DB::raw("(select SUM(order_items.quantity) FROM order_items Where myob_product_id = a.id) as com_courier")
+            'b.store'
         )
         ->distinct('a.brand_name')
         ->paginate(10, ['*'], 'page', $page);
@@ -492,8 +490,7 @@ class ReportController extends Controller
         $endDate = $request->endDate;
 
         $items = DB::table('items as a')
-            ->join('locations as b', 'b.item_id', 'a.id')
-            ->join('order_items as oi', 'oi.myob_product_id', 'a.id');
+            ->join('locations as b', 'b.item_id', 'a.id');
             
         // if ($startDate != null && $endDate != null) {
         //     $items = $items->whereDate('oi.created_at', '>=', $startDate)
@@ -509,8 +506,7 @@ class ReportController extends Controller
             'b.store',
             'b.counter',
             'b.courier',
-            'b.store',
-            DB::raw("(select SUM(order_items.quantity) FROM order_items Where myob_product_id = a.id) as com_courier")
+            'b.store'
         )
         ->distinct('a.brand_name')
         ->paginate(10, ['*'], 'page', $page);
@@ -546,8 +542,7 @@ class ReportController extends Controller
         $endDate = $request->endDate;
 
         $items = DB::table('items as a')
-            ->join('locations as b', 'b.item_id', 'a.id')
-            ->join('order_items as oi', 'oi.myob_product_id', 'a.id');
+            ->join('locations as b', 'b.item_id', 'a.id');
             
         // if ($startDate != null && $endDate != null) {
         //     $items = $items->whereDate('oi.created_at', '>=', $startDate)
@@ -563,8 +558,7 @@ class ReportController extends Controller
             'b.store',
             'b.counter',
             'b.courier',
-            'b.store',
-            DB::raw("(select SUM(order_items.quantity) FROM order_items Where myob_product_id = a.id) as com_courier")
+            'b.store'
         )
         ->paginate(10, ['*'], 'page', $page);
 
