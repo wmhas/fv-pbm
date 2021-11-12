@@ -469,6 +469,26 @@ class ReportController extends Controller
 
         $links = $items->links();
 
+        $committed_courier = [];
+        $committed_counter = [];
+
+        foreach($items as $key => $val){
+            $db_courier = DB::select(DB::raw("SELECT SUM(order_items.quantity) as com_courier FROM orders JOIN order_items ON orders.id = order_items.order_id WHERE orders.dispensing_method = 'Delivery' AND order_items.myob_product_id = ".$val->id.""));
+            if ($db_courier[0]->com_courier) {
+                $committed_courier[$key] = $db_courier[0]->com_courier;
+            } else {
+                $committed_courier[$key] = 0;
+            }
+
+            $db_counter = DB::select(DB::raw("SELECT SUM(order_items.quantity) as com_counter FROM orders JOIN order_items ON orders.id = order_items.order_id WHERE orders.dispensing_method = 'Walkin' AND order_items.myob_product_id = ".$val->id.""));
+            if ($db_counter[0]->com_counter) {
+                $committed_counter[$key] = $db_counter[0]->com_counter;
+            } else {
+                $committed_counter[$key] = 0;
+            }
+
+        }  
+
         // $sales = DB::table('v_sum_order_items')
         //     ->select('myob_product_id', 'sales_quantity as committed')
         //     ->get()->toArray();
@@ -483,7 +503,7 @@ class ReportController extends Controller
         // }
 
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
-        return view('reports.report_stocks', ['items' => $items, 'roles'=> $roles,'startDate'=>$startDate, 'endDate'=>$endDate, 'links'=>$links, 'page'=>$page]);
+        return view('reports.report_stocks', ['items' => $items, 'roles'=> $roles,'startDate'=>$startDate, 'endDate'=>$endDate, 'links'=>$links, 'page'=>$page, 'committed_courier'=> $committed_courier, 'committed_counter'=> $committed_counter]);
     }
 
     public function search_report_stock($request)
@@ -517,6 +537,26 @@ class ReportController extends Controller
 
         $links = $items->links();
 
+        $committed_courier = [];
+        $committed_counter = [];
+
+        foreach($items as $key => $val){
+            $db_courier = DB::select(DB::raw("SELECT SUM(order_items.quantity) as com_courier FROM orders JOIN order_items ON orders.id = order_items.order_id WHERE orders.dispensing_method = 'Delivery' AND order_items.myob_product_id = ".$val->id." AND order_items.created_at >= ".$startDate." AND order_items.created_at <= ".$endDate." "));
+            if ($db_courier[0]->com_courier) {
+                $committed_courier[$key] = $db_courier[0]->com_courier;
+            } else {
+                $committed_courier[$key] = 0;
+            }
+
+            $db_counter = DB::select(DB::raw("SELECT SUM(order_items.quantity) as com_counter FROM orders JOIN order_items ON orders.id = order_items.order_id WHERE orders.dispensing_method = 'Walkin' AND order_items.myob_product_id = ".$val->id." AND order_items.created_at >= ".$startDate." AND order_items.created_at <= ".$endDate." "));
+            if ($db_counter[0]->com_counter) {
+                $committed_counter[$key] = $db_counter[0]->com_counter;
+            } else {
+                $committed_counter[$key] = 0;
+            }
+
+        }
+
         // $sales = DB::table('v_sum_order_items')
         //     ->select('myob_product_id', 'sales_quantity as committed')
         //     ->get()->toArray();
@@ -531,7 +571,7 @@ class ReportController extends Controller
         // }
 
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
-        return view('reports.report_stocks', ['items' => $items, 'roles'=> $roles,'startDate'=>$startDate, 'endDate'=>$endDate, 'links'=>$links, 'page'=>$page]);
+        return view('reports.report_stocks', ['items' => $items, 'roles'=> $roles,'startDate'=>$startDate, 'endDate'=>$endDate, 'links'=>$links, 'page'=>$page, 'committed_courier'=> $committed_courier, 'committed_counter'=> $committed_counter]);
     }
 
     public function export_stock_item_pdf(Request $request)
@@ -568,6 +608,26 @@ class ReportController extends Controller
 
         $links = $items->links();
 
+        $committed_courier = [];
+        $committed_counter = [];
+
+        foreach($items as $key => $val){
+            $db_courier = DB::select(DB::raw("SELECT SUM(order_items.quantity) as com_courier FROM orders JOIN order_items ON orders.id = order_items.order_id WHERE orders.dispensing_method = 'Delivery' AND order_items.myob_product_id = ".$val->id." AND order_items.created_at >= ".$startDate." AND order_items.created_at <= ".$endDate." "));
+            if ($db_courier[0]->com_courier) {
+                $committed_courier[$key] = $db_courier[0]->com_courier;
+            } else {
+                $committed_courier[$key] = 0;
+            }
+
+            $db_counter = DB::select(DB::raw("SELECT SUM(order_items.quantity) as com_counter FROM orders JOIN order_items ON orders.id = order_items.order_id WHERE orders.dispensing_method = 'Walkin' AND order_items.myob_product_id = ".$val->id." AND order_items.created_at >= ".$startDate." AND order_items.created_at <= ".$endDate." "));
+            if ($db_counter[0]->com_counter) {
+                $committed_counter[$key] = $db_counter[0]->com_counter;
+            } else {
+                $committed_counter[$key] = 0;
+            }
+
+        }
+
         // $sales = DB::table('v_sum_order_items')
         //     ->select('myob_product_id', 'sales_quantity as committed')
         //     ->get()->toArray();
@@ -583,7 +643,7 @@ class ReportController extends Controller
 
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
 
-        $pdf = PDF::loadView('reports.report_stocks', compact('items','roles','startDate','endDate','links','page'));
+        $pdf = PDF::loadView('reports.report_stocks', compact('items','roles','startDate','endDate','links','page','committed_courier','committed_counter'));
         return $pdf->stream('patient_lists.pdf');
     }
 

@@ -80,7 +80,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                    @foreach ($items as $item)
+                                    @foreach ($items as $key => $item)
                                         <tr>
                                             <td>{{ $item->item_code }}</td>
                                             <td>{{ $item->brand_name }}</td>
@@ -88,13 +88,13 @@
                                                 {{ ($item->counter=="") ? 0 : $item->counter }}
                                             </td>
                                             <td>
-                                                0
+                                                {{ $committed_counter[$key] }}
                                             </td>
                                             <td>
                                                 {{ ($item->courier=="") ? 0 : $item->courier }}
                                             </td>
                                             <td>
-                                                0
+                                                {{ $committed_courier[$key] }}
                                             </td>
                                             <td>{{ ($item->staff=="") ? 0 : $item->staff }}</td>
                                             <td>{{ ($item->store=="") ? 0 : $item->store }}</td>
