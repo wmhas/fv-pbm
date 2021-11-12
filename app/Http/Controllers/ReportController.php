@@ -522,7 +522,7 @@ class ReportController extends Controller
 
     public function export_stock_item_pdf(Request $request)
     {
-        ini_set("max_execute_time", 0);
+        ini_set("max_execution_time", 1000000000);
         if($request->filter == 1){
             return $this->search_report_stock($request);
         }
@@ -571,7 +571,7 @@ class ReportController extends Controller
 
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
 
-        $pdf = PDF::loadView('reports.report_stocks', ['items' => $items, 'roles'=> $roles,'startDate'=>$startDate, 'endDate'=>$endDate, 'links'=>$links, 'page'=>$page]);
+        $pdf = PDF::loadView('reports.report_stocks', compact('items','roles','startDate','endDate','links','page'));
         return $pdf->stream('patient_lists.pdf');
     }
 
