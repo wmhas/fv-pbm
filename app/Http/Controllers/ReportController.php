@@ -450,7 +450,20 @@ class ReportController extends Controller
                 ->whereDate('oi.created_at', '<=', $endDate);
         }
 
-        $items = $items->select('a.id', 'a.brand_name', 'a.item_code', 'b.courier as on_hand','b.staff','b.store')->paginate(10, ['*'], 'page', $page);
+        $items = $items->select(
+            'a.id', 
+            'a.brand_name', 
+            'a.item_code', 
+            'b.courier as on_hand',
+            'b.staff',
+            'b.store',
+            'b.counter',
+            'b.courier',
+            'b.store',
+            DB::raw("(select SUM(order_items.quantity) FROM order_items Where myob_product_id = a.id) as com_courier")
+        )
+        ->distinct('a.brand_name')
+        ->paginate(10, ['*'], 'page', $page);
 
         $links = $items->links();
 
