@@ -1,87 +1,180 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('layouts.app')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Courier - Stocks</title>
-    <style>
-        * {
-            font-family: arial, sans-serif;
-        }
+@section('content')
+<section>
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1 class="m-0">Stocks Report</h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
+                            <li class="breadcrumb-item active">Report Stocks</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <form method="GET" enctype="multipart/form-data" action="{{ route('export.stock-item.pdf') }}">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label>Date From</label>
+                                            <input value="{{ $startDate }}" name="startDate" type="date" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label>Date To</label>
+                                            <input value="{{ $endDate }}" name="endDate" type="date" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label></label>
+                                        <div class="form-group">
+                                            <button type="submit" class="btn btn-success" style=" width:100%;" name="filter" value="1">Search</button>
+                                        </div>
+                                    </div>
+                                    <!-- <div class="col-md-2">
+                                        <button type="button" class="btn btn-secondary" style="margin-top:32px; width:100%;">Export</button>
+                                    </div> -->
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th></th>
+                                            <th>Counter</th>
+                                            <th></th>
+                                            <th>Courir</th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                        </tr>
+                                        <tr>
+                                            <th>Item Code</th>
+                                            <th>Item Name</th>
+                                            <th>Available</th>
+                                            <th>Committed</th>
+                                            <th>Available</th>
+                                            <th>Committed</th>
+                                            <th>Staff</th>
+                                            <th>Store</th>
+                                            <th>On Hand</th>
+                                            <th>Quantity Used</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    @foreach ($items as $item)
+                                        <tr>
+                                            <td>{{ $item->item_code }}</td>
+                                            <td>{{ $item->brand_name }}</td>
+                                            <td>
+                                                {{ $item->counter }}
+                                            </td>
+                                            <td>
+                                                @if (!empty($item->committed) && $item->on_hand != null)
+                                                    {{ $item->on_hand - $item->committed }}
+                                                @elseif($item->on_hand == null)
+                                                    0
+                                                @else
+                                                    {{ $item->on_hand }}
+                                                @endif
+                                            </td>
+                                            <td>
+                                                {{ $item->courier }}
+                                            </td>
+                                            <td>
+                                                {{ $item->com_courier }}
+                                            </td>
+                                            <td>{{ $item->staff }}</td>
+                                            <td>{{ $item->store }}</td>
+                                            <td>
+                                                @if ($item->on_hand != null)
+                                                    {{ $item->on_hand }}
+                                                @else
+                                                    0
+                                                @endif
+                                            </td>
+                                            <td></td>
+                                        </tr>
+                                    @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="card-body clearfix">
+                            <ul class="pagination pagination-sm m-0 float-right">
+                              {!! $links !!}
+                            </ul>
+                        </div>
+                        <div class="card-body" style="overflow-x:auto;">
+                            <form method="GET" enctype="multipart/form-data" action="{{ route('export.stock-item.pdf') }}">
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <input name="startDate" value="{{ $startDate }}" type="hidden" class="form-control">
+                                        <input name="endDate" value="{{ $endDate }}" type="hidden" class="form-control">
+                                        <input name="page" value="{{ $page }}" type="hidden" class="form-control">
+                                        <div class="form-group">
+                                            <button type="submit" class="btn btn-danger" style=" width:100%;" name="filter" value="2">Export PDF</button>
+                                        </div>
+                                    </div>
+                                    <!-- <div class="col-md-2">
+                                        <button type="button" class="btn btn-secondary" style="margin-top:32px; width:100%;">Export</button>
+                                    </div> -->
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+</section>
 
-        table.main,
-        th.main {
-            border: 1px solid black;
-            border-collapse: collapse;
-            width: 100%;
-        }
+@if(\Illuminate\Support\Facades\Session::has('error'))
+<div class="toast bg-danger" data-delay="10000" role="alert" style="position: absolute; bottom: 20px; right: 20px;">
+    <div class="toast-header">
+        <strong class="mr-auto">Error</strong>
+        <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="toast-body text-white">
+        {{\Illuminate\Support\Facades\Session::get('error')}}
+    </div>
+</div>
+@endif
 
-        th.main {
-            text-align: center;
-        }
+@endsection
 
-        th.main,
-        td.main {
-            padding-bottom: 3px;
-            padding-top: 3px;
-            padding-right: 8px;
-            padding-left: 8px;
-        }
+@section('script')
+{{-- @include('reports.dashboard3') --}}
+    @parent
+    <script>
+        $(document).ready(function () {
+            $('.toast').toast('show');
+        });
 
-        td.main {
-            border-bottom: 1px solid black;
-        }
+        $(document).on("click",".page-link",function(){
+            href = $(this).attr("href");
+            $(this).attr("href", href+"&startDate={{ $startDate }}&endDate={{$endDate}}&filter=1");
+         });
+    </script>
+@endsection
 
-    </style>
-</head>
-
-<body>
-    <table style="width: 100%; border-collapse: collapse;">
-        <tr>
-            <th style="text-align: center; width: 90%">COURIER ONLY</th>
-            <th style="text-align: center;">{{$date}}</th>
-        </tr>
-    </table>
-    <table class="main">
-        <tr class="main">
-            <th style="width: 10%" class="main">Item #</th>
-            <th style="width: 45%" class="main">Item Name</th>
-            <th style="width: 15%" class="main">On Hand</th>
-            <th style="width: 15%" class="main">Committed</th>
-            <th style="width: 15%" class="main">Available</th>
-        </tr>
-        @foreach ($items as $item)
-            <tr>
-                <td style="width: 10%" class="main">{{ $item->item_code }}</td>
-                <td style="width: 45%" class="main">{{ $item->brand_name }}</td>
-                <td style="width: 15%" class="main">
-                    @if ($item->on_hand != null)
-                        {{ $item->on_hand }}
-                    @else
-                        0
-                    @endif
-                </td>
-                <td style="width: 15%" class="main">
-                    @if (!empty($item->committed))
-                        {{ $item->committed }}
-                    @else
-                        0
-                    @endif
-                </td>
-                <td style="width: 15%" class="main">
-                    @if (!empty($item->committed) && $item->on_hand != null)
-                        {{ $item->on_hand - $item->committed }}
-                    @elseif($item->on_hand == null)
-                        0
-                    @else
-                        {{ $item->on_hand }}
-                    @endif
-                </td>
-            </tr>
-        @endforeach
-    </table>
-</body>
-
-</html>

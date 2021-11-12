@@ -295,7 +295,7 @@ class ReportController extends Controller
         return $pdf->stream('patient_lists.pdf');
     }
 
-    public function report_stocks()
+    public function report_stock_pdf()
     {
         // $items = DB::table('v_sum_order_items as a')
         // ->join('locations as b', 'b.item_id', 'a.myob_product_id')
@@ -432,6 +432,147 @@ class ReportController extends Controller
 
         $request->session()->flash('error', 'No Data to Export');
         return redirect(url('/report/sales_report'));
+    }
+
+    public function report_stocks()
+    {
+        
+        $page = 1;
+
+        $startDate = $endDate = date('Y-m-d');
+
+        $items = DB::table('items as a')
+            ->join('locations as b', 'b.item_id', 'a.id')
+            ->join('order_items as oi', 'oi.myob_product_id', 'a.id');
+            
+        if ($startDate != null && $endDate != null) {
+            $items = $items->whereDate('oi.created_at', '>=', $startDate)
+                ->whereDate('oi.created_at', '<=', $endDate);
+        }
+
+        $items = $items->select('a.id', 'a.brand_name', 'a.item_code', 'b.courier as on_hand','b.staff','b.store')->paginate(10, ['*'], 'page', $page);
+
+        $links = $items->links();
+
+        $sales = DB::table('v_sum_order_items')
+            ->select('myob_product_id', 'sales_quantity as committed')
+            ->get()->toArray();
+        
+        foreach ($sales as $sale) {
+            foreach ($items as $item) {
+                if ($sale->myob_product_id == $item->id) {
+                    $item->committed = $sale->committed;
+                    // $item->available = $item->on_hand - $sale->committed;
+                }
+            }
+        }
+
+        $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
+        return view('reports.report_stocks', ['items' => $items, 'roles'=> $roles,'startDate'=>$startDate, 'endDate'=>$endDate, 'links'=>$links, 'page'=>$page]);
+    }
+
+    public function search_report_stock($request)
+    {
+
+        $page = $request->page;
+        $startDate = $request->startDate; 
+        $endDate = $request->endDate;
+
+        $items = DB::table('items as a')
+            ->join('locations as b', 'b.item_id', 'a.id')
+            ->join('order_items as oi', 'oi.myob_product_id', 'a.id');
+            
+        if ($startDate != null && $endDate != null) {
+            $items = $items->whereDate('oi.created_at', '>=', $startDate)
+                ->whereDate('oi.created_at', '<=', $endDate);
+        }
+
+        $items = $items->select(
+            'a.id', 
+            'a.brand_name', 
+            'a.item_code', 
+            'b.courier as on_hand',
+            'b.staff',
+            'b.store',
+            'b.counter',
+            'b.courier',
+            'b.store',
+            DB::raw("(select SUM(order_items.quantity) FROM order_items Where myob_product_id = a.id) as com_courier")
+        )
+        ->paginate(10, ['*'], 'page', $page);
+
+        $links = $items->links();
+
+        $sales = DB::table('v_sum_order_items')
+            ->select('myob_product_id', 'sales_quantity as committed')
+            ->get()->toArray();
+        
+        foreach ($sales as $sale) {
+            foreach ($items as $item) {
+                if ($sale->myob_product_id == $item->id) {
+                    $item->committed = $sale->committed;
+                    // $item->available = $item->on_hand - $sale->committed;
+                }
+            }
+        }
+
+        $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
+        return view('reports.report_stocks', ['items' => $items, 'roles'=> $roles,'startDate'=>$startDate, 'endDate'=>$endDate, 'links'=>$links, 'page'=>$page]);
+    }
+
+    public function export_stock_item_pdf(Request $request)
+    {
+        ini_set("max_execute_time", 0);
+        if($request->filter == 1){
+            return $this->search_report_stock($request);
+        }
+        
+        $page = $request->page;
+        $startDate = $request->startDate; 
+        $endDate = $request->endDate;
+
+        $items = DB::table('items as a')
+            ->join('locations as b', 'b.item_id', 'a.id')
+            ->join('order_items as oi', 'oi.myob_product_id', 'a.id');
+            
+        if ($startDate != null && $endDate != null) {
+            $items = $items->whereDate('oi.created_at', '>=', $startDate)
+                ->whereDate('oi.created_at', '<=', $endDate);
+        }
+
+        $items = $items->select(
+            'a.id', 
+            'a.brand_name', 
+            'a.item_code', 
+            'b.courier as on_hand',
+            'b.staff',
+            'b.store',
+            'b.counter',
+            'b.courier',
+            'b.store',
+            DB::raw("(select SUM(order_items.quantity) FROM order_items Where myob_product_id = a.id) as com_courier")
+        )
+        ->paginate(10, ['*'], 'page', $page);
+
+        $links = $items->links();
+
+        $sales = DB::table('v_sum_order_items')
+            ->select('myob_product_id', 'sales_quantity as committed')
+            ->get()->toArray();
+        
+        foreach ($sales as $sale) {
+            foreach ($items as $item) {
+                if ($sale->myob_product_id == $item->id) {
+                    $item->committed = $sale->committed;
+                    // $item->available = $item->on_hand - $sale->committed;
+                }
+            }
+        }
+
+        $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
+
+        $pdf = PDF::loadView('reports.report_stocks', ['items' => $items, 'roles'=> $roles,'startDate'=>$startDate, 'endDate'=>$endDate, 'links'=>$links, 'page'=>$page]);
+        return $pdf->stream('patient_lists.pdf');
     }
 
 }
