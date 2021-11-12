@@ -99,7 +99,7 @@
                                             <td>{{ $item->staff }}</td>
                                             <td>{{ $item->store }}</td>
                                             <td>
-                                                {{ $item->counter + $item->counter + $item->staff + $item->store  }}
+                                                {{ $item->counter + $item->courier + $item->staff + $item->store  }}
                                             </td>
                                             <td></td>
                                         </tr>
