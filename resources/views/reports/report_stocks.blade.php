@@ -85,23 +85,25 @@
                                             <td>{{ $item->item_code }}</td>
                                             <td>{{ $item->brand_name }}</td>
                                             <td>
-                                                {{ $item->counter }}
+                                                {{ ($item->counter=="") ? 0 : $item->counter }}
                                             </td>
                                             <td>
                                                 0
                                             </td>
                                             <td>
-                                                {{ $item->courier }}
+                                                {{ ($item->courier=="") ? 0 : $item->courier }}
                                             </td>
                                             <td>
                                                 0
                                             </td>
-                                            <td>{{ $item->staff }}</td>
-                                            <td>{{ $item->store }}</td>
+                                            <td>{{ ($item->staff=="") ? 0 : $item->staff }}</td>
+                                            <td>{{ ($item->store=="") ? 0 : $item->store }}</td>
                                             <td>
                                                 {{ $item->counter + $item->courier + $item->staff + $item->store  }}
                                             </td>
-                                            <td></td>
+                                            <td>
+                                                0
+                                            </td>
                                         </tr>
                                     @endforeach
                                     </tbody>
