@@ -445,10 +445,10 @@ class ReportController extends Controller
             ->join('locations as b', 'b.item_id', 'a.id')
             ->join('order_items as oi', 'oi.myob_product_id', 'a.id');
             
-        if ($startDate != null && $endDate != null) {
-            $items = $items->whereDate('oi.created_at', '>=', $startDate)
-                ->whereDate('oi.created_at', '<=', $endDate);
-        }
+        // if ($startDate != null && $endDate != null) {
+        //     $items = $items->whereDate('oi.created_at', '>=', $startDate)
+        //         ->whereDate('oi.created_at', '<=', $endDate);
+        // }
 
         $items = $items->select(
             'a.id', 
@@ -467,18 +467,18 @@ class ReportController extends Controller
 
         $links = $items->links();
 
-        $sales = DB::table('v_sum_order_items')
-            ->select('myob_product_id', 'sales_quantity as committed')
-            ->get()->toArray();
+        // $sales = DB::table('v_sum_order_items')
+        //     ->select('myob_product_id', 'sales_quantity as committed')
+        //     ->get()->toArray();
         
-        foreach ($sales as $sale) {
-            foreach ($items as $item) {
-                if ($sale->myob_product_id == $item->id) {
-                    $item->committed = $sale->committed;
-                    // $item->available = $item->on_hand - $sale->committed;
-                }
-            }
-        }
+        // foreach ($sales as $sale) {
+        //     foreach ($items as $item) {
+        //         if ($sale->myob_product_id == $item->id) {
+        //             $item->committed = $sale->committed;
+        //             // $item->available = $item->on_hand - $sale->committed;
+        //         }
+        //     }
+        // }
 
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
         return view('reports.report_stocks', ['items' => $items, 'roles'=> $roles,'startDate'=>$startDate, 'endDate'=>$endDate, 'links'=>$links, 'page'=>$page]);
@@ -495,10 +495,10 @@ class ReportController extends Controller
             ->join('locations as b', 'b.item_id', 'a.id')
             ->join('order_items as oi', 'oi.myob_product_id', 'a.id');
             
-        if ($startDate != null && $endDate != null) {
-            $items = $items->whereDate('oi.created_at', '>=', $startDate)
-                ->whereDate('oi.created_at', '<=', $endDate);
-        }
+        // if ($startDate != null && $endDate != null) {
+        //     $items = $items->whereDate('oi.created_at', '>=', $startDate)
+        //         ->whereDate('oi.created_at', '<=', $endDate);
+        // }
 
         $items = $items->select(
             'a.id', 
@@ -517,18 +517,18 @@ class ReportController extends Controller
 
         $links = $items->links();
 
-        $sales = DB::table('v_sum_order_items')
-            ->select('myob_product_id', 'sales_quantity as committed')
-            ->get()->toArray();
+        // $sales = DB::table('v_sum_order_items')
+        //     ->select('myob_product_id', 'sales_quantity as committed')
+        //     ->get()->toArray();
         
-        foreach ($sales as $sale) {
-            foreach ($items as $item) {
-                if ($sale->myob_product_id == $item->id) {
-                    $item->committed = $sale->committed;
-                    // $item->available = $item->on_hand - $sale->committed;
-                }
-            }
-        }
+        // foreach ($sales as $sale) {
+        //     foreach ($items as $item) {
+        //         if ($sale->myob_product_id == $item->id) {
+        //             $item->committed = $sale->committed;
+        //             // $item->available = $item->on_hand - $sale->committed;
+        //         }
+        //     }
+        // }
 
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
         return view('reports.report_stocks', ['items' => $items, 'roles'=> $roles,'startDate'=>$startDate, 'endDate'=>$endDate, 'links'=>$links, 'page'=>$page]);
@@ -549,10 +549,10 @@ class ReportController extends Controller
             ->join('locations as b', 'b.item_id', 'a.id')
             ->join('order_items as oi', 'oi.myob_product_id', 'a.id');
             
-        if ($startDate != null && $endDate != null) {
-            $items = $items->whereDate('oi.created_at', '>=', $startDate)
-                ->whereDate('oi.created_at', '<=', $endDate);
-        }
+        // if ($startDate != null && $endDate != null) {
+        //     $items = $items->whereDate('oi.created_at', '>=', $startDate)
+        //         ->whereDate('oi.created_at', '<=', $endDate);
+        // }
 
         $items = $items->select(
             'a.id', 
@@ -570,18 +570,18 @@ class ReportController extends Controller
 
         $links = $items->links();
 
-        $sales = DB::table('v_sum_order_items')
-            ->select('myob_product_id', 'sales_quantity as committed')
-            ->get()->toArray();
+        // $sales = DB::table('v_sum_order_items')
+        //     ->select('myob_product_id', 'sales_quantity as committed')
+        //     ->get()->toArray();
         
-        foreach ($sales as $sale) {
-            foreach ($items as $item) {
-                if ($sale->myob_product_id == $item->id) {
-                    $item->committed = $sale->committed;
-                    // $item->available = $item->on_hand - $sale->committed;
-                }
-            }
-        }
+        // foreach ($sales as $sale) {
+        //     foreach ($items as $item) {
+        //         if ($sale->myob_product_id == $item->id) {
+        //             $item->committed = $sale->committed;
+        //             // $item->available = $item->on_hand - $sale->committed;
+        //         }
+        //     }
+        // }
 
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
 

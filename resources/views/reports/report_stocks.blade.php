@@ -88,19 +88,13 @@
                                                 {{ $item->counter }}
                                             </td>
                                             <td>
-                                                @if (!empty($item->committed) && $item->on_hand != null)
-                                                    {{ $item->on_hand - $item->committed }}
-                                                @elseif($item->on_hand == null)
-                                                    0
-                                                @else
-                                                    {{ $item->on_hand }}
-                                                @endif
+                                                0
                                             </td>
                                             <td>
                                                 {{ $item->courier }}
                                             </td>
                                             <td>
-                                                {{ $item->com_courier }}
+                                                0
                                             </td>
                                             <td>{{ $item->staff }}</td>
                                             <td>{{ $item->store }}</td>
