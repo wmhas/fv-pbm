@@ -436,8 +436,12 @@ class ReportController extends Controller
 
     public function report_stocks()
     {
-        
-        $page = 1;
+
+        if ($request->page){
+            $page = $request->page;
+        } else {
+            $page = 1;
+        }
 
         $startDate = $endDate = date('Y-m-d');
 
