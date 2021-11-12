@@ -102,7 +102,7 @@
                                                 {{ $item->counter + $item->courier + $item->staff + $item->store  }}
                                             </td>
                                             <td>
-                                                0
+                                                {{ $committed_counter[$key] + $committed_courier[$key] }}
                                             </td>
                                         </tr>
                                     @endforeach
