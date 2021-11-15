@@ -16,6 +16,7 @@ use PDF;
 use Excel;
 use App\Exports\TransactionsExport;
 use App\Exports\TransactionsSalesExport;
+use App\Exports\StockReportExport;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -580,10 +581,10 @@ class ReportController extends Controller
         return view('reports.report_stocks', ['items' => $items, 'roles'=> $roles,'startDate'=>$startDate, 'endDate'=>$endDate, 'links'=>$links, 'page'=>$page, 'committed_courier'=> $committed_courier, 'committed_counter'=> $committed_counter]);
     }
 
-    public function export_stock_item_pdf(Request $request)
+    public function export_stock_item(Request $request)
     {
         ini_set("max_execution_time", 1000000000);
-        if($request->filter == 1){
+        if ($request->filter == 1) {
             return $this->search_report_stock($request);
         }
         
@@ -594,66 +595,110 @@ class ReportController extends Controller
         $startTime = " 00:00:00";
         $endTime = " 23:59:59";
 
-        $items = DB::table('items as a')
-            ->join('locations as b', 'b.item_id', 'a.id');
-            
-        // if ($startDate != null && $endDate != null) {
-        //     $items = $items->whereDate('oi.created_at', '>=', $startDate)
-        //         ->whereDate('oi.created_at', '<=', $endDate);
-        // }
-
-        $items = $items->select(
-            'a.id', 
-            'a.brand_name', 
-            'a.item_code', 
-            'b.courier as on_hand',
-            'b.staff',
-            'b.store',
-            'b.counter',
-            'b.courier',
-            'b.store'
-        )
-        ->paginate(10, ['*'], 'page', $page);
-
-        $links = $items->links();
-
         $committed_courier = [];
         $committed_counter = [];
 
-        foreach($items as $key => $val){
-            $db_courier = DB::select(DB::raw("SELECT SUM(order_items.quantity) as com_courier FROM orders JOIN order_items ON orders.id = order_items.order_id WHERE orders.dispensing_method = 'Delivery' AND order_items.myob_product_id = ".$val->id." AND orders.dispense_date >= '".$startDate.$startTime."' AND orders.dispense_date <= '".$endDate.$endTime."'"));
-            if ($db_courier[0]->com_courier) {
-                $committed_courier[$key] = $db_courier[0]->com_courier;
-            } else {
-                $committed_courier[$key] = 0;
+        $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
+
+        if ($request->filter == 3) {
+
+            $items = DB::table('items as a')
+            ->join('locations as b', 'b.item_id', 'a.id');
+            
+            // if ($startDate != null && $endDate != null) {
+            //     $items = $items->whereDate('oi.created_at', '>=', $startDate)
+            //         ->whereDate('oi.created_at', '<=', $endDate);
+            // }
+
+            $items = $items->select(
+                'a.id', 
+                'a.brand_name', 
+                'a.item_code', 
+                'b.courier as on_hand',
+                'b.staff',
+                'b.store',
+                'b.counter',
+                'b.courier',
+                'b.store'
+            )
+            ->get();
+
+            foreach($items as $key => $val){
+                $db_courier = DB::select(DB::raw("SELECT SUM(order_items.quantity) as com_courier FROM orders JOIN order_items ON orders.id = order_items.order_id WHERE orders.dispensing_method = 'Delivery' AND order_items.myob_product_id = ".$val->id." AND orders.dispense_date >= '".$startDate.$startTime."' AND orders.dispense_date <= '".$endDate.$endTime."'"));
+                if ($db_courier[0]->com_courier) {
+                    $committed_courier[$key] = $db_courier[0]->com_courier;
+                } else {
+                    $committed_courier[$key] = 0;
+                }
+
+                $db_counter = DB::select(DB::raw("SELECT SUM(order_items.quantity) as com_counter FROM orders JOIN order_items ON orders.id = order_items.order_id WHERE orders.dispensing_method = 'Walkin' AND order_items.myob_product_id = ".$val->id." AND orders.dispense_date >= '".$startDate.$startTime."' AND orders.dispense_date <= '".$endDate.$endTime."'"));
+                if ($db_counter[0]->com_counter) {
+                    $committed_counter[$key] = $db_counter[0]->com_counter;
+                } else {
+                    $committed_counter[$key] = 0;
+                }
+
             }
 
-            $db_counter = DB::select(DB::raw("SELECT SUM(order_items.quantity) as com_counter FROM orders JOIN order_items ON orders.id = order_items.order_id WHERE orders.dispensing_method = 'Walkin' AND order_items.myob_product_id = ".$val->id." AND orders.dispense_date >= '".$startDate.$startTime."' AND orders.dispense_date <= '".$endDate.$endTime."'"));
-            if ($db_counter[0]->com_counter) {
-                $committed_counter[$key] = $db_counter[0]->com_counter;
-            } else {
-                $committed_counter[$key] = 0;
+            $data["committed_counter"] = $committed_counter;
+            $data["committed_courier"] = $committed_courier;
+            $data["items"] = $items;
+
+            $transaction = new StockReportExport($data);
+            if ($transaction->collection()->count() > 0) {
+                return Excel::download($transaction, 'Sales Report Details ('. $startDate . " to " . $endDate .').xlsx');
             }
+
+            $request->session()->flash('error', 'No Data to Export');
+            return redirect(url('/report/sales_report'));
+                        
+        } else {
+
+            $items = DB::table('items as a')
+            ->join('locations as b', 'b.item_id', 'a.id');
+                
+            // if ($startDate != null && $endDate != null) {
+            //     $items = $items->whereDate('oi.created_at', '>=', $startDate)
+            //         ->whereDate('oi.created_at', '<=', $endDate);
+            // }
+
+            $items = $items->select(
+                'a.id', 
+                'a.brand_name', 
+                'a.item_code', 
+                'b.courier as on_hand',
+                'b.staff',
+                'b.store',
+                'b.counter',
+                'b.courier',
+                'b.store'
+            )
+            ->paginate(10, ['*'], 'page', $page);
+
+            $links = $items->links();
+
+            foreach($items as $key => $val){
+                $db_courier = DB::select(DB::raw("SELECT SUM(order_items.quantity) as com_courier FROM orders JOIN order_items ON orders.id = order_items.order_id WHERE orders.dispensing_method = 'Delivery' AND order_items.myob_product_id = ".$val->id." AND orders.dispense_date >= '".$startDate.$startTime."' AND orders.dispense_date <= '".$endDate.$endTime."'"));
+                if ($db_courier[0]->com_courier) {
+                    $committed_courier[$key] = $db_courier[0]->com_courier;
+                } else {
+                    $committed_courier[$key] = 0;
+                }
+
+                $db_counter = DB::select(DB::raw("SELECT SUM(order_items.quantity) as com_counter FROM orders JOIN order_items ON orders.id = order_items.order_id WHERE orders.dispensing_method = 'Walkin' AND order_items.myob_product_id = ".$val->id." AND orders.dispense_date >= '".$startDate.$startTime."' AND orders.dispense_date <= '".$endDate.$endTime."'"));
+                if ($db_counter[0]->com_counter) {
+                    $committed_counter[$key] = $db_counter[0]->com_counter;
+                } else {
+                    $committed_counter[$key] = 0;
+                }
+
+            }
+
+            $pdf = PDF::loadView('reports.report_stocks', compact('items','roles','startDate','endDate','links','page','committed_courier','committed_counter'));
+            return $pdf->stream('patient_lists.pdf');
 
         }
 
-        // $sales = DB::table('v_sum_order_items')
-        //     ->select('myob_product_id', 'sales_quantity as committed')
-        //     ->get()->toArray();
-        
-        // foreach ($sales as $sale) {
-        //     foreach ($items as $item) {
-        //         if ($sale->myob_product_id == $item->id) {
-        //             $item->committed = $sale->committed;
-        //             // $item->available = $item->on_hand - $sale->committed;
-        //         }
-        //     }
-        // }
-
-        $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
-
-        $pdf = PDF::loadView('reports.report_stocks', compact('items','roles','startDate','endDate','links','page','committed_courier','committed_counter'));
-        return $pdf->stream('patient_lists.pdf');
     }
 
 }
