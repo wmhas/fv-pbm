@@ -222,7 +222,7 @@
                                 <td>
                                     <div class="form-group">
                                         <input type="number" name="dose_quantity" id="dose_quantity"
-                                               class="value_dq form-control" style="width:60px;">
+                                               class="value_dq form-control" style="width:60px;" step="0.1">
                                     </div>
                                 </td>
                                 <td>
@@ -399,7 +399,7 @@
                                     <td>
                                         <div class="form-group">
                                             <input type="number" name="dose_quantity" id="u_dose_quantity"
-                                                   class="u_value_dq form-control" style="width:60px;">
+                                                   class="u_value_dq form-control" style="width:60px;" step="0.1">
                                         </div>
                                     </td>
                                     <td>
