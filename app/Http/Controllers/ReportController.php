@@ -646,7 +646,7 @@ class ReportController extends Controller
 
             $transaction = new StockReportExport($data);
             if ($transaction->collection()->count() > 0) {
-                return Excel::download($transaction, 'Sales Report Details ('. $startDate . " to " . $endDate .').xlsx');
+                return Excel::download($transaction, 'Report Stock ('. $startDate . " to " . $endDate .').xlsx');
             }
 
             $request->session()->flash('error', 'No Data to Export');
