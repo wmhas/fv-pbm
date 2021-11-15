@@ -14,9 +14,10 @@ use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use Maatwebsite\Excel\Concerns\WithStrictNullComparison;
 use Carbon\Carbon;
 
-class StockReportExport implements FromCollection, WithHeadings, WithStyles
+class StockReportExport implements FromCollection, WithHeadings, WithStyles, WithStrictNullComparison
 {
 
     use Exportable;
@@ -38,16 +39,16 @@ class StockReportExport implements FromCollection, WithHeadings, WithStyles
 
         if (count($data)>0){
             foreach ($data as $k => $v) {
-                $orders[$k]['Item Code'] = $v->item_code;
-                $orders[$k]['Item Name'] = $v->brand_name;
-                $orders[$k]['Available']= (strlen($v->counter)==0) ? 0 : $v->counter;
-                $orders[$k]['Committed']= $committed_counter[$k];
-                $orders[$k]['Available']= (strlen($v->courier)==0) ? 0 : $v->courier;
-                $orders[$k]['Committed']= $committed_courier[$k];
-                $orders[$k]['Staff']= (strlen($v->staff)==0) ? 0 : $v->staff;
-                $orders[$k]['Store']= (strlen($v->store)==0) ? 0 : $v->store;
-                $orders[$k]['On Hand']= $v->counter + $v->courier + $v->staff + $v->store ;
-                $orders[$k]['Quantity Used']= $committed_counter[$k] + $committed_courier[$k];
+                $orders[$k]['Item Code'] = (string)$v->item_code;
+                $orders[$k]['Item Name'] = (string)$v->brand_name;
+                $orders[$k]['Available']= (string)(strlen($v->counter)==0) ? "0" : $v->counter;
+                $orders[$k]['Committed']= (string)$committed_counter[$k];
+                $orders[$k]['Available.']= (string)(strlen($v->courier)==0) ? "0" : $v->courier;
+                $orders[$k]['Committed.']= $committed_courier[$k];
+                $orders[$k]['Staff']= (string)(strlen($v->staff)==0) ? "0" : $v->staff;
+                $orders[$k]['Store']= (string)(strlen($v->store)==0) ? "0" : $v->store;
+                $orders[$k]['On Hand']= (string)($v->counter + $v->courier + $v->staff + $v->store) ;
+                $orders[$k]['Quantity Used']= (string)($committed_counter[$k] + $committed_courier[$k]);
             }
         }
         
@@ -61,8 +62,8 @@ class StockReportExport implements FromCollection, WithHeadings, WithStyles
             'Item Name',
             'Available',
             'Committed',
-            'Available',
-            'Committed',
+            'Available.',
+            'Committed.',
             'Staff',
             'Store',
             'On Hand',
