@@ -20,8 +20,6 @@ class StockReportExport implements FromCollection, WithHeadings, WithStyles
 {
 
     use Exportable;
-    private $startDate = false;
-    private $endDate = false;
 
     public function __construct($data)
     {
