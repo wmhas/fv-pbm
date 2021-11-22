@@ -122,19 +122,23 @@ class HomeController extends Controller
         return view('orders.index', compact('orders', 'method', 'keyword', 'status_id', 'statuses', 'roles'));
     }
 
-    public function see_more_refill()
+    public function see_more_refill(Request $request)
     {
-        $today = Carbon::now()->format('Y-m-d');
+        $startDate = $request->get('startDate', date('Y-m-d'));
+        $endDate = $request->get('endDate', date('Y-m-d'));
+        $searchType = $request->get('search_type');
+        $keyword = $request->get('keyword');
         $orders = Order::query()
-            ->whereHas('prescription', function ($prescription) use ($today) {
-                $prescription->where('next_supply_date', '=', $today);
+            ->whereHas('prescription', function ($prescription) use ($startDate, $endDate) {
+                $prescription->where('next_supply_date', '>=', $startDate);
+                $prescription->where('next_supply_date', '<=', $endDate);
             })->with(['prescription', 'patient'])
             ->where('rx_interval', '>', '1')
             ->where('total_amount', '!=', '0')
             ->whereIn('status_id', [4, 5])
             ->paginate(15);
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
-        return view('reports.report_refill', compact('orders', 'roles'));
+        return view('reports.report_refill', compact('orders', 'roles', 'startDate', 'endDate', 'searchType', 'keyword'));
     }
 
     public function see_more_end()
