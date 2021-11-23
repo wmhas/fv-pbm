@@ -61,7 +61,8 @@
                                             <th>IC</th>
                                             <th>Fullname</th>
                                             <th>Address</th>
-                                            <th>Dispensed By</th>
+                                            <th>Clinic</th>
+                                            <th>Dispensing Method</th>
                                             <th class="text-center">RX Number</th>
                                             <th class="text-center">RX Duration</th>
                                             <th>Medicine</th>
@@ -96,7 +97,8 @@
                                                 <td>{{ $order->patient->identification }}</td>
                                                 <td>{{ $order->patient->full_name }}</td>
                                                 <td>{{ $address }}</td>
-                                                <td>{{ $order->dispensing_by }}</td>
+                                                <td>{{ $order->prescription->clinic->name }}</td>
+                                                <td>{{ $order->dispensing_method }}</td>
                                                 <td>{{ $order->prescription->rx_number }}</td>
                                                 <td class="p-0 text-center">
                                                     <table class="table table-borderless">

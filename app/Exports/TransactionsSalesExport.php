@@ -102,8 +102,9 @@ class TransactionsSalesExport implements FromCollection, WithHeadings, WithStyle
                 $orders[$k]['FULLANME']=$v->patient->full_name;
                 $orders[$k]['ADDRESS']=trim($address);
                 $orders[$k]['RX NUMBER']=$v->prescription->rx_number;
-                $orders[$k]['DISPENSED BY']=$v->dispensing_by;
                 $orders[$k]['PANEL']=$v->patient->tariff->name;
+                $orders[$k]['CLINIC']=$v->prescription->clinic->name;
+                $orders[$k]['DISPENSING METHOD']=$v->dispensing_method;
                 $orders[$k]['TOTAL AMOUNT'] = $v->total_amount;
                 $orders[$k]['STATUS'] = $v->patient->card->type;
 
@@ -125,8 +126,9 @@ class TransactionsSalesExport implements FromCollection, WithHeadings, WithStyle
             'FULLNAME',
             'ADDRESS',
             'RX NUMBER',
-            'DISPENSED BY',
             'PANEL',
+            'CLINIC',
+            'DISPENSING METHOD',
             'TOTAL AMOUNT',
             'STATUS',
             'REMARKS',
@@ -135,14 +137,14 @@ class TransactionsSalesExport implements FromCollection, WithHeadings, WithStyle
 
     public function styles(Worksheet $sheet)
     {
-        $sheet->getStyle('A1:M1')->getFont()->setBold(true);
+        $sheet->getStyle('A1:N1')->getFont()->setBold(true);
         $sheet->getColumnDimension('A')->setVisible(false);
     }
 
     public function columnFormats(): array
     {
         return [
-            'J' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
+            'L' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
         ];
     }
 }

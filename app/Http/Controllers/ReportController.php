@@ -171,7 +171,7 @@ class ReportController extends Controller
         if ($export) {
             $refill = new ReportRefillExport($orders->get());
             if ($refill->collection()->count() > 0) {
-                return \Maatwebsite\Excel\Facades\Excel::download($refill, 'refill.xlsx');
+                return \Maatwebsite\Excel\Facades\Excel::download($refill, 'Refill Report (' . $startDate . ' to ' . $endDate . ').xlsx');
             }
             $request->session()->flash('error', 'No Data to Export');
         }

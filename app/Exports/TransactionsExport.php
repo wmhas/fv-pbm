@@ -38,6 +38,7 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
         $order = Order::join("patients","patients.id","=","orders.patient_id")
             ->join("cards","cards.id","=","patients.card_id")
             ->join("prescriptions","prescriptions.order_id","=","orders.id")
+            ->join("clinics","prescriptions.clinic_id","=","clinics.id")
             ->join("order_items","order_items.order_id","=","orders.id")
             ->join("items","items.id","=","order_items.myob_product_id")
             ->join("states","states.id","=","patients.state_id")
@@ -64,7 +65,8 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
             "prescriptions.rx_number",
             "prescriptions.rx_start",
             "prescriptions.rx_end", 
-            "orders.dispensing_by",
+            "clinics.name as clinic", 
+            "orders.dispensing_method",
             "items.brand_name as med",
             "order_items.quantity",
             "order_items.duration",
@@ -110,7 +112,8 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
                 $orders[$k]['IC']=$v->ic;
                 $orders[$k]['FULLANME']=$v->full_name;
                 $orders[$k]['ADDRESS']= trim($address);
-                $orders[$k]['DISPENSED BY']=$v->dispensing_by;
+                $orders[$k]['CLINIC']=$v->clinic;
+                $orders[$k]['DISPENSING METHOD']=$v->dispensing_method;
                 $orders[$k]['RX NUMBER']=$v->rx_number;
                 $orders[$k]['RX DURATION']=$v->duration;
                 $orders[$k]['MEDICINE']=$v->med;
@@ -138,7 +141,8 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
             'IC',
             'FULLNAME',
             'ADDRESS',
-            'DISPENSED BY',
+            'CLINIC',
+            'DISPENSING METHOD',
             'RX NUMBER',
             'RX DURATION',
             'MEDICINE',
@@ -152,7 +156,7 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
 
     public function styles(Worksheet $sheet)
     {
-        $sheet->getStyle('A1:P1')->getFont()->setBold(true);
+        $sheet->getStyle('A1:Q1')->getFont()->setBold(true);
 
         $last_row = $sheet->getHighestRow();
         $current_row = 2;
@@ -189,8 +193,9 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
         $sheet->mergeCells('G' .$start_row. ':G' .$end_row);
         $sheet->mergeCells('H' .$start_row. ':H' .$end_row);
         $sheet->mergeCells('I' .$start_row. ':I' .$end_row);
-        $sheet->mergeCells('O' .$start_row. ':O' .$end_row);
+        $sheet->mergeCells('J' .$start_row. ':J' .$end_row);
         $sheet->mergeCells('P' .$start_row. ':P' .$end_row);
+        $sheet->mergeCells('Q' .$start_row. ':Q' .$end_row);
 
         $sheet->setCellValue('B'.$start_row, $num); 
     }
@@ -198,8 +203,8 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
     public function columnFormats(): array
     {
         return [
-            'M' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
             'N' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
+            'O' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
         ];
     }
 }

@@ -70,6 +70,8 @@
                                     <th>Patient</th>
                                     <th>Prescription</th>
                                     <th>Next Supply Date</th>
+                                    <th>Clinic</th>
+                                    <th>Dispensing Method</th>
                                     <th>Resubmission</th>
                                 </tr>
                             </thead>
@@ -106,10 +108,15 @@
                                         <td>
                                             {{ date("d/m/Y", strtotime($o->prescription->next_supply_date))}}
                                         </td>
+                                        <td>
+                                            {{ $o->prescription->clinic->name }}
+                                        </td>
                                     @else
                                         <td></td>
                                         <td></td>
+                                        <td></td>
                                     @endif
+                                    <td>{{ $o->dispensing_method }}</td>
                                     @if ($o->rx_interval == 2)
                                         <td style="text-align: center;">
                                             <form method="post" action="{{ url('/order/'.$o->id.'/resubmission') }}">

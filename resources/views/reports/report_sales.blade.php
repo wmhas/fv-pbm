@@ -56,6 +56,8 @@
                                         <th>Dispense Date</th>
                                         <th>Patient Detail</th>
                                         <th>Panel</th>
+                                        <th>Clinic</th>
+                                        <th>Dispensing Method</th>
                                         <th>Total Amount (RM)</th>
                                         <th>Status</th>
                                     </tr>
@@ -76,6 +78,20 @@
                                             </a>
                                         </td>
                                         <td>@if (!empty($order->patient->tariff_id)) {{$order->patient->tariff->name}} @else <b>(!) no panel</b> @endif</td>
+                                        <td>
+                                            @if (!empty($order->prescription->clinic->name))
+                                                {{ $order->prescription->clinic->name }}
+                                            @else
+                                                N/A
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if (!empty($order->dispensing_method))
+                                                {{ $order->dispensing_method }}
+                                            @else
+                                                N/A
+                                            @endif
+                                        </td>
                                         <td style="text-align: right;">{{ number_format($order->total_amount, 2) }}</td>
                                         <td>
                                             @if ($order->status_id == 1)

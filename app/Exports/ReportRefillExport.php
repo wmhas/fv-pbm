@@ -31,10 +31,15 @@ class ReportRefillExport implements FromCollection, WithHeadings, WithStyles, Wi
             $refills[] = [
                 'NO' => $no,
                 'DO NUMBER' => $refill->do_number,
-                'PATIENT' => $refill->patient->full_name,
-                'PRESCRIPTION' => $refill->prescription->rx_number,
+                'PATIENT NAME' => $refill->patient->full_name,
+                'PATIENT NRIC' => $refill->patient->identification,
+                'PRESCRIPTION NO' => $refill->prescription->rx_number,
+                'PRESCRIPTION START DATE' => $refill->prescription->rx_start,
+                'PRESCRIPTION END DATE' => $refill->prescription->rx_end,
                 'NEXT SUPPLY DATE' => date("d/m/Y", strtotime($refill->prescription->next_supply_date)),
-                'RESUBMISSION' => $refill->rx_interval === 3 ? 'Complete' : '',
+                'CLINIC' => $refill->prescription->clinic->name,
+                'DISPENSING METHOD' => $refill->dispensing_method,
+                'RESUBMISSION' => $refill->rx_interval === 3 ? 'Complete' : 'Incomplete',
             ];
             $no++;
         }
@@ -46,23 +51,28 @@ class ReportRefillExport implements FromCollection, WithHeadings, WithStyles, Wi
         return [
             'NO',
             'DO NUMBER',
-            'PATIENT',
-            'PRESCRIPTION',
+            'PATIENT NAME',
+            'PATIENT NRIC',
+            'PRESCRIPTION NO',
+            'PRESCRIPTION START DATE',
+            'PRESCRIPTION END DATE',
             'NEXT SUPPLY DATE',
+            'CLINIC',
+            'DISPENSING METHOD',
             'RESUBMISSION',
         ];
     }
 
     public function styles(Worksheet $sheet): void
     {
-        $sheet->getStyle('A1:F1')->getFont()->setBold(true);
+        $sheet->getStyle('A1:K1')->getFont()->setBold(true);
     }
 
     public function columnFormats(): array
     {
         return [
             'B' => NumberFormat::FORMAT_TEXT,
-            'D' => NumberFormat::FORMAT_TEXT,
+            'E' => NumberFormat::FORMAT_TEXT,
         ];
     }
 }
