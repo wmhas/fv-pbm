@@ -195,25 +195,25 @@
             </td>
         </tr>
         <tr>
-            <td>
-                @if ($order->patient->relation != 'CardOwner')
+            <td colspan="2">
+                @if (strcasecmp($order->patient->relation, 'cardowner') !== 0)
                     (K/P: {{ $order->patient->identification }})
                 @endif
-                {{ strtoupper($order->patient->salutation) }} {{ strtoupper($order->patient->full_name) }}
-                @if ($order->patient->relation != 'CardOwner')
+                 {{ strtoupper($order->patient->salutation) }} {{ strtoupper($order->patient->full_name) }}
+                @if (strcasecmp($order->patient->relation, 'cardowner') !== 0)
                     <br> 
-                    @if ($order->patient->relation == 'Wife')
-                        ISTERI KEPADA
-                    @elseif ($order->patient->relation == 'Husband')
-                        SUAMI KEPADA
-                    @elseif ($order->patient->relation == 'Widowed')
-                        BALU KEPADA
-                    @elseif ($order->patient->relation == 'Children')
-                        ANAK KEPADA
+                    @if (strcasecmp($order->patient->relation, 'wife') == 0 || strcasecmp($order->patient->relation, 'isteri') == 0)
+                        ISTERI
+                    @elseif (strcasecmp($order->patient->relation, 'husband') == 0 || strcasecmp($order->patient->relation, 'suami') == 0)
+                        SUAMI
+                    @elseif (strcasecmp($order->patient->relation, 'widowed') == 0 || strcasecmp($order->patient->relation, 'balu') == 0)
+                        BALU
+                    @elseif (strcasecmp($order->patient->relation, 'children') == 0 || strcasecmp($order->patient->relation, 'anak') == 0)
+                        ANAK
                     @else
-                        WARIS KEPADA
+                        WARIS
                     @endif
-                         {{ strtoupper($order->patient->card->salutation) }} {{ strtoupper($order->patient->card->name) }}
+                     KEPADA {{ strtoupper($order->patient->card->salutation) }} {{ strtoupper($order->patient->card->name) }}
                 @endif
             </td>
         </tr>
