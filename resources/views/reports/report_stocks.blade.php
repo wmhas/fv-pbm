@@ -52,31 +52,23 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table class="table table-bordered">
+                                <table class="table table-bordered align-top">
                                     <thead>
                                         <tr>
-                                            <th></th>
-                                            <th></th>
-                                            <th>Counter</th>
-                                            <th></th>
-                                            <th>Courir</th>
-                                            <th></th>
-                                            <th></th>
-                                            <th></th>
-                                            <th></th>
-                                            <th></th>
+                                            <th rowspan="2" class="border">Item Code</th>
+                                            <th rowspan="2" class="border">Item Name</th>
+                                            <th colspan="2" class="text-center border">Counter</th>
+                                            <th colspan="2" class="text-center border">Courier</th>
+                                            <th rowspan="2" class="border">Staff</th>
+                                            <th rowspan="2" class="border">Store</th>
+                                            <th rowspan="2" class="border">On Hand</th>
+                                            <th rowspan="2" class="border">Quantity Used</th>
                                         </tr>
                                         <tr>
-                                            <th>Item Code</th>
-                                            <th>Item Name</th>
-                                            <th>Available</th>
-                                            <th>Committed</th>
-                                            <th>Available</th>
-                                            <th>Committed</th>
-                                            <th>Staff</th>
-                                            <th>Store</th>
-                                            <th>On Hand</th>
-                                            <th>Quantity Used</th>
+                                            <th class="border">Available</th>
+                                            <th class="border">Committed</th>
+                                            <th class="border">Available</th>
+                                            <th class="border">Committed</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -116,7 +108,7 @@
                             </ul>
                         </div>
                         <div class="card-body" style="overflow-x:auto;">
-                            <form method="GET" enctype="multipart/form-data" action="{{ route('export.stock-item') }}">
+                            {{-- <form method="GET" enctype="multipart/form-data" action="{{ route('export.stock-item') }}">
                                 <div class="row">
                                     <div class="col-md-2">
                                         <input name="startDate" value="{{ $startDate }}" type="hidden" class="form-control">
@@ -126,11 +118,11 @@
                                             <button type="submit" class="btn btn-danger" style=" width:100%;" name="filter" value="2">Export PDF</button>
                                         </div>
                                     </div>
-                                    <!-- <div class="col-md-2">
+                                    <div class="col-md-2">
                                         <button type="button" class="btn btn-secondary" style="margin-top:32px; width:100%;">Export</button>
-                                    </div> -->
+                                    </div>
                                 </div>
-                            </form>
+                            </form> --}}
                             <form method="GET" enctype="multipart/form-data" action="{{ route('export.stock-item') }}">
                                 <div class="row">
                                     <div class="col-md-2">

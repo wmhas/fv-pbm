@@ -58,21 +58,46 @@ class StockReportExport implements FromCollection, WithHeadings, WithStyles, Wit
     public function headings(): array
     {
         return [
-            'Item Code',
-            'Item Name',
-            'Available',
-            'Committed',
-            'Available.',
-            'Committed.',
-            'Staff',
-            'Store',
-            'On Hand',
-            'Quantity Used',
+            [
+                'Item Code',
+                'Item Name',
+                'Counter',
+                '',
+                'Courier',
+                '',
+                'Staff',
+                'Store',
+                'On Hand',
+                'Quantity Used',
+            ],
+            [
+                '',
+                '',
+                'Available',
+                'Committed',
+                'Available',
+                'Committed',
+                '',
+                '',
+                '',
+                '',
+            ]
         ];
     }
 
     public function styles(Worksheet $sheet)
     {
         $sheet->getStyle('A1:J1')->getFont()->setBold(true);
+        $sheet->getStyle('A2:J2')->getFont()->setBold(true);
+
+        $sheet->mergeCells('A1:A2');
+        $sheet->mergeCells('B1:B2');
+        $sheet->mergeCells('G1:G2');
+        $sheet->mergeCells('H1:H2');
+        $sheet->mergeCells('I1:I2');
+        $sheet->mergeCells('J1:J2');
+
+        $sheet->mergeCells('C1:D1');
+        $sheet->mergeCells('E1:F1');
     }
 }
