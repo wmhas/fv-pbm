@@ -96,8 +96,8 @@
                                             @endif
                                         </a>
                                     </th>
-                                    <th>Quantity Used</th>   
-                                    <th>Total Price (RM)</th>
+                                    <th class="text-center">Quantity Used</th>   
+                                    <th class="text-right">Total Price (RM)</th>
                                     <th>Action</th>
                                 </tr>   
                             </thead>
@@ -117,34 +117,14 @@
                                     </td>
                                     <td>{{$item->item_code}}</td>
                                     <td>{{$item->brand_name}}</td>
-                                    <td class="text-right">{{$quantity}}</td>
+                                    <td class="text-center">{{$quantity}}</td>
                                     <td class="text-right">{{number_format($price, 2)}}</td>
                                     <td>
-                                    <button type="button"  class="btn btn-primary" data-toggle="modal" data-target="#exampleModal{{$item->id}}">Show Detail</button>
-                                        <div class="modal fade" id="exampleModal{{$item->id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog" role="document">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="exampleModalLabel">Date </h5>
-                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                    </div>
-                                                    <form action="{{url('report/'.$item->id.'/item_summary/')}}" method="GET">
-                                                        <div class="modal-body">
-                                                            <label>Date From</label><br>
-                                                            <input type="date" name="startDate" class="form-control" required><br><br>
-                                                            <label>Date To</label><br>
-                                                            <input type="date" name="endDate" class="form-control" required>
-                                                        </div>       
-                                                        <div class="modal-footer">
-                                                            <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> -->
-                                                            <button type="submit" class="btn btn-primary">Display</button>
-                                                        </div>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        <form action="{{ url('report/' . $item->id . '/item_summary/') }}" method="get">
+                                            <input type="date" name="startDate" value="{{ $startDate }}" hidden>
+                                            <input type="date" name="endDate" value="{{ $endDate }}" hidden>
+                                            <button type="submit" class="btn btn-primary">Show Details</button>
+                                        </form>
                                     </td>      
                                 </tr>
                                @endforeach
