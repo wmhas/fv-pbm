@@ -257,15 +257,16 @@ class ReportController extends Controller
             $patient_lists = DB::table('orders as a')
             ->join('order_items as b', 'b.order_id', '=', 'a.id')
             ->join('patients as c', 'c.id', '=', 'a.patient_id')
-            ->selectRaw('c.id, c.full_name, SUM(b.quantity) as quantity, SUM(b.price) as amount')
+            ->selectRaw('a.dispense_date, c.full_name, SUM(b.quantity) as quantity, SUM(b.price) as amount')
             ->where('b.myob_product_id', $item->id)
-            ->whereDate('a.created_at', '>=', $request->startDate)
-            ->whereDate('a.created_at', '<=', $request->endDate)
+            ->whereDate('a.dispense_date', '>=', $request->startDate)
+            ->whereDate('a.dispense_date', '<=', $request->endDate)
             ->whereIn('a.status_id', [4,5])
             ->whereNull('a.deleted_at')
             ->whereNull('a.return_timestamp')
             ->whereNull('b.deleted_at')
-            ->groupby('c.id')
+            ->orderBy('a.dispense_date', 'DESC')
+            ->groupby('a.id')
             ->paginate(15);
         }
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
@@ -279,21 +280,22 @@ class ReportController extends Controller
             $patient_lists = DB::table('orders as a')
             ->join('order_items as b', 'b.order_id', '=', 'a.id')
             ->join('patients as c', 'c.id', '=', 'a.patient_id')
-            ->selectRaw('c.id, c.full_name, SUM(b.quantity) as quantity, SUM(b.price) as amount')
+            ->selectRaw('a.dispense_date, c.full_name, SUM(b.quantity) as quantity, SUM(b.price) as amount')
             ->where('b.myob_product_id', $request->item_id)
-            ->whereDate('a.created_at', '>=', $request->startDate)
-            ->whereDate('a.created_at', '<=', $request->endDate)
+            ->whereDate('a.dispense_date', '>=', $request->startDate)
+            ->whereDate('a.dispense_date', '<=', $request->endDate)
             ->whereIn('a.status_id', [4,5])
             ->whereNull('a.deleted_at')
             ->whereNull('a.return_timestamp')
             ->whereNull('b.deleted_at')
-            ->groupby('c.id')
+            ->orderBy('a.dispense_date', 'DESC')
+            ->groupby('a.id')
             ->get();
         }
         // dd($patient_lists);
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
         $pdf = PDF::loadView('reports.exportsalesitem', compact('patient_lists', 'roles'));
-        return $pdf->stream('patient_lists.pdf');
+        return $pdf->stream('Item Summary ( ' . $request->startDate . ' to ' . $request->endDate . ' ).pdf');
     }
 
     public function report_stock_pdf()

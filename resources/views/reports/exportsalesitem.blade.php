@@ -24,6 +24,7 @@
     <table class="bottom">
         <tr >
             <th >No</th>
+            <th>Dispense Date</th>
             <th>Customer Name</th>
             <th>Quantity</th>
             <th>Amount (RM)</th>
@@ -31,6 +32,7 @@
         @foreach($patient_lists as $list)
         <tr>
             <td class="nak-tepi">{{$loop->iteration}}</td>
+            <td class="nak-tepi">{{$list->dispense_date}}</td>
             <td class="nak-tepi">{{$list->full_name}}</td>
             <td class="nak-tepi">{{$list->quantity}}</td>
             <td class="nak-tepi" style="text-align: right;">{{number_format($list->amount,2)}}</td>

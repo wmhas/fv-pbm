@@ -23,6 +23,7 @@
                 <thead>
                     <tr>
                         <th>No</th>
+                        <th>Dispense Date</th>
                         <th>Customer Name</th>
                         <th>Quantity</th>
                         <th>Amount (RM)</th>     
@@ -32,6 +33,7 @@
                     @foreach($patient_lists as $list)
                     <tr>
                         <td>{{$loop->iteration}}</td>
+                        <td>{{ date_format(date_create($list->dispense_date), 'd/m/Y') }}</td>
                         <td>{{$list->full_name}}</td>
                         <td>{{$list->quantity}}</td>
                         <td style="text-align: right;">{{number_format($list->amount,2)}}</td>
