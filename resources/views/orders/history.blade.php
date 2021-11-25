@@ -94,7 +94,7 @@
                                                                                 <tr>
                                                                                     <td>{{ $item->items->brand_name }}{{ $item->items->generic_name }}
                                                                                     </td>
-                                                                                    <td>{{ $item->id }}</td>
+                                                                                    <td>{{ $item->quantity }}</td>
                                                                                     <td>{{ $item->duration }}</td>
                                                                                 </tr>
                                                                             @endforeach
@@ -153,7 +153,9 @@
                                                                     <p>Date: {{ date("d/m/Y", strtotime($o->prescription->rx_start)) }} - {{ date("d/m/Y", strtotime($o->prescription->rx_end)) }} </p>
                                                                     <p>RX Attachment: @if(!empty($o->prescription->rx_original_filename)) <a href="{{route('order.rxattachment', [$o->prescription->id])}} " target="_blank"> {{ $o->prescription->rx_original_filename}}</a> @else No Attachment Uploaded @endif </p>
                                                                     <!-- <p>Dispensing Note : <a href="" target="_blank"> </a> </p> -->
-                                                                    <p>Invoice : <a href="{{ url( '/order/downloadPDF2/'.$o->id )}}" target="_blank"> See Invoice</a> </p>
+                                                                    @if ($o->status_id == 5)
+                                                                        <p>Invoice : <a href="{{ url( '/order/downloadPDF2/'.$o->id )}}" target="_blank"> See Invoice</a> </p>
+                                                                    @endif
                                                                     </div>
                                                                     <div class="modal-footer">
                                                                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>  
