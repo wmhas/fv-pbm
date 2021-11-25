@@ -114,20 +114,18 @@
                         </div>
                         <form method="get" action="/home/search/patient">
                             <div class="card-body">
-                                <div class="form-group">
-                                    <div class="row">
-                                        <div class="col-12 col-md-4">
-                                            <select class="form-control" name="method" required>
-                                                <option value="identification" <?php if (isset($method) && $method == "identification") echo "selected"; ?>>By IC / Passport</option>
-                                                <option value="army_pension" <?php if (isset($method) && $method == "army_pension") echo "selected"; ?>>By Army No.</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-12 col-md-5">
-                                            <input type="text" name="keyword" class="form-control" placeholder="Enter IC / Army Number">
-                                        </div>
-                                        <div class="col-12 mt-2 col-md-3 mt-md-0">
-                                            <button type="submit" class="btn btn-primary w-100">Search</button>
-                                        </div>
+                                <div class="row">
+                                    <div class="col-12 col-md-3">
+                                        <select class="form-control" name="method" required>
+                                            <option value="identification" <?php if (isset($method) && $method == "identification") echo "selected"; ?>>By IC / Passport</option>
+                                            <option value="army_pension" <?php if (isset($method) && $method == "army_pension") echo "selected"; ?>>By Army No.</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <input type="text" name="keyword" class="form-control" placeholder="Enter IC / Army Number">
+                                    </div>
+                                    <div class="col-12 col-md-3 mt-2 mt-md-0">
+                                        <button type="submit" class="btn btn-primary btn-block">Search</button>
                                     </div>
                                 </div>
                             </div>
@@ -142,15 +140,12 @@
                         </div>
                         <form method="get" action="/home/search/order">
                             <div class="card-body">
-                                <div class="form-group">
-                                    <div class="row">
-                                        <div class="col-md-9 col-12">
-                                            <input type="text" name="keyword" class="form-control"
-                                                placeholder="Enter DO Number">
-                                        </div>
-                                        <div class="col-md-3 col-12">
-                                            <button type="submit" class="btn btn-primary">Search</button>
-                                        </div>
+                                <div class="row">
+                                    <div class="col-md-9 col-12">
+                                        <input type="text" name="keyword" class="form-control" placeholder="Enter DO Number">
+                                    </div>
+                                    <div class="col-md-3 col-12 mt-2 mt-md-0">
+                                        <button type="submit" class="btn btn-primary btn-block">Search</button>
                                     </div>
                                 </div>
                             </div>
@@ -166,8 +161,8 @@
                                  Refill Reminder </h3>
                         </div>
                         <div class="card-body">
-                            <div class="form-group">
-                                <table class="table table-bordered table-hover table-responsive">
+                            <div class="form-group table-responsive">
+                                <table class="table table-bordered table-hover">
                                     <thead>
                                             <tr>
                                                 <td>Patient Name </td>
@@ -224,7 +219,7 @@
                                   Rx Expiry</h3>
                         </div>
                         <div class="card-body">
-                            <div class="form-group">
+                            <div class="form-group table-responsive">
                                 <table class="table table-striped table-bordered">
                                     <thead>
                                         <tr>
