@@ -77,6 +77,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['prefix' => 'order'], function () {
         Route::post('/', 'OrderController@index');
         Route::get('/', 'OrderController@index')->name('orders.index');
+        Route::get('/{id}/delete', 'OrderController@destroy')->name('order.delete');
         Route::get('/search', 'OrderController@search');
         Route::get('/{order}/view', 'OrderController@show');
         Route::post('/{order}/OrderAttachment', 'OrderController@uploadOrderAttachment');

@@ -1096,4 +1096,27 @@ class OrderController extends Controller
             return back()->with(['status' => true, 'message' => 'Update successfully']);
         }
     }
+
+    public function destroy($order_id)
+    {
+        $order = Order::findorfail($order_id);
+        $order_items = OrderItem::where('order_id', $order->id);
+        foreach ($order_items->get() as $oi) {
+            $location = Location::where('item_id', $oi->myob_product_id)->first();
+            if ($order->dispensing_method == 'Walkin') {
+                $location->counter = $location->counter + $oi->quantity;
+                $location->save();
+            } elseif ($order->dispensing_method == 'Delivery') {
+                $location->courier = $location->courier + $oi->quantity;
+                $location->save();
+            }
+        }
+
+        Prescription::where('order_id', $order->id)->delete();
+        Delivery::where('order_id', $order->id)->delete();
+        $order_items->delete();
+        $order->delete();
+
+        return redirect()->action('OrderController@index')->with(['status' => true, 'message' => 'Successfully delete order']);
+    }
 }

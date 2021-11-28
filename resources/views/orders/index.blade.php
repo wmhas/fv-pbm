@@ -75,6 +75,7 @@
                                     <th style="width: 5%">Date Created</th>
                                     <th style="width: 2%">Status</th>
                                     <th style="width: 2%">Dispensing Method</th>
+                                    <th style="width: 2%">Delete</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -138,6 +139,11 @@
                                         @else
                                             Walkin
                                         @endif
+                                    </td>
+                                    <td align="center">
+                                        <a href="{{ route('order.delete', $o->id) }}" data-toggle="tooltip" data-placement="left" title="Delete Order" style="color: red;">
+                                            <i class="mdi mdi-trash-can mdi-24px"></i>
+                                        </a>
                                     </td>
                                 </tr>
                                 <div class="modal fade" id="exampleModal{{$o->id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModal{{$o->id}}" aria-hidden="true">
