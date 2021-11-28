@@ -47,6 +47,10 @@ class Order extends Model
         return $this->belongsTo(SalesPerson::class , 'salesperson_id', 'id');
     }
 
+    public function batch() {
+        return $this->belongsTo(NewBatch::class, 'batch_id', 'id');
+    }
+
     public static function getorder($startDate,$endDate,$page)
     {
         $order = Order::join("patients","patients.id","=","orders.patient_id")

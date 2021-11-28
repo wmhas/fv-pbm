@@ -23,7 +23,7 @@
 			<div class="col-md-12">
 				<div class="card">
 					<div class="card-header">
-						<h3 class="card-title">Unbatch Order</h3>
+						<h3 class="card-title">Batching Order</h3>
 					</div>
 					<div class="card-body" style="overflow-x:auto;">
 						<table class="table table-bordered">
@@ -33,29 +33,37 @@
 									<th>Batch Number</th>
 									<th>Order's Number</th>
 									<th>Payor</th>
+									<th>Status</th>
+									<th>Batch Person</th>
 									<th>Action</th>
 								</tr>
 							</thead>
 							<tbody>
-								@foreach ($unbatches as $unbatche)
+								@foreach ($batching as $batch)
 								
 								<tr>
 									<td>{{ $loop->iteration }}</td>
-									<td>{{ $unbatche->batch_no }}</td>
-									<td> {{ $unbatche->batchOrder->count() }} Orders</td>
-									<td> @if($unbatche->tariff_id == 3)
-										MINDEF
-									     @else
-										JPA/JHEV
-										 @endif
-										</td>
+									<td><a href="{{ url('/batch/'.$batch->id.'/batch_list') }}">{{ $batch->batch_no }}</a></td>
 									<td>
-										<a href="{{ url('/batch/'.$unbatche->id.'/batch_list') }}" data-toggle="tooltip" title="View Unbatch Order"><i class="mdi mdi-folder-account mdi-24px"></i></a> 
+										@if (sizeOf($batch->orders) > 1)
+											{{ sizeOf($batch->orders) }} Orders
+										@else
+											{{ sizeOf($batch->orders) }} Order
+										@endif
 									</td>
+									<td> 
+										@if($batch->tariff == 3)
+											MINDEF
+									    @else
+											JPA/JHEV
+										@endif
+									</td>
+									<td>{{ $batch->patient_status }}</td>
+									<td>{{ $batch->sales_person->name }}</td>
 									<td>
-										<form action="{{ url('/batch/'.$unbatche->id.'/batch_list') }}" method="POST">
+										<form action="{{ url('/batch/'.$batch->id.'/batch_list') }}" method="POST">
 											@csrf
-											<button  class="btn mdi mdi-folder-move mdi-24px" type="submit" data-toggle="tooltip" title="Batch This Order"></button>
+											<button  class="btn btn-dark" type="submit">Batch This Order</button>
 										</form>
 									</td>
 								</tr>
@@ -64,7 +72,7 @@
 						</table>
 					</div>
 					<div class="card-footer clearfix">
-						{{ $unbatches->withQueryString()->links() }}
+						{{ $batching->withQueryString()->links() }}
 					</div>
 				</div>
 			</div>
@@ -100,33 +108,38 @@
 									<th>Batch Number</th>
 									<th>Order's Number</th>
 									<th>Payor</th>
-									<th>Action</th>
+									<th>Status</th>
+									<th>Batch Person</th>
 								</tr>
 							</thead>
 							<tbody>
-								@foreach ($batches as $batche)
+								@foreach ($batched as $batch)
 								<tr>
 									<td>{{ $loop->iteration }}</td>
-									<td>{{ $batche->batch_no }}</td>
-									<td> {{ $batche->batchOrder->count() }} Orders</td>
-									<td> @if($batche->tariff_id == 3)
-										MINDEF
-									     @else
-										JPA/JHEV
-										 @endif	</td>
+									<td><a href="{{ url('/batch/'.$batch->id.'/batch_list') }}">{{ $batch->batch_no }}</a></td>
 									<td>
-										<a href="{{ url('/batch/'.$batche->id.'/batch_list') }}" data-toggle="tooltip" title="View Batched Order"><i class="mdi mdi-folder-account mdi-24px"></i></a> 
+										@if (sizeOf($batch->orders) > 1)
+											{{ sizeOf($batch->orders) }} Orders
+										@else
+											{{ sizeOf($batch->orders) }} Order
+										@endif
 									</td>
-									{{-- <td>
-										<a href="#" title="Print Order"><i class="mdi mdi-printer mdi-24px"></i>
-									</td> --}}
+									<td> 
+										@if($batch->tariff == 3)
+											MINDEF
+									    @else
+											JPA/JHEV
+										@endif	
+									</td>
+									<td>{{ $batch->patient_status }}</td>
+									<td>{{ $batch->sales_person->name }}</td>
 								</tr>
 								@endforeach
 							</tbody>
 						</table>
 					</div>
 					<div class="card-footer clearfix">
-						{{ $batches->withQueryString()->links() }}
+						{{ $batched->withQueryString()->links() }}
 					</div>
 				</div>
 			</div>

@@ -1040,7 +1040,7 @@ class OrderController extends Controller
         return view('print.print2');
     }
 
-    public function download_invoice($id)
+    public function download_invoice1($id)
     {
         // $order = Order::where('id', $id)->first();
         $date = Carbon::now()->format('d/m/Y');
@@ -1048,6 +1048,13 @@ class OrderController extends Controller
         $order_item = OrderItem::where('order_id', $id)->get();
         $pdf = PDF::loadView('print.print2', compact('batch', 'order_item', 'date'));
         return $pdf->stream('invoice_' .$batch->order->do_number. '.pdf');
+    }
+
+    public function download_invoice($id) {
+        $order = Order::where('id', $id)->with(['batch'])->first();
+        $pdf = PDF::loadView('print.print2', compact('order'));
+
+        return $pdf->stream('Invoice_' . $order->batch->batch_no . '.pdf');
     }
 
     public function download_justify($id)
