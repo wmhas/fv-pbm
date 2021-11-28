@@ -1110,6 +1110,15 @@ class OrderController extends Controller
                 $location->courier = $location->courier + $oi->quantity;
                 $location->save();
             }
+
+            $stock = new Stock();
+            $stock->item_id = $oi->item_id;
+            $stock->quantity = $oi->quantity;
+            $stock->balance = 0;
+            $stock->source = 'return';
+            $stock->source_id = $oi->id;
+            $stock->source_date = Carbon::now()->format('Y-m-d');
+            $stock->save();
         }
 
         Prescription::where('order_id', $order->id)->delete();
