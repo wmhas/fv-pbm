@@ -1112,7 +1112,7 @@ class OrderController extends Controller
             }
 
             $stock = new Stock();
-            $stock->item_id = $oi->item_id;
+            $stock->item_id = $oi->myob_product_id;
             $stock->quantity = $oi->quantity;
             $stock->balance = 0;
             $stock->source = 'return';
