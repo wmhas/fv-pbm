@@ -7,8 +7,9 @@ use Illuminate\Http\Request;
 use PDF;
 use App\Models\Order;
 use App\Models\Batch;
+use App\Models\NewBatch;
 use App\Models\BatchOrder;
-use App\Exports\BatchExport;
+use App\Exports\NewBatchExport;
 use Excel;
 
 class BatchController extends Controller
@@ -27,8 +28,8 @@ class BatchController extends Controller
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
         return view('batch.index', [
             'roles' => $roles,
-            'unbatches' => Batch::where('batch_status', 'unbatch')->with(['batchOrder'])->paginate(5),
-            'batches' => Batch::where('batch_status', 'batched')->with(['batchOrder'])->paginate(5),
+            'batching' => NewBatch::where('batch_status', 'batching')->with(['orders', 'sales_person'])->paginate(5),
+            'batched' => NewBatch::where('batch_status', 'batched')->with(['orders', 'sales_person'])->paginate(5),
             'keyword' => $keyword,
         ]);
     }
@@ -45,8 +46,8 @@ class BatchController extends Controller
         return view('batch.pending', compact('roles'));
     }
 
-    public function batch_order(Order $order, Request $request)
-    {
+    public function batch_order(Order $order, Request $request) {        
+        
         if ($order->patient->tariff_id == 1 || $order->patient->tariff_id == 2) {
             $tariff = 1;
         } elseif ($order->patient->tariff_id == 3)  {
@@ -55,48 +56,46 @@ class BatchController extends Controller
             return redirect()->back()
                 ->with(['status' => false, 'message' => 'THIS PATIENT DOES NOT HAVE A TARIFF, PLEASE UPDATE']);
         }
-        $batchperson = $request->input('batchperson');
+        
+        $batch_person = $request->input('batchperson');
+        $batch_status = 'batching';
+        $patient_status = $order->patient->card->type;
+
+        $total_batch = NewBatch::count();
+        $batch = NewBatch::where('batch_person', $batch_person)
+            ->where('batch_status', 'batching')
+            ->where('tariff', $tariff)
+            ->where('patient_status', $patient_status)
+            ->first();
+        
+        if ($batch == NULL) {
+            $batch = NewBatch::create([
+                'batch_no' => 'B' .str_pad($total_batch + 1, 6, "0", STR_PAD_LEFT),
+                'batch_person' => $batch_person,
+                'batch_status' => $batch_status,
+                'tariff' => $tariff,
+                'patient_status' => $patient_status
+            ]);
+        }
+
+        $batch_id = $batch->id;
+
         $order->status_id = 5;
+        $order->batch_id = $batch_id;
         $order->save();
-
-        $batch =  Batch::where('tariff_id', $tariff)->where('batch_status', 'unbatch')->latest()->first();
-        $count_batch=Batch::count();
-        //only find unbatch status so it wont go to batched batch
-        if ($batch == null) {
-            $batch =  Batch::create([
-                'batch_no' => 'B' .str_pad($count_batch + 1, 6, "0", STR_PAD_LEFT),
-                'batch_status' => 'unbatch',
-                'tariff_id' =>  $tariff
-            ]);
-        }
-
-        if ($batch_order = BatchOrder::where('batch_id', $batch->id)->get()->count() > 10) {
-            $batch =  Batch::create([
-                'batch_no' => 'B' .str_pad($count_batch + 1, 6, "0", STR_PAD_LEFT),
-                'batch_status' => 'unbatch',
-                'tariff_id' =>  $tariff
-            ]);
-        }
-        BatchOrder::create([
-            'order_id' => $order->id,
-            'batch_id' => $batch->id,
-            'tariff_id' => $tariff,
-            'batchperson_id' => $batchperson
-        ]);
 
         return redirect()->action('BatchController@show_batch', [
             'batch' => $batch->id
         ]);
     }
 
-    public function show_batch(Batch $batch)
-    {
-        $batch_orders = BatchOrder::where('batch_id', $batch->id)->get();
+    public function show_batch(NewBatch $batch) {
+        $orders = Order::where('batch_id', $batch->id)->get();
 
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
         return view('batch.batch', [
-            'batches' => $batch_orders,
-            'group' => $batch,
+            'orders' => $orders,
+            'batch' => $batch,
             'roles' => $roles
         ]);
     }
@@ -109,22 +108,16 @@ class BatchController extends Controller
             $batch_status = $request->post('batch_status');
             $batch_no = $request->post('batch_no');
 
-            if ($batch_status == "unbatch")
-                $file_name = 'Unbatch ' .$batch_no. '.xlsx';
-            else
-                $file_name = 'Batched ' .$batch_no. '.xlsx';
-
-            $export = new BatchExport($batch_id);
-            // if ($export->collection()->count() > 0) {
-                return Excel::download($export, $file_name);
-            // }
+            $export = new NewBatchExport($batch_id);
+            
+            return Excel::download($export, 'Batch ' . $batch_no . '.xlsx');
         }
 
         $request->session()->flash('error', 'No Data to Export');
         return redirect(url('/batch/'.$batch_id.'/batch_list'));
     }
 
-    public function changeStatus(Batch $batch)
+    public function changeStatus(NewBatch $batch)
     {
         $batch->batch_status = 'batched';
         $batch->submission_date = now();

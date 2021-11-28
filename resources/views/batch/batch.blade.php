@@ -24,21 +24,24 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="row">
-                            <div class="col-3"></div>
+                            <div class="col-3 d-flex flex-column justify-content-end">
+                                <p><strong>BATCH PERSON</strong></p>
+                                <p>{{ $batch->sales_person->name }}</p>
+                            </div>
                             <div class="col-6">
                                 <h4 class="text-center">RASUMI MEDIPHARMA SDN BHD</h4>
                                 <p class="text-center">Company No. 727958-A</p>
                                 <p class="text-center">FARMASI VETERAN</p>
                                 <p class="text-center">Lobi Utama</p>
                                 <p class="text-center">Hospital Angkatan Tentera Tuanku Mizan</p>
-                                <p class="text-center"><strong>BATCH {{ $group->batch_no }}</strong></p>
+                                <p class="text-center"><strong>BATCH {{ $batch->batch_no }}</strong></p>
                             </div>
                             <div class="col-3 d-flex flex-column justify-content-end">
                                 <p class="text-right"><strong>LAMPIRAN</strong></p>
                                 <p class="text-right">SUBMISSION DATE:</p>
                                 @php
-                                    if (!empty($group->submission_date)) {
-                                        $date = date_create($group->submission_date);
+                                    if (!empty($batch->submission_date)) {
+                                        $date = date_create($batch->submission_date);
                                         $date = date_format($date, 'd/m/Y');
                                     } else {
                                         $date = "N/A";
@@ -61,74 +64,73 @@
                                     <th>Item</th>
                                     <th>Qty</th>
                                     <th>Total Price (RM)</th>
-                                    <th>Status</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @php $total_price = 0; @endphp
 
-                                @foreach ($batches as $batch)
+                                @foreach ($orders as $order)
                                     @php
-                                        $total_price = $total_price + $batch->order->total_amount;
+                                        $total_price = $total_price + $order->total_amount;
                                     @endphp
 
                                 <tr>
                                     <td class="text-center">{{ $loop->iteration }}</td>
                                     <td>
-                                        <a href="{{ url('/order/'.$batch->order_id.'/view') }}" title="View Order"><i class="fas fa-folder-open"></i>{{ $batch->order->do_number }}</a> 
+                                        <a href="{{ url('/order/'.$order->id.'/view') }}" title="View Order"><i class="fas fa-folder-open"></i>{{ $order->do_number }}</a> 
                                     </td>
                                     <td>
-                                        {{ $batch->order->patient->full_name }} <br>
-                                        <small class="text-muted">(IC: {{ $batch->order->patient->identification }})</small><br>
-                                        <small class="text-muted">(Pensioner No : {{ $batch->order->patient->card->army_pension }})</small>
+                                        {{ $order->patient->full_name }} <br>
+                                        <small class="text-muted">(IC: {{ $order->patient->identification }})</small><br>
+                                        <small class="text-muted">(Pensioner No : {{ $order->patient->card->army_pension }})</small>
                                     </td>
-                                    <td> @if (!empty($batch->order->patient->tariff_id)) {{ $batch->order->patient->tariff->name }} @else MINDEF @endif</td>
-                                    <td>{{ date("d/m/Y", strtotime($batch->order->dispense_date))}}</td>
-                                    <td class="p-0">
-                                        @php 
-                                            $oitems = $batch->order->orderitem; 
-                                            if (count($oitems)>0) {
-                                                foreach($oitems as $oi){
-                                                    if (isset($oi->items->brand_name)){
-                                                        echo "<table class='table-borderless' width='100%'><tr><td class='border-top border-bottom'>".$oi->items->brand_name."</td></tr></table>";
-                                                    }
-                                                }
-                                            }
-                                        @endphp
+                                    <td> @if (!empty($order->patient->tariff_id)) {{ $order->patient->tariff->name }} @else MINDEF @endif</td>
+                                    <td>{{ date("d/m/Y", strtotime($order->dispense_date))}}</td>
+                                    <td class="p-0">                                        
+                                        <table class="table table-borderless">
+                                            <tbody>
+                                                @foreach ($order->orderitem as $orderitem)
+                                                    <tr>
+                                                        <td @if ($loop->iteration > 1) class="border-top" @endif>{{ $orderitem->items->brand_name }}</td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
                                     </td>
                                     <td class="p-0 text-center">
-                                        @php 
-                                            $oitems = $batch->order->orderitem; 
-                                            if (count($oitems)>0) {
-                                                foreach($oitems as $oi){
-                                                    echo "<table class='table-borderless' width='100%'><tr><td class='border-top border-bottom'>".$oi->quantity."</td></tr></table>";
-                                                }
-                                            }
-                                        @endphp
+                                        <table class="table table-borderless">
+                                            <tbody>
+                                                @foreach ($order->orderitem as $orderitem)
+                                                    <tr>
+                                                        <td @if ($loop->iteration > 1) class="border-top" @endif>{{ $orderitem->quantity }}</td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
                                     </td>
-                                    <td class="text-right">{{ number_format((float)$batch->order->total_amount, 2, '.', '') }}</td>
-                                    <td>{{ $batch->order->patient->card->type }}</td>
+                                    <td class="text-right">{{ number_format((float)$order->total_amount, 2, '.', '') }}</td>
                                 </tr>
                                 @endforeach
                                 <tr>
                                     <th colspan="7"><p class="text-right text-bold m-0">GRAND TOTAL (RM)</p></th>
                                     <td><p class="text-right m-0"><b>{{ number_format($total_price, 2) }}</b></p></td>
-                                    <td></td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                     <div class="card-footer clearfix d-flex">
-                        <form method="POST" enctype="multipart/form-data" action="{{ route('batch.export.excel') }}">
-                            @csrf
-                            <input type="hidden" name="exportable" value="yes">
-                            <input type="hidden" name="batch_id" value="{{ $group->id }}">
-                            <input type="hidden" name="batch_status" value="{{ $group->batch_status }}">
-                            <input type="hidden" name="batch_no" value="{{ $group->batch_no }}">
-                            <button class="btn btn-success" type="submit">Export Excel</button>
-                        </form>
-                        @if ($group->batch_status == "unbatch")
-                            <form action="{{ url('/batch/'.$group->id.'/batch_list') }}" method="POST" class="ml-auto">
+                        @if ($batch->batch_status == 'batched')
+                            <form method="POST" enctype="multipart/form-data" action="{{ route('batch.export.excel') }}">
+                                @csrf
+                                <input type="hidden" name="exportable" value="yes">
+                                <input type="hidden" name="batch_id" value="{{ $batch->id }}">
+                                <input type="hidden" name="batch_status" value="{{ $batch->batch_status }}">
+                                <input type="hidden" name="batch_no" value="{{ $batch->batch_no }}">
+                                <button class="btn btn-success" type="submit">Export Excel</button>
+                            </form>
+                        @endif
+                        @if ($batch->batch_status == "batching")
+                            <form action="{{ url('/batch/'.$batch->id.'/batch_list') }}" method="POST" class="ml-auto">
                                 @csrf
                                 <button  class="btn btn-primary" type="submit" data-toggle="tooltip" title="Batch This Order">Batch This Order</button>
                             </form>

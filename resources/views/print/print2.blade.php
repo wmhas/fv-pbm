@@ -59,44 +59,44 @@
                 <table style="width: 100%;">
                     <tr>
                         <td><b>Pensioner's Detail</b></td>
-                        <td>: {{ $batch->order->patient->card->army_pension }} {{ strtoupper($batch->order->patient->card->type) }}</td>
+                        <td>: {{ $order->patient->card->army_pension }} {{ strtoupper($order->patient->card->type) }}</td>
                     </tr>
                     <tr>
                         <td><b>NRIC</b></td>
-                        <td>: {{ $batch->order->patient->card->patient->identification }}</td>
+                        <td>: {{ $order->patient->card->patient->identification }}</td>
                     </tr>
                     <tr>
                         <td colspan="2">
-                            @if (strcasecmp($batch->order->patient->relation, 'cardowner') !== 0)
-                                (K/P: {{ $batch->order->patient->identification }})
+                            @if (strcasecmp($order->patient->relation, 'cardowner') !== 0)
+                                (K/P: {{ $order->patient->identification }})
                             @endif
-                             {{ strtoupper($batch->order->patient->salutation) }} {{ strtoupper($batch->order->patient->full_name) }}
-                            @if (strcasecmp($batch->order->patient->relation, 'cardowner') !== 0)
+                             {{ strtoupper($order->patient->salutation) }} {{ strtoupper($order->patient->full_name) }}
+                            @if (strcasecmp($order->patient->relation, 'cardowner') !== 0)
                                 <br> 
-                                @if (strcasecmp($batch->order->patient->relation, 'wife') == 0 || strcasecmp($batch->order->patient->relation, 'isteri') == 0)
+                                @if (strcasecmp($order->patient->relation, 'wife') == 0 || strcasecmp($order->patient->relation, 'isteri') == 0)
                                     ISTERI
-                                @elseif (strcasecmp($batch->order->patient->relation, 'husband') == 0 || strcasecmp($batch->order->patient->relation, 'suami') == 0)
+                                @elseif (strcasecmp($order->patient->relation, 'husband') == 0 || strcasecmp($order->patient->relation, 'suami') == 0)
                                     SUAMI
-                                @elseif (strcasecmp($batch->order->patient->relation, 'widowed') == 0 || strcasecmp($batch->order->patient->relation, 'balu') == 0)
+                                @elseif (strcasecmp($order->patient->relation, 'widowed') == 0 || strcasecmp($order->patient->relation, 'balu') == 0)
                                     BALU
-                                @elseif (strcasecmp($batch->order->patient->relation, 'children') == 0 || strcasecmp($batch->order->patient->relation, 'anak') == 0)
+                                @elseif (strcasecmp($order->patient->relation, 'children') == 0 || strcasecmp($order->patient->relation, 'anak') == 0)
                                     ANAK
                                 @else
                                     WARIS
                                 @endif
-                                 KEPADA {{ strtoupper($batch->order->patient->card->salutation) }} {{ strtoupper($batch->order->patient->card->name) }}
+                                 KEPADA {{ strtoupper($order->patient->card->salutation) }} {{ strtoupper($order->patient->card->name) }}
                             @endif
                         </td>
                     </tr>
                     
                     <tr>
                         <td colspan="2">
-                            @if (!empty($batch->order->patient->address_1)) {{ strtoupper($batch->order->patient->address_1) }} @endif
-                            @if (!empty($batch->order->patient->address_2)) <br> {{ strtoupper($batch->order->patient->address_2) }} @endif
-                            @if (!empty($batch->order->patient->address_3)) <br> {{ strtoupper($batch->order->patient->address_3) }} @endif
-                            @if (!empty($batch->order->patient->postcode)) <br> {{ strtoupper($batch->order->patient->postcode) }} @endif
-                            @if (!empty($batch->order->patient->city)) {{ strtoupper($batch->order->patient->city) }} @endif
-                            @if (!empty($batch->order->patient->state->name)) <br> {{ strtoupper($batch->order->patient->state->name) }} @endif
+                            @if (!empty($order->patient->address_1)) {{ strtoupper($order->patient->address_1) }} @endif
+                            @if (!empty($order->patient->address_2)) <br> {{ strtoupper($order->patient->address_2) }} @endif
+                            @if (!empty($order->patient->address_3)) <br> {{ strtoupper($order->patient->address_3) }} @endif
+                            @if (!empty($order->patient->postcode)) <br> {{ strtoupper($order->patient->postcode) }} @endif
+                            @if (!empty($order->patient->city)) {{ strtoupper($order->patient->city) }} @endif
+                            @if (!empty($order->patient->state->name)) <br> {{ strtoupper($order->patient->state->name) }} @endif
                         </td>
                     </tr>
                 </table>
@@ -105,10 +105,10 @@
                 <table style="width: 100%;">
                     <tr>
                         <td><b>Invoice No.</b></td>
-                        <td>: {{ $batch->order->do_number }}</td>
+                        <td>: {{ $order->do_number }}</td>
                     </tr>
                     @php
-                        $date = date_create($batch->order->dispense_date);
+                        $date = date_create($order->dispense_date);
                         $date = date_format($date, 'd/m/Y');
                     @endphp
                     <tr>
@@ -120,7 +120,7 @@
                         <td><b>Terms</b></td>
                     </tr>
                     <tr>
-                        <td>JHEV/BP/UBAT/401/1 Jil {{ strtoupper($batch->batch->batch_no) }}</td>
+                        <td>JHEV/BP/UBAT/401/1 Jil {{ strtoupper($order->batch->batch_no) }}</td>
                         <td>NET 30th after</td>
                     </tr>
                 </table>
@@ -138,14 +138,14 @@
                 <th style="border-bottom: 1px solid black; text-align: right;">AMOUNT (RM)</th>
             </tr>
 
-            @foreach ($order_item as $item)
+            @foreach ($order->orderitem as $order_item)
                 <tr>
-                    <td style="text-align: center;">{{ number_format($item->quantity, 0) }}</td>
-                    <td style="text-align: center;">{{ $item->items->item_code }}</td>
-                    <td>{{ $item->items->brand_name }}</td>
-                    <td style="text-align: right;">{{ number_format($item->items->selling_price, 2) }}</td>
-                    <td style="text-align: center;">{{ $item->items->selling_uom }}</td>
-                    <td style="text-align: right;">{{ number_format($item->price, 2) }}</td>
+                    <td style="text-align: center;">{{ number_format($order_item->quantity, 0) }}</td>
+                    <td style="text-align: center;">{{ $order_item->items->item_code }}</td>
+                    <td>{{ $order_item->items->brand_name }}</td>
+                    <td style="text-align: right;">{{ number_format($order_item->items->selling_price, 2) }}</td>
+                    <td style="text-align: center;">{{ $order_item->items->selling_uom }}</td>
+                    <td style="text-align: right;">{{ number_format($order_item->price, 2) }}</td>
                 </tr>
             @endforeach
             
@@ -161,7 +161,7 @@
                 </small>
             </td>
             <td style="text-align: right;"><b>TOTAL</b></td>
-            <td style="text-align: right; border: 1px solid black;">{{ number_format($batch->order->total_amount, 2) }}</td>
+            <td style="text-align: right; border: 1px solid black;">{{ number_format($order->total_amount, 2) }}</td>
         </tr>
         <tr>
             <td style="text-align: right;"><b>6% SST</b></td>
@@ -169,11 +169,11 @@
         </tr>
         <tr>
             <td style="text-align: right;"><b>TOTAL INCL. SST</b></td>
-            <td style="text-align: right; border: 1px solid black;">{{ number_format($batch->order->total_amount + 0, 2) }}</td>
+            <td style="text-align: right; border: 1px solid black;">{{ number_format($order->total_amount + 0, 2) }}</td>
         </tr>
         <tr>
             <td style="text-align: right;"><b>BALANCE DUE</b></td>
-            <td style="text-align: right; border: 1px solid black;">{{ number_format($batch->order->total_amount, 2) }}</td>
+            <td style="text-align: right; border: 1px solid black;">{{ number_format($order->total_amount, 2) }}</td>
         </tr>
         <tr>
             <td>
@@ -186,7 +186,7 @@
                     <tr>
                         <td>Non-Taxable</td>
                         <td>0%</td>
-                        <td style="text-align: right;">{{ number_format($batch->order->total_amount, 2) }}</td>
+                        <td style="text-align: right;">{{ number_format($order->total_amount, 2) }}</td>
                         <td style="text-align: right;">0.00</td>
                     </tr>
                 </table>
