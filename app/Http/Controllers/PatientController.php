@@ -188,6 +188,15 @@ class PatientController extends Controller
             }
         }
 
+        $exists = Card::where("ic_no", $patient->identification)->orWhere("army_pension", $request->army_pension)->first();
+
+        if ($exists) {
+            return redirect()->action('PatientController@create_card',[
+                'id'=> $id,
+                'error'=> 'Identification or Army Pension Number already exist!'
+            ]);
+        }
+
         if ($request->relation == 'CardOwner') {
             $cardchecking = Card::where('ic_no', $patient->identification)->first();
             if (!empty($cardchecking)) {
@@ -199,6 +208,7 @@ class PatientController extends Controller
                 $cardchecking->patient_id = $patient->id;
                 $cardchecking->save();
             } else {
+
                 $card = new Card();
                 $card->patient_id =  $patient->id;
                 $card->army_pension = $request->army_pension;
@@ -217,6 +227,7 @@ class PatientController extends Controller
                 $patient->save();
             }
         } else {
+            
             $card = new Card();
             $card->army_pension = $request->army_pension;
             $card->salutation = $request->salutation;

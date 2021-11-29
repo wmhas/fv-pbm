@@ -211,6 +211,16 @@
 
 <script src="{{asset('js/bs-custom-file-input/bs-custom-file-input.min.js')}}"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+@if (\Request::get('error'))
+    <script type="text/javascript">
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: '{{ \Request::get("error") }}'
+        })
+    </script>
+@endif
 <script>
     $(function () {
         bsCustomFileInput.init();
