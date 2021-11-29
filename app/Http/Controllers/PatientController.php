@@ -70,6 +70,16 @@ class PatientController extends Controller
     public function store(Request $request)
     {
         if (!($request->update)) {
+
+            $exists = Patient::where("identification", $request->identification)->first();
+
+            if ($exists) {
+                return redirect()->action('PatientController@create', [
+                    'id' => $exists->id,
+                    'error'=> 'This IC/Passport number already registered!'
+                ]);
+            }
+
             $patient = Patient::create([
                 'email' => $request->email,
                 'full_name' => $request->full_name,
@@ -518,6 +528,16 @@ class PatientController extends Controller
     public function store_relation(Request $request, Patient $patient)
     {
         // dd($request->relation);
+
+        $exists = Patient::where("identification", $request->identification)->first();
+
+        if ($exists) {
+            return redirect()->action('PatientController@register_relation',[
+                'patient' => $patient,
+                'error'=> 'This IC/Passport number already registered!'
+            ]); 
+        }
+
         $new =  Patient::create([
             'full_name' => $request->full_name,
             'salutation' => $request->salutation,
