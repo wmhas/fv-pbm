@@ -232,7 +232,7 @@
                                         @foreach ($rx_expireds as $rx)
                                             <tr>
                                                 <td>
-                                                    {{ (isset($rx->order->patient->full_name)) ? $rx->order->patient->full_name : "" }}
+                                                    {{ (isset($rx->order->patient)) ? $rx->order->patient->full_name : "" }}
                                                 </td>
                                                 <td>
                                                    {{ $rx->rx_end}}
