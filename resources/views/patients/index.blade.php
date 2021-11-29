@@ -114,6 +114,12 @@
                                                 </div>
                                             </td>
                                             <td>
+                                                <div class="mt-2 d-flex justify-content-center">
+                                                    <a id="deletePatient" href="#" data-id="{{ $patient->id }}"><i
+                                                            class="mdi mdi-trash-can"></i></a>
+                                                </div>
+                                            </td>
+                                            <td>
                                             @if ($patient->relation == 'CardOwner')
                                             <div class="mt-2 d-flex justify-content-center">
                                                     <a href="{{ url('/patient/create-relation/'.$patient->id) }}" data-toggle="tooltip" title="Register Relative"  data-placement="left">
@@ -143,12 +149,56 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="modal-msg">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 id="modal-msg-title"></h5>
+                </div>
+                <div class="modal-body">
+                    <p id="modal-msg-body"></p>
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('script')
 <script>
     $(document).ready(function(){
-      $('[data-toggle="tooltip"]').tooltip();   
+      $('[data-toggle="tooltip"]').tooltip();
+
+      $(document).on("click","#deletePatient", function(){
+        patient_id = $(this).data("id");
+
+        $.ajax({
+            /* the route pointing to the post function */
+            url: "{{ route('patient.delete') }}",
+            type: 'POST',
+            /* send the csrf-token and the input to the controller */
+            data: {
+                "_token":"{{ csrf_token() }}",
+                "id": patient_id
+            },
+            dataType: 'JSON',
+            /* remind that 'data' is the response of the AjaxController */
+            success: function (data) { 
+               $("#modal-user-add").modal("hide");
+               $("#modal-msg-title").html("Success");
+               $("#modal-msg-body").html("Patient deleted succesfully!");
+               $("#modal-msg").modal("show");
+               setTimeout(function(){ 
+                    window.location.reload();
+               },1000);
+            },error: function(e) {
+                alert(e.responseJSON);
+            }
+        });
+      });
+
     });
 </script>
 @endsection

@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use PDF;
+use Validator;
 
 class PatientController extends Controller
 {
@@ -31,7 +32,7 @@ class PatientController extends Controller
         $cards = null;
         switch ($method) {
             case ('identification'):
-                $patients = Patient::with('card')->where('identification', 'like', '%' . strtoupper($keyword) . '%')
+                $patients = Patient::with('card')->whereNull('deleted_at')->where('identification', 'like', '%' . strtoupper($keyword) . '%')
                     ->orderBy('identification', 'asc')
                     ->paginate(10);
                 break;
@@ -40,14 +41,14 @@ class PatientController extends Controller
                 $cards = Card::where('army_pension', 'like', '%' . strtoupper($keyword) . '%')
                     ->orderBy('army_pension', 'asc')->pluck('id');
 
-                $patients = Patient::with('card')->whereIn('card_id', $cards)
+                $patients = Patient::with('card')->whereNull('deleted_at')->whereIn('card_id', $cards)
                     ->orderBy('id', 'asc')->limit(500)
                     ->paginate(10);
 
                 break;
 
             default:
-                $patients = Patient::with('card')->orderBy('id', 'desc')->paginate(10);
+                $patients = Patient::with('card')->whereNull('deleted_at')->orderBy('id', 'desc')->paginate(10);
         }
 
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
@@ -581,4 +582,41 @@ class PatientController extends Controller
         }
         return redirect()->action('PatientController@index')->with(['status' => true, 'message' => 'Register Sucessfully !']);
     }
+
+    public function delete(Request $request){
+        $messages = [
+            'id.required' => 'ID required!'
+        ];
+
+        $rule = [
+            'id' => 'required'
+        ];
+
+        $validator = Validator::make($request->all(), $rule, $messages);
+
+        if ($validator->fails()) {    
+            return response()->json($validator->messages()->first(), 400);
+        }
+
+        try {
+
+            $patient = Patient::find($request->id);
+            $deleted = false;
+
+            if ($patient) {
+                $patient->deleted_at = date('Y-m-d H:i:s');
+                $deleted = $patient->save();
+            }
+        
+            if ($deleted){
+                return response()->json("success", 200);
+            }
+
+            return response()->json("Patient not exist!", 404);
+
+        } catch (\Exception $e){
+            return response()->json($e->getMessage(), 500);
+        }
+    }
+
 }

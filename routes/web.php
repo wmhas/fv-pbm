@@ -62,6 +62,7 @@ Route::group(['middleware' => ['auth']], function () {
 
         Route::get('/create-relation/{patient}', 'PatientController@register_relation');
         Route::post('/create-relation/{patient}', 'PatientController@store_relation');
+        Route::post('/delete', 'PatientController@delete')->name("patient.delete"); //utk update
     });
 
     Route::group(['prefix' => 'item'], function () {
