@@ -238,7 +238,7 @@
                                                    {{ $rx->rx_end}}
                                                 </td>
                                                 <td>
-                                                    {{ $rx->order->dispensing_method}}
+                                                    {{ (isset($rx->order)) ? $rx->order->dispensing_method : "" }}
                                                  </td>
                                             </tr>
                                         @endforeach
