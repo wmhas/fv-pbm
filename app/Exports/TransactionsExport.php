@@ -13,6 +13,7 @@ use Maatwebsite\Excel\Concerns\Exportable;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Carbon\Carbon;
 
@@ -22,12 +23,14 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
     use Exportable;
     private $startDate = false;
     private $endDate = false;
+    private $grand_total;
 
     public function __construct($startDate, $endDate, $page = null)
     {
         $this->startDate = $startDate;
         $this->endDate = $endDate;
         $this->page = $page;
+        $this->grand_total = 0;
     }
 
     /**
@@ -121,6 +124,8 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
                 $orders[$k]['UNIT PRICE'] = $v->unit_price;
                 $orders[$k]['TOTAL PRICE'] = $v->total_price;
                 $orders[$k]['STATUS'] = $v->type;
+
+                $this->grand_total += $v->total_price;
                 
                 if (!empty($orders[$k]['NO'])){
                     $num+=1;
@@ -134,45 +139,127 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
     public function headings(): array
     {
         return [
-            'ORDER ID',
-            'NO',
-            'DISPENSE DATE',
-            'DO NUMBER',
-            'IC',
-            'FULLNAME',
-            'ADDRESS',
-            'CLINIC',
-            'DISPENSING METHOD',
-            'RX NUMBER',
-            'RX DURATION',
-            'MEDICINE',
-            'QTY',
-            'UNIT PRICE',
-            'TOTAL PRICE',
-            'STATUS',
-            'REMARKS',
+            [
+                'ORDER ID',
+                'NO',
+                'DISPENSE DATE',
+                'DO NUMBER',
+                'IC',
+                'FULLNAME',
+                'ADDRESS',
+                'CLINIC',
+                'DISPENSING METHOD',
+                'RX NUMBER',
+                'RX DURATION',
+                'MEDICINE',
+                'QTY',
+                'UNIT PRICE',
+                'TOTAL PRICE',
+                'STATUS',
+                'REMARKS',
+            ],
+            [
+                'ORDER ID',
+                'NO',
+                'DISPENSE DATE',
+                'DO NUMBER',
+                'IC',
+                'FULLNAME',
+                'ADDRESS',
+                'CLINIC',
+                'DISPENSING METHOD',
+                'RX NUMBER',
+                'RX DURATION',
+                'MEDICINE',
+                'QTY',
+                'UNIT PRICE',
+                'TOTAL PRICE',
+                'STATUS',
+                'REMARKS',
+            ],
+            [
+                'ORDER ID',
+                'NO',
+                'DISPENSE DATE',
+                'DO NUMBER',
+                'IC',
+                'FULLNAME',
+                'ADDRESS',
+                'CLINIC',
+                'DISPENSING METHOD',
+                'RX NUMBER',
+                'RX DURATION',
+                'MEDICINE',
+                'QTY',
+                'UNIT PRICE',
+                'TOTAL PRICE',
+                'STATUS',
+                'REMARKS',
+            ],
+            [
+                'ORDER ID',
+                'NO',
+                'DISPENSE DATE',
+                'DO NUMBER',
+                'IC',
+                'FULLNAME',
+                'ADDRESS',
+                'CLINIC',
+                'DISPENSING METHOD',
+                'RX NUMBER',
+                'RX DURATION',
+                'MEDICINE',
+                'QTY',
+                'UNIT PRICE',
+                'TOTAL PRICE',
+                'STATUS',
+                'REMARKS',
+            ],
+            [
+                'ORDER ID',
+                'NO',
+                'DISPENSE DATE',
+                'DO NUMBER',
+                'IC',
+                'FULLNAME',
+                'ADDRESS',
+                'CLINIC',
+                'DISPENSING METHOD',
+                'RX NUMBER',
+                'RX DURATION',
+                'MEDICINE',
+                'QUANTITY',
+                'UNIT PRICE (RM)',
+                'TOTAL PRICE (RM)',
+                'STATUS',
+                'REMARKS',
+            ],
         ];
     }
 
     public function styles(Worksheet $sheet)
     {
-        $sheet->getStyle('A1:Q1')->getFont()->setBold(true);
+        $right = array(
+            'alignment' => array(
+                'horizontal' => Alignment::HORIZONTAL_RIGHT,
+                'vertical' => Alignment::VERTICAL_CENTER,
+            )
+        );
+
+        $sheet->getStyle('A5:Q5')->getFont()->setBold(true);
 
         $last_row = $sheet->getHighestRow();
-        $current_row = 2;
-        $start_row = 2;
-        $end_row = 2;
+        $current_row = 6;
+        $start_row = 6;
+        $end_row = 6;
         $num = 1;
         $current_id = $sheet->getCell('A'.$current_row)->getValue();
 
-        for ($current_row = 2; $current_row <= $last_row; $current_row++) {
+        for ($current_row = 6; $current_row <= $last_row; $current_row++) {
             if ($sheet->getCell('A'.$current_row)->getValue() == $current_id) {
                 $end_row = $current_row;
             } else {
                 $this->merge($sheet, $start_row, $end_row, $num);
-
-                 
-                
                 $num++;
                 $start_row = $end_row = $current_row;
                 $current_id = $sheet->getCell('A' .$current_row)->getValue();
@@ -181,6 +268,48 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
             $sheet->getColumnDimension('A')->setVisible(false);
         }
         $this->merge($sheet, $start_row, $end_row, $num);
+
+        for ($i = 1; $i < 5; $i++) {
+            for ($j = 'A'; $j < 'R'; $j++) {
+                $sheet->setCellValue($j.$i, '');
+            }
+        }
+
+        $sheet->setCellValue('B2', 'Start Date :');
+        $sheet->setCellValue('B3', 'End Date :');
+        $sheet->setCellValue('D2', $this->startDate);
+        $sheet->setCellValue('D3', $this->endDate);
+
+        $sheet->mergeCells('B2:C2');
+        $sheet->mergeCells('B3:C3');
+
+        $sheet->getStyle('B2:B3')->getFont()->setBold(true);
+        $sheet->getStyle('B2:B3')->applyFromArray($right);
+
+        $sheet->getColumnDimension('B')->setAutoSize(true);
+        $sheet->getColumnDimension('C')->setAutoSize(true);
+        $sheet->getColumnDimension('D')->setAutoSize(true);
+        $sheet->getColumnDimension('E')->setAutoSize(true);
+        $sheet->getColumnDimension('F')->setAutoSize(true);
+        $sheet->getColumnDimension('G')->setAutoSize(true);
+        $sheet->getColumnDimension('H')->setAutoSize(true);
+        $sheet->getColumnDimension('I')->setAutoSize(true);
+        $sheet->getColumnDimension('J')->setAutoSize(true);
+        $sheet->getColumnDimension('K')->setAutoSize(true);
+        $sheet->getColumnDimension('L')->setAutoSize(true);
+        $sheet->getColumnDimension('M')->setAutoSize(true);
+        $sheet->getColumnDimension('N')->setAutoSize(true);
+        $sheet->getColumnDimension('O')->setAutoSize(true);
+        $sheet->getColumnDimension('P')->setAutoSize(true);
+        $sheet->getColumnDimension('Q')->setAutoSize(true);
+
+        $lastRow = $sheet->getHighestRow() + 1;
+
+        $sheet->getStyle('B' . $lastRow . ':O' . $lastRow)->getFont()->setBold(true);
+        $sheet->getStyle('B' . $lastRow)->applyFromArray($right);
+        $sheet->mergeCells('B' . $lastRow . ':N' . $lastRow);
+        $sheet->setCellValue('B' . $lastRow, 'GRAND TOTAL :');
+        $sheet->setCellValue('O' . $lastRow, $this->grand_total);
     }
 
     public function merge($sheet, $start_row, $end_row, $num) {

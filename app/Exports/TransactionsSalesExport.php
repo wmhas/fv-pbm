@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
 
 class TransactionsSalesExport implements FromCollection, WithHeadings, WithStyles, WithColumnFormatting
 {
@@ -22,12 +23,14 @@ class TransactionsSalesExport implements FromCollection, WithHeadings, WithStyle
     use Exportable;
     private $startDate = false;
     private $endDate = false;
+    private $grand_total;
 
     public function __construct($startDate, $endDate, $page = null)
     {
         $this->startDate = $startDate;
         $this->endDate = $endDate;
         $this->page = $page;
+        $this->grand_total = 0;
     }
 
     /**
@@ -109,6 +112,8 @@ class TransactionsSalesExport implements FromCollection, WithHeadings, WithStyle
                 $orders[$k]['STATUS'] = $v->patient->card->type;
 
                 $num++;
+
+                $this->grand_total += $v->total_amount;
             }
         }
         
@@ -118,27 +123,139 @@ class TransactionsSalesExport implements FromCollection, WithHeadings, WithStyle
     public function headings(): array
     {
         return [
-            'ORDER ID',
-            'NO',
-            'DISPENSING DATE',
-            'DO NUMBER',
-            'IC',
-            'FULLNAME',
-            'ADDRESS',
-            'RX NUMBER',
-            'PANEL',
-            'CLINIC',
-            'DISPENSING METHOD',
-            'TOTAL AMOUNT',
-            'STATUS',
-            'REMARKS',
+            [
+                'ORDER ID',
+                'NO',
+                'DISPENSING DATE',
+                'DO NUMBER',
+                'IC',
+                'FULLNAME',
+                'ADDRESS',
+                'RX NUMBER',
+                'PANEL',
+                'CLINIC',
+                'DISPENSING METHOD',
+                'TOTAL AMOUNT',
+                'STATUS',
+                'REMARKS',
+            ],
+            [
+                'ORDER ID',
+                'NO',
+                'DISPENSING DATE',
+                'DO NUMBER',
+                'IC',
+                'FULLNAME',
+                'ADDRESS',
+                'RX NUMBER',
+                'PANEL',
+                'CLINIC',
+                'DISPENSING METHOD',
+                'TOTAL AMOUNT',
+                'STATUS',
+                'REMARKS',
+            ],
+            [
+                'ORDER ID',
+                'NO',
+                'DISPENSING DATE',
+                'DO NUMBER',
+                'IC',
+                'FULLNAME',
+                'ADDRESS',
+                'RX NUMBER',
+                'PANEL',
+                'CLINIC',
+                'DISPENSING METHOD',
+                'TOTAL AMOUNT',
+                'STATUS',
+                'REMARKS',
+            ],
+            [
+                'ORDER ID',
+                'NO',
+                'DISPENSING DATE',
+                'DO NUMBER',
+                'IC',
+                'FULLNAME',
+                'ADDRESS',
+                'RX NUMBER',
+                'PANEL',
+                'CLINIC',
+                'DISPENSING METHOD',
+                'TOTAL AMOUNT',
+                'STATUS',
+                'REMARKS',
+            ],
+            [
+                'ORDER ID',
+                'NO',
+                'DISPENSING DATE',
+                'DO NUMBER',
+                'IC',
+                'FULLNAME',
+                'ADDRESS',
+                'RX NUMBER',
+                'PANEL',
+                'CLINIC',
+                'DISPENSING METHOD',
+                'TOTAL AMOUNT (RM)',
+                'STATUS',
+                'REMARKS',
+            ]
         ];
     }
 
     public function styles(Worksheet $sheet)
     {
-        $sheet->getStyle('A1:N1')->getFont()->setBold(true);
+        $right = array(
+            'alignment' => array(
+                'horizontal' => Alignment::HORIZONTAL_RIGHT,
+                'vertical' => Alignment::VERTICAL_CENTER,
+            )
+        );
+
+        $sheet->getStyle('A5:N5')->getFont()->setBold(true);
         $sheet->getColumnDimension('A')->setVisible(false);
+
+        for ($i = 1; $i < 5; $i++) {
+            for ($j = 'A'; $j < 'O'; $j++) {
+                $sheet->setCellValue($j.$i, '');
+            }
+        }
+
+        $sheet->setCellValue('B2', 'Start Date :');
+        $sheet->setCellValue('B3', 'End Date :');
+        $sheet->setCellValue('D2', $this->startDate);
+        $sheet->setCellValue('D3', $this->endDate);
+
+        $sheet->mergeCells('B2:C2');
+        $sheet->mergeCells('B3:C3');
+
+        $sheet->getStyle('B2:B3')->getFont()->setBold(true);
+        $sheet->getStyle('B2:B3')->applyFromArray($right);
+
+        $sheet->getColumnDimension('B')->setAutoSize(true);
+        $sheet->getColumnDimension('C')->setAutoSize(true);
+        $sheet->getColumnDimension('D')->setAutoSize(true);
+        $sheet->getColumnDimension('E')->setAutoSize(true);
+        $sheet->getColumnDimension('F')->setAutoSize(true);
+        $sheet->getColumnDimension('G')->setAutoSize(true);
+        $sheet->getColumnDimension('H')->setAutoSize(true);
+        $sheet->getColumnDimension('I')->setAutoSize(true);
+        $sheet->getColumnDimension('J')->setAutoSize(true);
+        $sheet->getColumnDimension('K')->setAutoSize(true);
+        $sheet->getColumnDimension('L')->setAutoSize(true);
+        $sheet->getColumnDimension('M')->setAutoSize(true);
+        $sheet->getColumnDimension('N')->setAutoSize(true);
+
+        $lastRow = $sheet->getHighestRow() + 1;
+
+        $sheet->getStyle('B' . $lastRow . ':L' . $lastRow)->getFont()->setBold(true);
+        $sheet->getStyle('B' . $lastRow)->applyFromArray($right);
+        $sheet->mergeCells('B' . $lastRow . ':K' . $lastRow);
+        $sheet->setCellValue('B' . $lastRow, 'GRAND TOTAL :');
+        $sheet->setCellValue('L' . $lastRow, $this->grand_total);
     }
 
     public function columnFormats(): array
