@@ -417,11 +417,11 @@ class OrderController extends Controller
 
         if (isset($order) && isset($prescription)) {
             if ($order->rx_interval==1) {
-                $duration = floor(abs(strtotime($prescription->rx_end) - strtotime($prescription->rx_start)) / (60 * 60 * 24));
+                $duration = strtotime($prescription->rx_end) - strtotime($prescription->rx_start)) / (60 * 60 * 24));
             } else if ($order->rx_interval == 2 && $order->do_number != NULL) {
-                $duration = floor(abs(strtotime($prescription->next_supply_date) - strtotime($prescription->rx_start)) / (60 * 60 * 24));
+                $duration = strtotime($prescription->next_supply_date) - strtotime($prescription->rx_start)) / (60 * 60 * 24));
             } else if ($order->rx_interval == 2 && $order->do_number == NULL) {
-                $duration = floor(abs(strtotime($prescription->rx_end) - strtotime($prescription->next_supply_date)) / (60 * 60 * 24));
+                $duration = strtotime($prescription->rx_end) - strtotime($prescription->next_supply_date)) / (60 * 60 * 24));
             }
         }
 
@@ -438,7 +438,7 @@ class OrderController extends Controller
         $orderItems = $order->orderitem;
 
         // Get rx_start and rx_end from table prescription
-        $prescription = Prescription::select('rx_start', 'rx_end')->where('order_id', $order_id)->first();
+        $prescription = Prescription::select('rx_start', 'rx_end', 'next_supply_date')->where('order_id', $order_id)->first();
 
         // Get duration in days
         $duration = $this->getDuration($order, $prescription);
