@@ -188,7 +188,7 @@ class PatientController extends Controller
             }
         }
 
-        $exists = Card::where("ic_no", $patient->identification)->orWhere("army_pension", $request->army_pension)->first();
+        $exists = Card::where("ic_no", $request->identification)->orWhere("army_pension", $request->army_pension)->first();
 
         if ($exists) {
             return redirect()->action('PatientController@create_card',[
