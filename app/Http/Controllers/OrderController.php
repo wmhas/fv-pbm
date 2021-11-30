@@ -413,14 +413,16 @@ class OrderController extends Controller
 
     private function getDuration($order, $prescription){
 
-        if ($order->rx_interval==1) {
-            $duration = floor(abs(strtotime($prescription->rx_end) - strtotime($prescription->rx_start)) / (60 * 60 * 24));
-        } else if ($order->rx_interval == 2 && $orders->do_number != NULL) {
-            $duration = floor(abs(strtotime($prescription->next_supply_date) - strtotime($prescription->rx_start)) / (60 * 60 * 24));
-        } else if ($order->rx_interval == 2 && $order->do_number == NULL) {
-            $duration = floor(abs(strtotime($prescription->rx_end) - strtotime($prescription->next_supply_date)) / (60 * 60 * 24));
-        } else {
-            $duration = 0;
+        $duration = 0;
+
+        if (isset($order) && isset($prescription)) {
+            if ($order->rx_interval==1) {
+                $duration = floor(abs(strtotime($prescription->rx_end) - strtotime($prescription->rx_start)) / (60 * 60 * 24));
+            } else if ($order->rx_interval == 2 && $orders->do_number != NULL) {
+                $duration = floor(abs(strtotime($prescription->next_supply_date) - strtotime($prescription->rx_start)) / (60 * 60 * 24));
+            } else if ($order->rx_interval == 2 && $order->do_number == NULL) {
+                $duration = floor(abs(strtotime($prescription->rx_end) - strtotime($prescription->next_supply_date)) / (60 * 60 * 24));
+            }
         }
 
         return $duration;
