@@ -419,7 +419,7 @@ class OrderController extends Controller
 
             if ($order->rx_interval==1) {
                 $duration = floor(abs(strtotime($prescription->rx_end) - strtotime($prescription->rx_start)) / (60 * 60 * 24));
-            } else if ($order->rx_interval == 2 && $orders->do_number != NULL) {
+            } else if ($order->rx_interval == 2 && $order->do_number != NULL) {
                 $duration = floor(abs(strtotime($prescription->next_supply_date) - strtotime($prescription->rx_start)) / (60 * 60 * 24));
             } else if ($order->rx_interval == 2 && $order->do_number == NULL) {
                 $duration = floor(abs(strtotime($prescription->rx_end) - strtotime($prescription->next_supply_date)) / (60 * 60 * 24));
@@ -907,18 +907,19 @@ class OrderController extends Controller
             ->with(['status' => true, 'message' => 'Item Returned Successfully!']);
     }
 
-    public function resubmission($id)
+    public function resubmission(Request $request, $id)
     {
         $prev_order = Order::where('id', $id)->first();
-        $items = Item::all();
+        $items = Item::all();  
         $order = new Order();
         if (!empty($prev_order)) {
             $order->patient_id = $prev_order->patient_id;
-            $order->status_id = 1;
-            $order->dispensing_by = $prev_order->dispensing_by;
-            $order->dispensing_method = $prev_order->dispensing_method;
+            $order->status_id = 2;
+            $order->dispensing_by = $request->input('dispensing_by');
+            $order->dispensing_method = $request->input('dispensing_method');
             $order->rx_interval = 2;
-            $order->salesperson_id = $prev_order->salesperson_id;
+            $order->salesperson_id = $request->input('salesperson');
+            $order->total_amount = $request->input('total_amount');
             $order->save();
 
             $prev_order->rx_interval = 3;
@@ -937,13 +938,23 @@ class OrderController extends Controller
             if (!empty($prev_order->prescription)) {
                 $prescription = new Prescription();
                 $prescription->order_id = $order->id;
-                $prescription->clinic_id = $prev_order->prescription->clinic_id;
-                $prescription->hospital_id = $prev_order->prescription->hospital_id;
-                $prescription->rx_number = $prev_order->prescription->rx_number;
-                $prescription->rx_original_filename = $prev_order->prescription->rx_original_filename;
-                $prescription->rx_document_path = $prev_order->prescription->rx_document_path;
-                $prescription->rx_start = $prev_order->prescription->rx_start;
-                $prescription->rx_end = $prev_order->prescription->rx_end;
+                $prescription->clinic_id = $request->input('rx_clinic');
+                $prescription->hospital_id = $request->input('rx_hospital');
+                $prescription->rx_number = $request->input('rx_number');
+                $prescription->rx_start = $request->input('rx_start_date');
+                $prescription->rx_end = $request->input('rx_end_date');
+
+                if ($request->hasFile('rx_attach')) {
+                    $fileNameWithExt = $request->file('rx_attach')->getClientOriginalName();
+                    $fileName = pathinfo($fileNameWithExt, PATHINFO_FILENAME);
+                    $extension = $request->file('rx_attach')->getClientOriginalExtension();
+                    $fileNameToStore = $fileName . '.' . $extension;
+                    $path = $request->file('rx_attach')->storeAs('public/order/' . $order->id . '/rx-attachment/', $fileNameToStore);
+                    $document_path = 'public/order/' . $order->id . '/rx-attachment/' . $fileNameToStore;
+                    $prescription->rx_original_filename = $fileNameToStore;
+                    $prescription->rx_document_path = $document_path;
+                }
+
                 $prescription->save();
             }
         }
@@ -968,7 +979,7 @@ class OrderController extends Controller
             }
         }
 
-        $prev_order_item = OrderItem::where('order_id', $id)->get();
+        $prev_order_item = OrderItem::where('order_id', $order->id)->get();
         foreach ($prev_order_item as $item) {
             $location = Location::where('item_id', $item->myob_product_id)->first();
             if ($order->dispensing_method == 'Walkin' && $location->counter >= $item->quantity) {
@@ -1018,7 +1029,9 @@ class OrderController extends Controller
             } else {
             }
         }
-        return redirect()->action('OrderController@new_resubmission', ['order' => $order->id]);
+        return redirect()->action('OrderController@show', ['order' => $order->id])
+                ->with(['status' => true, 'message' => 'Resubmission Success!']);
+        // return redirect()->action('OrderController@new_resubmission', ['order' => $order->id]);
     }
 
     public function new_resubmission($id)

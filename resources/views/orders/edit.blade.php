@@ -286,7 +286,12 @@
         </div>
     </div>
     <br>
-    <form action="{{ url('/order/' . $order->id . '/update') }}" method="post" enctype="multipart/form-data">
+    @if ($resubmission == 1)
+        <form action="{{ url('/order/' . $order->id . '/resubmission') }}" method="post" enctype="multipart/form-data">
+    @else
+        <form action="{{ url('/order/' . $order->id . '/update') }}" method="post" enctype="multipart/form-data">
+    @endif
+    
         @csrf
         <!--  DISPENSE INFO  -->
         <div class="row">

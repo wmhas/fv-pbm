@@ -185,8 +185,8 @@
                                             </td>
                                             @if ($refill->rx_interval == 2)
                                                 <td style="text-align: center;">
-                                                    <form method="post" action="{{ url('/order/'.$refill->order_id_submit.'/resubmission') }}">
-                                                        @csrf
+                                                    <form method="get" action="{{ url('/order/'.$refill->order_id_submit.'/new_resubmission') }}">
+                                                        {{-- @csrf --}}
                                                         <button class="btn btn-primary" type="submit">
                                                             <i class="mdi mdi-repeat"></i>
                                                         </button>
