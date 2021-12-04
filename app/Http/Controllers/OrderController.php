@@ -917,7 +917,8 @@ class OrderController extends Controller
             $order->status_id = 2;
             $order->dispensing_by = $request->input('dispensing_by');
             $order->dispensing_method = $request->input('dispensing_method');
-            $order->rx_interval = 2;
+            $order->rx_interval = $request->input('rx_interval');
+            $order->do_number = $request->input('do_number');
             $order->salesperson_id = $request->input('salesperson');
             $order->total_amount = $request->input('total_amount');
             $order->save();
@@ -1044,12 +1045,47 @@ class OrderController extends Controller
         $order = Order::where('id', $id)->first();
         $items = Item::all();
         // $items = DB::table('myob_products as a')->join('myob_product_details as b', 'b.myob_product_id', 'a.ItemNumber')->where('IsInactive', 'N')->get();
-        $item_lists = OrderItem::where('order_id', $id)->get();
+        $item_lists = [];
+        foreach ($items as $item) {
+            $location = DB::table('locations')->select('counter','courier')->where('item_id', $item->id)->first();
+
+            if ($order->dispensing_method == "Walkin") {
+                array_push($item_lists, [
+                    'id' => $item->id,
+                    'brand_name' => $item->brand_name,
+                    'code' => $item->item_code,
+                    'quantity' => $location->counter != null ? $location->counter : 0,
+                    'frequency' => $item->frequency_id,
+                ]);
+            } else {
+                array_push($item_lists, [
+                    'id' => $item->id,
+                    'brand_name' => $item->brand_name,
+                    'code' => $item->item_code,
+                    'quantity' => $location->courier != null ? $location->courier : 0,
+                    'frequency' => $item->frequency_id,
+                ]);
+            }
+        }
+
+        $orderItemSelected = [];
+        foreach ($order->orderItem as $key => $value) {
+            $orderItemSelected[] = DB::table('items as a')
+            ->join('frequencies as b', 'b.id', 'a.frequency_id')
+            ->join('formulas as c', 'c.id', 'a.formula_id')
+            ->select('a.id', 'a.selling_price as selling_price', 'a.selling_uom as selling_uom', 'a.instruction', 'a.indikasi as indication', 'a.formula_id', 'b.name', 'b.id as freq_id', 'c.value')
+            ->where('a.id', $value->items->id)
+            ->first();
+        }
+
         $resubmission = 1;
         // Get rx_start and rx_end from table prescription
         $prescription = Prescription::select('rx_start', 'rx_end')->where('order_id', $order->id)->first();
         // Get duration in days
-        $duration = floor(abs(strtotime($prescription->rx_end) - strtotime($prescription->rx_start)) / (60 * 60 * 24));
+        $duration = floor(abs(strtotime($order->prescription->rx_end) - strtotime($order->prescription->next_supply_date)) / (60 * 60 * 24));
+
+        $do = Order::select('do_number')->orderBy('do_number','DESC')->first();
+        $do_number = (int)$do->do_number+1;
 
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
         return view('orders.edit', compact(
@@ -1063,7 +1099,9 @@ class OrderController extends Controller
             'item_lists',
             'resubmission',
             'duration',
-            'roles'
+            'roles',
+            'do_number',
+            'orderItemSelected'
         ));
     }
 

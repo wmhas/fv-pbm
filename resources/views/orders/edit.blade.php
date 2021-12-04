@@ -101,7 +101,7 @@
                             <th>&nbsp;</th>
                         </tr>
                         </thead>
-                        @if ($order->orderItem != null)
+                        {{-- @if ($order->orderItem != null)
                             @foreach ($order->orderItem as $o_i)
 
                                 <tbody>
@@ -173,105 +173,109 @@
                                 </tr>
                                 </tbody>
                             @endforeach
+                        @endif --}}
+                        @if ($order->orderItem != null)
+                            @foreach ($order->orderItem as $k => $o_i)
+                                <tbody>
+                                <form method="post" action="{{ url('order/store_item/') }}">
+                                    @csrf
+                                    <input type="hidden" name="patient_id" value="{{ $order->patient->id }}">
+                                    <tr class="row-table">
+                                        <td>
+                                            @if ($order->id == null)
+                                                <input type="hidden" name="order_id" value="{{ $record->id }}">
+                                            @else
+                                                <input type="hidden" name="order_id" value="{{ $order->id }}">
+                                            @endif
+                                            <div class="form-group">
+                                                <select class="js-single form-control" name="item_id" id="item_id"
+                                                        style="width: 230px">
+                                                    <option>--Select--</option>
+                                                    @foreach ($item_lists as $item)
+                                                        <option value="{{ $item['id'] }}" @if($o_i->items->id == $item['id']) selected @endif>
+                                                            {{ $item['code'] }}
+                                                            {{ $item['brand_name'] }}
+                                                            ({{ $item['quantity'] }}) </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group">
+                                                <input type="text" name="indication" id="indication" class="form-control"
+                                                    style="width:150px;" value="{{ $orderItemSelected[$k]->indication }}">
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group">
+                                                <input type="text" name="instruction" id="instruction" class="form-control"
+                                                    style="width:200px;" value="{{ $orderItemSelected[$k]->instruction }}">
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group">
+                                                {{-- <input type="text" name="frequency" id="frequency" class="value_f form-control" style="width:50px;"> --}}
+                                                <select name="frequency" id="frequency" class="value_f form-control">
+                                                    <option value="0">-</option>
+                                                    @foreach ($frequencies as $freq)
+                                                        <option value="{{ $freq->id }}" @php (isset($o_i) && $orderItemSelected[$k]->freq_id==$freq->id) ? "selected":"" @endphp>{{ $freq->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group">
+                                                <input type="text" name="selling_uom" id="selling_uom" class="uom form-control"
+                                                    style="width:50px;" value="{{ $orderItemSelected[$k]->selling_uom }}">
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group">
+                                                <input type="number" name="dose_quantity" id="dose_quantity"
+                                                    class="value_dq form-control" style="width:60px;" step="0.1" value="{{ $o_i->dose_quantity }}">
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group">
+                                                <input type="hidden" name="hidden_duration" id="hidden_duration" value="{{ $duration }}">
+                                                <input type="number" name="duration" id="duration" class="value_d form-control"
+                                                    style="width:60px;" value="{{ $duration }}">
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group">
+                                                <input type="text" name="quantity" id="quantity" class="quantity form-control"
+                                                    style="width:70px;" value="{{ $o_i->quantity }}">
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group">
+                                                <input type="number" name="selling_price" id="selling_price"
+                                                    class="price form-control" step="0.01" style="width:70px;" value="{{ $orderItemSelected[$k]->selling_price }}">
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group">
+                                                <input type="text" name="price" id="price" class="form-control"
+                                                    style="width:70px;" value="{{ $o_i->price }}">
+                                            </div>
+                                        </td>
+                                        <td style="vertical-align: middle;">
+                                            {{-- <button class="btn waves-effect btn-danger btn-sm">Delete</button> --}}
+                                        </td>
+                                        <input type="hidden" id="formula_id" class="formula_id">
+                                        <input type="hidden" id="formula_value" class="formula_value">
+                                    </tr>
+                                    <tr>
+                                        <td colspan="11" style="vertical-align: top;">
+                                            <button class="btn waves-effect btn-info btn-sm" type="submit">Add
+                                                Item</button>
+                                        </td>
+                                    </tr>
+                                </form>
+                                </tbody>
+                            @endforeach
                         @endif
-                        <tbody>
-                        <form method="post" action="{{ url('order/store_item/') }}">
-                            @csrf
-                            <input type="hidden" name="patient_id" value="{{ $order->patient->id }}">
-                            <tr class="row-table">
-                                <td>
-                                    @if ($order->id == null)
-                                        <input type="hidden" name="order_id" value="{{ $record->id }}">
-                                    @else
-                                        <input type="hidden" name="order_id" value="{{ $order->id }}">
-                                    @endif
-                                    <div class="form-group">
-                                        <select class="js-single form-control" name="item_id" id="item_id"
-                                                style="width: 230px">
-                                            <option>--Select--</option>
-                                            @foreach ($item_lists as $item)
-                                                <option value="{{ $item['id'] }}">
-                                                    {{ $item['code'] }}
-                                                    {{ $item['brand_name'] }}
-                                                    ({{ $item['quantity'] }}) </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="form-group">
-                                        <input type="text" name="indication" id="indication" class="form-control"
-                                               style="width:150px;">
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="form-group">
-                                        <input type="text" name="instruction" id="instruction" class="form-control"
-                                               style="width:200px;">
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="form-group">
-                                        {{-- <input type="text" name="frequency" id="frequency" class="value_f form-control" style="width:50px;"> --}}
-                                        <select name="frequency" id="frequency" class="value_f form-control">
-                                            <option value="0">-</option>
-                                            @foreach ($frequencies as $freq)
-                                                <option value="{{ $freq->id }}"  @php (isset($o_i) && $o_i->frequency==$freq->id) ? "selected":"" @endphp>{{ $freq->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="form-group">
-                                        <input type="text" name="selling_uom" id="selling_uom" class="uom form-control"
-                                               style="width:50px;">
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="form-group">
-                                        <input type="number" name="dose_quantity" id="dose_quantity"
-                                               class="value_dq form-control" style="width:60px;">
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="form-group">
-                                        <input type="hidden" name="hidden_duration" id="hidden_duration" value="{{ $duration }}">
-                                        <input type="number" name="duration" id="duration" class="value_d form-control"
-                                               style="width:60px;">
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="form-group">
-                                        <input type="text" name="quantity" id="quantity" class="quantity form-control"
-                                               style="width:70px;">
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="form-group">
-                                        <input type="number" name="selling_price" id="selling_price"
-                                               class="price form-control" step="0.01" style="width:70px;">
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="form-group">
-                                        <input type="text" name="price" id="price" class="form-control"
-                                               style="width:70px;">
-                                    </div>
-                                </td>
-                                <td style="vertical-align: middle;">
-                                    {{-- <button class="btn waves-effect btn-danger btn-sm">Delete</button> --}}
-                                </td>
-                                <input type="hidden" id="formula_id" class="formula_id">
-                                <input type="hidden" id="formula_value" class="formula_value">
-                            </tr>
-                            <tr>
-                                <td colspan="11" style="vertical-align: top;">
-                                    <button class="btn waves-effect btn-info btn-sm" type="submit">Add
-                                        Item</button>
-                                </td>
-                            </tr>
-                        </form>
-                        </tbody>
                         <tfoot>
                         <tr>
                             <td colspan="10" class="text-right" style="vertical-align: middle;">Grand Total Amount (RM)
@@ -326,7 +330,7 @@
                                     <label>DO Number</label>
                                     @if ($resubmission == 1)
                                         <input type="text" class="form-control" id="do_number" name="do_number"
-                                            value="{{ $order->do_number }}" readonly>
+                                            value="{{ ($order->do_number)?$order->do_number:$do_number }}" readonly>
                                     @else
                                         <input type="text" class="form-control" id="do_number" name="do_number" @if (!empty($order)) value="{{ $order->do_number }}" @endif
                                             readonly>
@@ -469,10 +473,10 @@
                         <div class="card-tools">
                             <div class="form-group">
                                 <div class="custom-control custom-switch">
-                                    <input type="checkbox" class="custom-control-input" id="NSD" @if ($order->rx_interval == 1) checked @endif>
+                                    <input type="checkbox" class="custom-control-input" id="NSD" checked>
                                     <label class="custom-control-label" for="NSD">Set One Off Supply</label>
                                     <input type="hidden" name="rx_interval" id="rx_interval"
-                                        value="{{ $order->rx_interval }}">
+                                        value="1">
                                 </div>
                             </div>
                         </div>
@@ -766,5 +770,353 @@
             </div>
         </div>
     </div>
+@endsection
+@section('script')
+    @include('orders.js')
+    <script type="text/javascript">
+        $(document).ready(function(){
+            if('{{ $order->rx_interval }}' == 1){
+                $('#NSD').attr('checked',true);
+            } else {
+                $('#NSD').attr('checked',false);
+            }
+        });
+
+        $('#NSD').change(function() {
+            if ($(this).prop("checked")) {
+                $('#colNSD').hide();
+                $('#rx_interval').val(1);
+            } else {
+                $('#colNSD').show();
+                $('#rx_interval').val(2);
+            }
+        });
+
+        function calculateQuantity(thisParent, except = [], quantity = null){
+            var dose_quantity = parseFloat(thisParent.find('.value_dq').val());
+            var frequency = thisParent.find('.value_f').val();
+            // var frequency = $('.value_f').prop('selectedIndex',0);
+            var duration = parseFloat(thisParent.find('.value_d').val());
+            var unit_price = parseFloat(thisParent.find('.price').val());
+            var uom = thisParent.find('.uom').val();
+            var formula_id = thisParent.find('.formula_id').val();
+            var formula_value = thisParent.find('.formula_value').val();
+
+            if (frequency == 1 || frequency == 5 || frequency == 6 || frequency == 7 ||
+                frequency == 8) {
+                var frequency = 1;
+            } else if (frequency == 2) {
+
+                var frequency = 2;
+
+            } else if (frequency == 3) {
+
+                var frequecy = 3;
+
+            } else {
+                var frequency = 4;
+            }
+
+            //mcm mana nak retrieve formula_id dengan formula_value
+            if (quantity === null) {
+                if (formula_id == 1) {
+                    quantity = dose_quantity * frequency * duration;
+                } else if (formula_id == 6) {
+                    quantity = 1;
+                } else {
+                    quantity = (dose_quantity * frequency * duration) / formula_value;
+                }
+            } else {
+                quantity = parseFloat(quantity);
+            }
+
+            var sum = quantity * unit_price;
+
+            ceilQ = Math.ceil(quantity.toFixed(2));
+
+            if (!except.includes('quantity')) {
+                parseFloat(thisParent.find("input#quantity").val(ceilQ));
+            }
+            if (!except.includes('price')) {
+                parseFloat(thisParent.find("input#price").val(sum.toFixed(2)));
+            }
+        }
+
+        function uCalculateQuantity(thisParent, except = [], quantity = null){
+            var dose_quantity = parseFloat(thisParent.find('.u_value_dq').val());
+            var frequency = thisParent.find('.u_value_f').val();
+            // var frequency = $('.value_f').prop('selectedIndex',0);
+            var duration = parseFloat(thisParent.find('.u_value_d').val());
+            var unit_price = parseFloat(thisParent.find('.u_price').val());
+            var uom = thisParent.find('.u_uom').val();
+            var formula_id = thisParent.find('.u_formula_id').val();
+            var formula_value = thisParent.find('.u_formula_value').val();
+
+            if (frequency == 1 || frequency == 5 || frequency == 6 || frequency == 7 ||
+                frequency == 8) {
+                var frequency = 1;
+            } else if (frequency == 2) {
+
+                var frequency = 2;
+
+            } else if (frequency == 3) {
+
+                var frequecy = 3;
+
+            } else {
+                var frequency = 4;
+            }
+
+            //mcm mana nak retrieve formula_id dengan formula_value
+            if (quantity === null) {
+                if (formula_id == 1) {
+                    quantity = dose_quantity * frequency * duration;
+                } else if (formula_id == 6) {
+                    quantity = 1;
+                } else {
+                    quantity = (dose_quantity * frequency * duration) / formula_value;
+                }
+            } else {
+                quantity = parseFloat(quantity);
+            }
+
+            var sum = quantity * unit_price;
+
+            ceilQ = Math.ceil(quantity.toFixed(2));
+
+            if (!except.includes('quantity')) {
+                parseFloat(thisParent.find("input#u_quantity").val(ceilQ));
+            }
+            if (!except.includes('price')) {
+                parseFloat(thisParent.find("input#u_price").val(sum.toFixed(2)));
+            }
+        }
+
+        function ajaxUpdateItem(id){
+             // AJAX request
+            $.ajax({
+                url: '{{url("/")}}/getItemDetails/' + id,
+                type: 'get',
+                dataType: 'json',
+                success: function(response) {
+                    var len = 0;
+                    if (response['data'] != null) {
+                        len = response['data'].length;
+                    }
+
+                    if (len > 0) {
+                        // Read data and create <option >
+                        for (var i = 0; i < len; i++) {
+
+                            var id = response['data'][i].id;
+                            var selling_price = response['data'][i].selling_price;
+                            var selling_uom = response['data'][i].selling_uom;
+                            var instruction = response['data'][i].instruction;
+                            var indication = response['data'][i].indication;
+                            var frequency = response['data'][i].name;
+                            var frequency_id = response['data'][i].freq_id;
+                            var formula_id = response['data'][i].formula_id;
+                            var formula_value = response['data'][i].value;
+
+
+                            // console.log(frequency);
+                            // var option = "<option value='"+id+"'>"+amount+"</option>";
+
+                            // $("#unit_price").append(option);
+                            $("#u_selling_price").val(selling_price);
+                            $("#u_selling_uom").val(selling_uom);
+                            $("#u_instruction").val(instruction);
+                            $("#u_indication").val(indication);
+                            $("#u_frequency option[value='" + frequency_id + "']").attr(
+                                'selected', 'selected');
+                            $("#u_formula_id").val(formula_id);
+                            $("#u_formula_value").val(formula_value);
+                            // $("#gst").val(0.00);
+                        }
+                    }
+
+                }
+            });
+        }
+
+        $(document).ready(function() {
+            // calculate quantity based on f x dq x d
+            $('input[type="number"] ,input[type="text"] ').keyup(function() {
+                thisParent = $(this).parent().parent().parent();
+                if ( this.id === 'quantity' || this.id === 'u_quantity' ) {
+                    const quantity = $(this).val().trim();
+                    calculateQuantity(thisParent, ['quantity'], quantity);
+                    uCalculateQuantity(thisParent, ['quantity'], quantity);
+                } else {
+                    calculateQuantity(thisParent);
+                    uCalculateQuantity(thisParent);
+                }
+            });
+
+            $(document).on("change","#frequency",function(){
+                thisParent = $(this).parent().parent().parent();
+                calculateQuantity(thisParent);
+            });
+
+            $(document).on("change","#u_frequency",function(){
+                thisParent = $(this).parent().parent().parent();
+                uCalculateQuantity(thisParent);
+            });
+
+            $('#item_id').change(function() {
+                $('#quantity').val('');
+                var hidden_duration = $('#hidden_duration').val();
+                var id = $(this).val();
+                parent = $(this).parent().parent().parent();
+                // console.log(id);
+                // Empty the dropdown
+                parent.find('#selling_price').find('option').not(':first').remove();
+                parent.find('#selling_uom').find('option').not(':first').remove();
+                parent.find('#instruction').find('option').not(':first').remove();
+                parent.find('#indication').find('option').not(':first').remove();
+
+                // AJAX request
+                $.ajax({
+                    url: '{{url("/")}}/getItemDetails/' + id,
+                    type: 'get',
+                    dataType: 'json',
+                    success: function(response) {
+                        var len = 0;
+                        if (response['data'] != null) {
+                            len = response['data'].length;
+                        }
+
+                        if (len > 0) {
+                            // Read data and create <option >
+                            for (var i = 0; i < len; i++) {
+                                console.log(response['data']);
+                                var id = response['data'][i].id;
+                                var selling_price = response['data'][i].selling_price;
+                                var selling_uom = response['data'][i].selling_uom;
+                                var instruction = response['data'][i].instruction;
+                                var indication = response['data'][i].indication;
+                                var frequency = response['data'][i].name;
+                                var frequency_id = response['data'][i].freq_id;
+                                var formula_id = response['data'][i].formula_id;
+                                var formula_value = response['data'][i].value;
+
+
+                                // console.log(frequency);
+                                // var option = "<option value='"+id+"'>"+amount+"</option>";
+
+                                // $("#unit_price").append(option);
+                                parent.find("#selling_price").val(selling_price);
+                                parent.find("#selling_uom").val(selling_uom);
+                                parent.find("#instruction").val(instruction);
+                                parent.find("#indication").val(indication);
+                                parent.find("#frequency").val(frequency_id).trigger("change");
+                                parent.find("#formula_id").val(formula_id);
+                                parent.find("#formula_value").val(formula_value);                            
+                                $('#duration').val(hidden_duration);
+                                // $("#gst").val(0.00);
+                            }
+                        }
+
+                    }
+                });
+            });
+
+            $('#item_id').change(function() {
+                $('#quantity').val('');
+                var hidden_duration = $('#hidden_duration').val();
+                var id = $(this).val();
+                parent = $(this).parent().parent().parent();
+                // console.log(id);
+                // Empty the dropdown
+                parent.find('#selling_price').find('option').not(':first').remove();
+                parent.find('#selling_uom').find('option').not(':first').remove();
+                parent.find('#instruction').find('option').not(':first').remove();
+                parent.find('#indication').find('option').not(':first').remove();
+
+                // AJAX request
+                $.ajax({
+                    url: '{{url("/")}}/getItemDetails/' + id,
+                    type: 'get',
+                    dataType: 'json',
+                    success: function(response) {
+                        var len = 0;
+                        if (response['data'] != null) {
+                            len = response['data'].length;
+                        }
+
+                        if (len > 0) {
+                            // Read data and create <option >
+                            for (var i = 0; i < len; i++) {
+                                console.log(response['data']);
+                                var id = response['data'][i].id;
+                                var selling_price = response['data'][i].selling_price;
+                                var selling_uom = response['data'][i].selling_uom;
+                                var instruction = response['data'][i].instruction;
+                                var indication = response['data'][i].indication;
+                                var frequency = response['data'][i].name;
+                                var frequency_id = response['data'][i].freq_id;
+                                var formula_id = response['data'][i].formula_id;
+                                var formula_value = response['data'][i].value;
+
+
+                                // console.log(frequency);
+                                // var option = "<option value='"+id+"'>"+amount+"</option>";
+
+                                // $("#unit_price").append(option);
+                                parent.find("#selling_price").val(selling_price);
+                                parent.find("#selling_uom").val(selling_uom);
+                                parent.find("#instruction").val(instruction);
+                                parent.find("#indication").val(indication);
+                                parent.find("#frequency").val(frequency_id).trigger("change");
+                                parent.find("#formula_id").val(formula_id);
+                                parent.find("#formula_value").val(formula_value);                            
+                                $('#duration').val(hidden_duration);
+                                // $("#gst").val(0.00);
+                            }
+                        }
+
+                    }
+                });
+            });
+
+            $(document).on("click","#editItem",function(e){
+                e.preventDefault();
+                order_item_id = $(this).parent().parent().parent().find("#order_item_id");
+                item = $(this).parent().parent().parent().find("#i_item");
+                item_title = $(this).parent().parent().parent().find("#i_item_title");
+                quantity = $(this).parent().parent().parent().find("#i_quantity");
+                frequency = $(this).parent().parent().parent().find("#i_frequency");
+                intruction = $(this).parent().parent().parent().find("#i_intruction");
+                indication = $(this).parent().parent().parent().find("#i_indication");
+                total_price = $(this).parent().parent().parent().find("#i_total_price");
+                unit_price = $(this).parent().parent().parent().find("#i_unit_price");
+                dose_qty = $(this).parent().parent().parent().find("#i_dose_qty");
+                dose_duration = $(this).parent().parent().parent().find("#i_dose_duration");
+                dose_uom = $(this).parent().parent().parent().find("#i_dose_uom");
+
+                $("#u_item_id").val(item.val().replaceAll(/\s/g,''));
+                $("#u_order_item_id").val(order_item_id.val().replaceAll(/\s/g,''));
+                $("#u_item_title").val(item_title.val());
+                $("#u_indication").val(indication.val());
+                $("#u_instruction").val(intruction.val());
+                $("#u_frequency").val(frequency.val().replaceAll(/\s/g,''));
+                $("#u_dose_quantity").val(dose_qty.val());
+                $("#u_duration").val(dose_duration.val());
+                $("#u_quantity").val(dose_qty.val());
+                $("#u_selling_price").val(unit_price.val());
+                $("#u_price").val(total_price.val());
+                $("#u_selling_uom").val(dose_uom.val());
+
+                $('#u_quantity').val(quantity.val());
+                var id = item.val();
+                ajaxUpdateItem(id);
+
+                modalEdit = $("#modalEditItem");
+                modalEdit.modal("show");
+
+            });
+
+        });
+    </script>
 @endsection
 @include('orders.formula')
