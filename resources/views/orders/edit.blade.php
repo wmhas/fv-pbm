@@ -218,7 +218,7 @@
                                                 <select name="frequency" id="frequency" class="value_f form-control">
                                                     <option value="0">-</option>
                                                     @foreach ($frequencies as $freq)
-                                                        <option value="{{ $freq->id }}" @php (isset($o_i) && $orderItemSelected[$k]->freq_id==$freq->id) ? "selected":"" @endphp>{{ $freq->name }}</option>
+                                                        <option value="{{ $freq->id }}" @if(isset($o_i) && $orderItemSelected[$k]->freq_id == $freq->id) selected @endif>{{ $freq->name }}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
@@ -263,8 +263,8 @@
                                         <td style="vertical-align: middle;">
                                             {{-- <button class="btn waves-effect btn-danger btn-sm">Delete</button> --}}
                                         </td>
-                                        <input type="hidden" id="formula_id" class="formula_id">
-                                        <input type="hidden" id="formula_value" class="formula_value">
+                                        <input type="hidden" id="formula_id" class="formula_id" value="{{ $orderItemSelected[$k]->formula_id }}">
+                                        <input type="hidden" id="formula_value" class="formula_value" value="{{ $orderItemSelected[$k]->value }}">
                                     </tr>
                                     <tr>
                                         <td colspan="11" style="vertical-align: top;">
@@ -560,7 +560,7 @@
                                     <input type="date" class="form-control" name="rx_end_date" @if (!empty($order->prescription)) value="{{ $order->prescription->rx_end }}" @endif required>
                                 </div>
                             </div>
-                            <div class="col-md-4" id="colNSD">
+                            <div class="col-md-4" id="colNSD" style="display: none;">
                                 <div class="form-group">
                                     <label>Next Supply Date</label>
                                     <input type="date" class="form-control" id="rx_supply_date" name="rx_supply_date" @if (!empty($order->prescription)) value="{{ $order->prescription->next_supply_date }}" @endif>
@@ -775,10 +775,10 @@
     @include('orders.js')
     <script type="text/javascript">
         $(document).ready(function(){
-            if('{{ $order->rx_interval }}' == 1){
-                $('#NSD').attr('checked',true);
-            } else {
-                $('#NSD').attr('checked',false);
+            if($('#dispensing_method').val() == 'Walkin'){
+                $('.Delivery').hide();
+            } else if($('#dispensing_method').val() == 'Delivery'){
+                $('.Delivery').show();
             }
         });
 
@@ -789,6 +789,14 @@
             } else {
                 $('#colNSD').show();
                 $('#rx_interval').val(2);
+            }
+        });
+
+        $('#dispensing_method').change(function(){
+            if($(this).val() == 'Walkin'){
+                $('.Delivery').hide();
+            } else if($(this).val() == 'Delivery'){
+                $('.Delivery').show();
             }
         });
 
