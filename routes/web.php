@@ -92,6 +92,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/{id}/store/{order_id}/orderentry', 'OrderController@create_orderEntry')->name('order.entry');
         Route::post('/{id}/store/{order_id}/orderentry', 'OrderController@store_orderEntry');
         Route::post('/store_item', 'OrderController@store_item');
+        Route::post('/store_item_resubmission', 'OrderController@store_item_resubmission');
         Route::post('/update_item', 'OrderController@update_item');
         Route::delete('/delete_item/{patient}/{id}', 'OrderController@delete_item');
         Route::get('/{id}/view/downloadConsignmentNote', 'OrderController@downloadConsignmentNote');

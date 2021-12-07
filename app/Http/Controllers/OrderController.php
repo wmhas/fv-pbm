@@ -551,6 +551,42 @@ class OrderController extends Controller
         }
     }
 
+    public function store_item_resubmission(Request $request)
+    {
+        $order = Order::select("id","dispensing_method","patient_id", "total_amount")->where('id',  $request->input('order_id'))->first();
+        $location = Location::where('item_id', $request->input('item_id'))->first();
+        if ($order->dispensing_method == 'Walkin' && $location->counter >= $request->input('quantity')) {
+            $location->counter = $location->counter - $request->input('quantity');
+            $location->save();
+        } elseif ($order->dispensing_method == 'Delivery' && $location->courier >= $request->input('quantity')) {
+            $location->courier = $location->courier - $request->input('quantity');
+            $location->save();
+        } else {
+            return redirect()->action('OrderController@create_orderEntry', ['patient' => $order->patient_id, 'order_id', $order->id])->with(['status' => false, 'message' => 'Item quantity exceeded the number of quantity available']);
+        }
+
+        $record = new OrderItem();
+        $record->order_id = $request->input('order_id');
+        $record->myob_product_id = $request->input('item_id');
+        $record->dose_quantity = $request->input('dose_quantity');
+        $record->duration = $request->input('duration');
+        $record->frequency = $request->input('frequency');
+        $record->quantity = $request->input('quantity');
+        $record->price = $request->input('price');
+        $record->save();
+
+        $stock = new Stock();
+        $stock->item_id = $request->input('item_id');
+        $stock->quantity = -$request->input('quantity');
+        $stock->balance = 0;
+        $stock->source = 'sale';
+        $stock->source_id = $record->id;
+        $stock->source_date = Carbon::now()->format('Y-m-d');
+        $stock->save();
+
+        return redirect('order/'.$request->input('order_id').'/new_resubmission')->with(['status' => true, 'message' => 'Successfully add item']);
+    }
+
     public function update_item(Request $request)
     {
         $order_item = OrderItem::where('id', $request->input('order_item_id'))->first();

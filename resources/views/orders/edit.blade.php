@@ -177,7 +177,7 @@
                         @if ($order->orderItem != null)
                             @foreach ($order->orderItem as $k => $o_i)
                                 <tbody>
-                                <form method="post" action="{{ url('order/store_item/') }}">
+                                <form method="post" action="{{ url('order/store_item_resubmission/') }}">
                                     @csrf
                                     <input type="hidden" name="patient_id" value="{{ $order->patient->id }}">
                                     <tr class="row-table">
