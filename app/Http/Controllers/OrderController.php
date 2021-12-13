@@ -551,9 +551,56 @@ class OrderController extends Controller
         }
     }
 
+    private function getDONumber($dispensing_by){
+        if($dispensing_by == 'FVKL'){
+            $count_order = DB::table('orders')->where('dispensing_by', 'FVKL')->where('do_number', '!=', '')->count();
+            $code = '50';
+        } elseif ($dispensing_by == 'FVT')  {
+            $count_order = DB::table('orders')->where('dispensing_by', 'FVT')->where('do_number', '!=', '')->count();
+            $code = '14';
+        } else {
+            $count_order = DB::table('orders')->where('dispensing_by', 'FVL')->where('do_number', '!=', '')->count();
+            $code = '99';
+        }
+        $number = str_pad($count_order + 1, 6, "0", STR_PAD_LEFT);
+        $do_number = $code.$number;
+        return $do_number;
+    }
+
     public function store_item_resubmission(Request $request)
     {
-        $order = Order::select("id","dispensing_method","patient_id", "total_amount")->where('id',  $request->input('order_id'))->first();
+        $order = Order::where('id',  $request->input('order_id'))->first();
+
+        $od = new Order; 
+        $od->patient_id = $order->patient_id;
+        $od->total_amount = $order->total_amount;
+        $od->do_number = $this->getDONumber($order->dispense_date);
+        $od->dispense_date = null;
+        $od->dispensing_method = $order->dispensing_method;
+        $od->rx_interval = 1;
+        $od->salesperson_id = $order->sales_person_id;
+        $od->batch_id = $order->batch_id;
+        $od->order_document_path = $order->order_document_path;
+        $od->order_original_filename = $order->order_original_filename;
+        $od->total_amount = $order->total_amount;
+        $od->status_id = $order->status_id;
+        $od->save();
+
+        if ($order->prescription) {
+            $pre = new Prescription;
+            $pre->order_id = $od->id;
+            $pre->clinic_id = $order->prescription->clinic_id;
+            $pre->hospital_id = $order->prescription->hospital_id;
+            $pre->rx_number = $order->prescription->rx_number;
+            $pre->rx_original_filename = $order->prescription->rx_original_filename;
+            $pre->rx_document_path = $order->prescription->rx_document_path;
+            $pre->rx_start = $order->prescription->rx_start;
+            $pre->rx_end = $order->prescription->rx_end;
+            $pre->next_supply_date = $order->prescription->next_supply_date;
+            $pre->save();
+        }
+
+        $order_id = $od->id;
         $location = Location::where('item_id', $request->input('item_id'))->first();
         if ($order->dispensing_method == 'Walkin' && $location->counter >= $request->input('quantity')) {
             $location->counter = $location->counter - $request->input('quantity');
@@ -566,7 +613,7 @@ class OrderController extends Controller
         }
 
         $record = new OrderItem();
-        $record->order_id = $request->input('order_id');
+        $record->order_id = $order_id;
         $record->myob_product_id = $request->input('item_id');
         $record->dose_quantity = $request->input('dose_quantity');
         $record->duration = $request->input('duration');
@@ -584,7 +631,7 @@ class OrderController extends Controller
         $stock->source_date = Carbon::now()->format('Y-m-d');
         $stock->save();
 
-        return redirect('order/'.$request->input('order_id').'/new_resubmission')->with(['status' => true, 'message' => 'Successfully add item']);
+        return redirect('order/'.$order_id.'/new_resubmission')->with(['status' => true, 'message' => 'Successfully add item']);
     }
 
     public function update_item(Request $request)
