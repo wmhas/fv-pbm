@@ -584,6 +584,7 @@ class OrderController extends Controller
         $od->order_original_filename = $order->order_original_filename;
         $od->total_amount = $order->total_amount;
         $od->status_id = $order->status_id;
+        $od->dispensing_by = $order->dispensing_by;
         $od->save();
 
         if ($order->prescription) {
