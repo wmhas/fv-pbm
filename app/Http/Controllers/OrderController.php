@@ -613,6 +613,22 @@ class OrderController extends Controller
             return redirect()->action('OrderController@create_orderEntry', ['patient' => $order->patient_id, 'order_id', $order->id])->with(['status' => false, 'message' => 'Item quantity exceeded the number of quantity available']);
         }
 
+        if($order->orderItem){
+            if (count($order->orderItem)>0){
+                foreach ($order->orderItem as $oi){
+                    $oin = new OrderItem;
+                    $oin->order_id = $order_id;
+                    $oin->myob_product_id = $oi->myob_product_id;
+                    $oin->dose_quantity = $oi->dose_quantity;
+                    $oin->duration = $oi->duration;
+                    $oin->quantity = $oi->quantity;
+                    $oin->frequency = $oi->frequency;
+                    $oin->price = $oi->price;
+                    $oin->save();
+                } 
+            }            
+        }
+
         $record = new OrderItem();
         $record->order_id = $order_id;
         $record->myob_product_id = $request->input('item_id');

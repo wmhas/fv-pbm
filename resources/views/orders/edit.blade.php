@@ -102,7 +102,7 @@
                         </tr>
                         </thead>
                         {{-- @if ($order->orderItem != null)
-                            @foreach ($order->orderItem as $o_i)
+                            @foreach ($order->orderItem as $key => $o_i)
 
                                 <tbody>
                                 <tr>
@@ -174,6 +174,7 @@
                                 </tbody>
                             @endforeach
                         @endif --}}
+                        @php $total = count($order->orderItem); @endphp
                         @if ($order->orderItem != null)
                             @foreach ($order->orderItem as $k => $o_i)
                                 <tbody>
@@ -266,12 +267,14 @@
                                         <input type="hidden" id="formula_id" class="formula_id" value="{{ $orderItemSelected[$k]->formula_id }}">
                                         <input type="hidden" id="formula_value" class="formula_value" value="{{ $orderItemSelected[$k]->value }}">
                                     </tr>
+                                    @if ($k+1==$total)
                                     <tr>
                                         <td colspan="11" style="vertical-align: top;">
                                             <button class="btn waves-effect btn-info btn-sm" type="submit">Add
                                                 Item</button>
                                         </td>
                                     </tr>
+                                    @endif
                                 </form>
                                 </tbody>
                             @endforeach
