@@ -283,8 +283,15 @@
                         <tr>
                             <td colspan="10" class="text-right" style="vertical-align: middle;">Grand Total Amount (RM)
                             </td>
-                            <td><input type="text" class="form-control" style="width:70px;"
-                                       value="{{ number_format($order->orderitem->sum('price'), 2) }}" disabled> </td>
+                            <td>
+                                @if (\Request::input('added'))
+                                <input type="text" class="form-control" style="width:70px;"
+                                       value="{{ number_format($order->orderitem->sum('price'), 2) }}" disabled>
+                                @else
+                                <input type="text" class="form-control" style="width:70px;"
+                                       value="0.00" disabled>
+                                @endif
+                             </td>
                         </tr>
                         </tfoot>
                     </table>

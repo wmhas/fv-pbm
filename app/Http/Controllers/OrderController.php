@@ -648,7 +648,7 @@ class OrderController extends Controller
         $stock->source_date = Carbon::now()->format('Y-m-d');
         $stock->save();
 
-        return redirect('order/'.$order_id.'/new_resubmission')->with(['status' => true, 'message' => 'Successfully add item']);
+        return redirect('order/'.$order_id.'/new_resubmission?added=1')->with(['status' => true, 'message' => 'Successfully add item']);
     }
 
     public function update_item(Request $request)
