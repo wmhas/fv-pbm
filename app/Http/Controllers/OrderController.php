@@ -570,6 +570,8 @@ class OrderController extends Controller
     public function store_item_resubmission(Request $request)
     {
 
+        dd($request->all());
+
         $count = count($request->input('item_id'));
 
         for ($i=0; $i < $count; $i++) { 
@@ -579,7 +581,7 @@ class OrderController extends Controller
             $od = new Order; 
             $od->patient_id = $order->patient_id;
             $od->total_amount = $order->total_amount;
-            $od->do_number = $this->getDONumber($order->dispense_by);
+            $od->do_number = $this->getDONumber($order->dispensing_by);
             $od->dispense_date = null;
             $od->dispensing_method = $order->dispensing_method;
             $od->rx_interval = 1;
@@ -590,6 +592,7 @@ class OrderController extends Controller
             $od->total_amount = $order->total_amount;
             $od->status_id = 1;
             $od->dispensing_by = $order->dispensing_by;
+            $od->resubmission = 1;
             $od->save();
 
             if ($order->prescription) {
@@ -639,7 +642,7 @@ class OrderController extends Controller
 
         }
 
-        return redirect('order/'.$order_id.'/new_resubmission?added=1')->with(['status' => true, 'message' => 'Successfully add item']);
+        return redirect('order/'.$order_id.'/new_resubmission')->with(['status' => true, 'message' => 'Successfully add item']);
     }
 
     public function update_item(Request $request)

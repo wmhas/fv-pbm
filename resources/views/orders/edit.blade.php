@@ -78,8 +78,7 @@
     </div>
     <br>
 
-
-                <!--  ORDER ENTRY  -->
+    <!--  ORDER ENTRY  -->
     <div class="row">
         <div class="col-12">
             <div class="card">
@@ -105,7 +104,6 @@
                         </thead>
                         {{-- @if ($order->orderItem != null)
                             @foreach ($order->orderItem as $key => $o_i)
-
                                 <tbody>
                                 <tr>
                                     <td>
@@ -178,8 +176,21 @@
                         @endif --}}
                         @php $total = count($order->orderItem); @endphp
                         @if ($order->orderItem != null)
-                            <form method="post" action="{{ url('order/store_item_resubmission/') }}">
+                            <form id="resubmissionForm" name="resubmissionForm" method="post" action="{{ url('order/store_item_resubmission/') }}">
                             @foreach ($order->orderItem as $k => $o_i)
+
+                            @php 
+
+                                if($order->resubmission==1){
+                                    $disabled = "readonly"; 
+                                    $disabled_select = "disabled";
+                                } else {
+                                    $disabled = "";
+                                    $disabled_select = "";
+                                }
+
+                            @endphp
+
                                 <tbody>
                                     @csrf
                                     <input type="hidden" name="patient_id[]" value="{{ $order->patient->id }}">
@@ -191,7 +202,7 @@
                                                 <input type="hidden" name="order_id[]" value="{{ $order->id }}">
                                             @endif
                                             <div class="form-group">
-                                                <select class="js-single form-control" name="item_id[]" id="item_id"
+                                                <select {{ $disabled_select }} class="js-single form-control" name="item_id[]" id="item_id"
                                                         style="width: 230px">
                                                     <option>--Select--</option>
                                                     @foreach ($item_lists as $item)
@@ -205,20 +216,20 @@
                                         </td>
                                         <td>
                                             <div class="form-group">
-                                                <input type="text" name="indication[]" id="indication" class="form-control"
+                                                <input {{ $disabled }} type="text" name="indication[]" id="indication" class="form-control"
                                                     style="width:150px;" value="{{ $orderItemSelected[$k]->indication }}">
                                             </div>
                                         </td>
                                         <td>
                                             <div class="form-group">
-                                                <input type="text" name="instruction[]" id="instruction" class="form-control"
+                                                <input {{ $disabled }} type="text" name="instruction[]" id="instruction" class="form-control"
                                                     style="width:200px;" value="{{ $orderItemSelected[$k]->instruction }}">
                                             </div>
                                         </td>
                                         <td>
                                             <div class="form-group">
                                                 {{-- <input type="text" name="frequency[]" id="frequency" class="value_f form-control" style="width:50px;"> --}}
-                                                <select name="frequency[]" id="frequency" class="value_f form-control">
+                                                <select {{ $disabled_select }} name="frequency[]" id="frequency" class="value_f form-control">
                                                     <option value="0">-</option>
                                                     @foreach ($frequencies as $freq)
                                                         <option value="{{ $freq->id }}" @if(isset($o_i) && $orderItemSelected[$k]->freq_id == $freq->id) selected @endif>{{ $freq->name }}</option>
@@ -228,38 +239,38 @@
                                         </td>
                                         <td>
                                             <div class="form-group">
-                                                <input type="text" name="selling_uom[]" id="selling_uom" class="uom form-control"
+                                                <input {{ $disabled }} type="text" name="selling_uom[]" id="selling_uom" class="uom form-control"
                                                     style="width:50px;" value="{{ $orderItemSelected[$k]->selling_uom }}">
                                             </div>
                                         </td>
                                         <td>
                                             <div class="form-group">
-                                                <input type="number" name="dose_quantity[]" id="dose_quantity"
+                                                <input {{ $disabled }} type="number" name="dose_quantity[]" id="dose_quantity"
                                                     class="value_dq form-control" style="width:60px;" step="0.1" value="{{ $o_i->dose_quantity }}">
                                             </div>
                                         </td>
                                         <td>
                                             <div class="form-group">
-                                                <input type="hidden" name="hidden_duration[]" id="hidden_duration" value="{{ $duration }}">
-                                                <input type="number" name="duration[]" id="duration" class="value_d form-control"
+                                                <input {{ $disabled }} type="hidden" name="hidden_duration[]" id="hidden_duration" value="{{ $duration }}">
+                                                <input {{ $disabled }} type="number" name="duration[]" id="duration" class="value_d form-control"
                                                     style="width:60px;" value="{{ $duration }}">
                                             </div>
                                         </td>
                                         <td>
                                             <div class="form-group">
-                                                <input type="text" name="quantity[]" id="quantity" class="quantity form-control"
+                                                <input {{ $disabled }} type="text" name="quantity[]" id="quantity" class="quantity form-control"
                                                     style="width:70px;" value="{{ $o_i->quantity }}">
                                             </div>
                                         </td>
                                         <td>
                                             <div class="form-group">
-                                                <input type="number" name="selling_price[]" id="selling_price"
+                                                <input {{ $disabled }} type="number" name="selling_price[]" id="selling_price"
                                                     class="price form-control" step="0.01" style="width:70px;" value="{{ $orderItemSelected[$k]->selling_price }}">
                                             </div>
                                         </td>
                                         <td>
                                             <div class="form-group">
-                                                <input type="text" name="price[]" id="price" class="form-control"
+                                                <input {{ $disabled }} type="text" name="price[]" id="price" class="form-control"
                                                     style="width:70px;" value="{{ $o_i->price }}">
                                             </div>
                                         </td>
@@ -269,10 +280,19 @@
                                         <input type="hidden" id="formula_id" class="formula_id" value="{{ $orderItemSelected[$k]->formula_id }}">
                                         <input type="hidden" id="formula_value" class="formula_value" value="{{ $orderItemSelected[$k]->value }}">
                                     </tr>
-                                    @if ($k+1==$total)
+                                    @if ($order->resubmission==1)
                                     <tr>
                                         <td colspan="11" style="vertical-align: top;">
-                                            <button class="btn waves-effect btn-info btn-sm" type="submit">Update</button>
+                                            <input type="hidden" name="addAction" value="0">
+                                            <button id="rbEditButton" class="btn waves-effect btn-info btn-sm" type="button">Edit</button>
+                                            <button style="display:none;" id="rbUpdateButton" class="btn waves-effect btn-info btn-sm" type="submit">Update</button>
+                                        </td>
+                                    </tr>
+                                    @else
+                                    <tr>
+                                        <td colspan="11" style="vertical-align: top;">
+                                            <input type="hidden" name="addAction" value="1">
+                                            <button class="btn waves-effect btn-info btn-sm" type="submit">Add Item</button>
                                         </td>
                                     </tr>
                                     @endif
@@ -285,7 +305,7 @@
                             <td colspan="10" class="text-right" style="vertical-align: middle;">Grand Total Amount (RM)
                             </td>
                             <td>
-                                @if (\Request::input('added'))
+                                @if ($order->resubmission==1)
                                 <input type="text" class="form-control" style="width:70px;"
                                        value="{{ number_format($order->orderitem->sum('price'), 2) }}" disabled>
                                 @else
@@ -1046,64 +1066,6 @@
                 });
             });
 
-            $('#item_id').change(function() {
-                $('#quantity').val('');
-                var hidden_duration = $('#hidden_duration').val();
-                var id = $(this).val();
-                parent = $(this).parent().parent().parent();
-                // console.log(id);
-                // Empty the dropdown
-                parent.find('#selling_price').find('option').not(':first').remove();
-                parent.find('#selling_uom').find('option').not(':first').remove();
-                parent.find('#instruction').find('option').not(':first').remove();
-                parent.find('#indication').find('option').not(':first').remove();
-
-                // AJAX request
-                $.ajax({
-                    url: '{{url("/")}}/getItemDetails/' + id,
-                    type: 'get',
-                    dataType: 'json',
-                    success: function(response) {
-                        var len = 0;
-                        if (response['data'] != null) {
-                            len = response['data'].length;
-                        }
-
-                        if (len > 0) {
-                            // Read data and create <option >
-                            for (var i = 0; i < len; i++) {
-                                console.log(response['data']);
-                                var id = response['data'][i].id;
-                                var selling_price = response['data'][i].selling_price;
-                                var selling_uom = response['data'][i].selling_uom;
-                                var instruction = response['data'][i].instruction;
-                                var indication = response['data'][i].indication;
-                                var frequency = response['data'][i].name;
-                                var frequency_id = response['data'][i].freq_id;
-                                var formula_id = response['data'][i].formula_id;
-                                var formula_value = response['data'][i].value;
-
-
-                                // console.log(frequency);
-                                // var option = "<option value='"+id+"'>"+amount+"</option>";
-
-                                // $("#unit_price").append(option);
-                                parent.find("#selling_price").val(selling_price);
-                                parent.find("#selling_uom").val(selling_uom);
-                                parent.find("#instruction").val(instruction);
-                                parent.find("#indication").val(indication);
-                                parent.find("#frequency").val(frequency_id).trigger("change");
-                                parent.find("#formula_id").val(formula_id);
-                                parent.find("#formula_value").val(formula_value);                            
-                                $('#duration').val(hidden_duration);
-                                // $("#gst").val(0.00);
-                            }
-                        }
-
-                    }
-                });
-            });
-
             $(document).on("click","#editItem",function(e){
                 e.preventDefault();
                 order_item_id = $(this).parent().parent().parent().find("#order_item_id");
@@ -1141,6 +1103,12 @@
 
             });
 
+            $(document).on("click","#rbEditButton", function(){
+                $(this).parent().parent().parent().find("input").attr('readonly', false);
+                $(this).parent().parent().parent().find("select").attr('disabled', false);
+                $(this).hide();
+                $("#rbUpdateButton").show();
+            });
         });
     </script>
 @endsection
