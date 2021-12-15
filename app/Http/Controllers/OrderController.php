@@ -1002,8 +1002,6 @@ class OrderController extends Controller
     public function resubmission(Request $request, $id)
     {
 
-        $req = $this->store_item_resubmission($request);
-
         $prev_order = Order::where('id', $id)->first();
         $items = Item::all();  
         $order = new Order();
