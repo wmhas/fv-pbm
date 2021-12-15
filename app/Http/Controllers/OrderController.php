@@ -570,8 +570,6 @@ class OrderController extends Controller
     public function store_item_resubmission(Request $request)
     {
 
-        dd($request->all());
-
         $count = count($request->input('item_id'));
 
         for ($i=0; $i < $count; $i++) { 
@@ -1003,6 +1001,9 @@ class OrderController extends Controller
 
     public function resubmission(Request $request, $id)
     {
+
+        $req = $this->store_item_resubmission($request);
+
         $prev_order = Order::where('id', $id)->first();
         $items = Item::all();  
         $order = new Order();
