@@ -77,7 +77,9 @@
         </div>
     </div>
     <br>
-    <!--  ORDER ENTRY  -->
+
+
+                <!--  ORDER ENTRY  -->
     <div class="row">
         <div class="col-12">
             <div class="card">
@@ -176,20 +178,20 @@
                         @endif --}}
                         @php $total = count($order->orderItem); @endphp
                         @if ($order->orderItem != null)
+                            <form method="post" action="{{ url('order/store_item_resubmission/') }}">
                             @foreach ($order->orderItem as $k => $o_i)
                                 <tbody>
-                                <form method="post" action="{{ url('order/store_item_resubmission/') }}">
                                     @csrf
-                                    <input type="hidden" name="patient_id" value="{{ $order->patient->id }}">
+                                    <input type="hidden" name="patient_id[]" value="{{ $order->patient->id }}">
                                     <tr class="row-table">
                                         <td>
                                             @if ($order->id == null)
-                                                <input type="hidden" name="order_id" value="{{ $record->id }}">
+                                                <input type="hidden" name="order_id[]" value="{{ $record->id }}">
                                             @else
-                                                <input type="hidden" name="order_id" value="{{ $order->id }}">
+                                                <input type="hidden" name="order_id[]" value="{{ $order->id }}">
                                             @endif
                                             <div class="form-group">
-                                                <select class="js-single form-control" name="item_id" id="item_id"
+                                                <select class="js-single form-control" name="item_id[]" id="item_id"
                                                         style="width: 230px">
                                                     <option>--Select--</option>
                                                     @foreach ($item_lists as $item)
@@ -203,20 +205,20 @@
                                         </td>
                                         <td>
                                             <div class="form-group">
-                                                <input type="text" name="indication" id="indication" class="form-control"
+                                                <input type="text" name="indication[]" id="indication" class="form-control"
                                                     style="width:150px;" value="{{ $orderItemSelected[$k]->indication }}">
                                             </div>
                                         </td>
                                         <td>
                                             <div class="form-group">
-                                                <input type="text" name="instruction" id="instruction" class="form-control"
+                                                <input type="text" name="instruction[]" id="instruction" class="form-control"
                                                     style="width:200px;" value="{{ $orderItemSelected[$k]->instruction }}">
                                             </div>
                                         </td>
                                         <td>
                                             <div class="form-group">
-                                                {{-- <input type="text" name="frequency" id="frequency" class="value_f form-control" style="width:50px;"> --}}
-                                                <select name="frequency" id="frequency" class="value_f form-control">
+                                                {{-- <input type="text" name="frequency[]" id="frequency" class="value_f form-control" style="width:50px;"> --}}
+                                                <select name="frequency[]" id="frequency" class="value_f form-control">
                                                     <option value="0">-</option>
                                                     @foreach ($frequencies as $freq)
                                                         <option value="{{ $freq->id }}" @if(isset($o_i) && $orderItemSelected[$k]->freq_id == $freq->id) selected @endif>{{ $freq->name }}</option>
@@ -226,38 +228,38 @@
                                         </td>
                                         <td>
                                             <div class="form-group">
-                                                <input type="text" name="selling_uom" id="selling_uom" class="uom form-control"
+                                                <input type="text" name="selling_uom[]" id="selling_uom" class="uom form-control"
                                                     style="width:50px;" value="{{ $orderItemSelected[$k]->selling_uom }}">
                                             </div>
                                         </td>
                                         <td>
                                             <div class="form-group">
-                                                <input type="number" name="dose_quantity" id="dose_quantity"
+                                                <input type="number" name="dose_quantity[]" id="dose_quantity"
                                                     class="value_dq form-control" style="width:60px;" step="0.1" value="{{ $o_i->dose_quantity }}">
                                             </div>
                                         </td>
                                         <td>
                                             <div class="form-group">
-                                                <input type="hidden" name="hidden_duration" id="hidden_duration" value="{{ $duration }}">
-                                                <input type="number" name="duration" id="duration" class="value_d form-control"
+                                                <input type="hidden" name="hidden_duration[]" id="hidden_duration" value="{{ $duration }}">
+                                                <input type="number" name="duration[]" id="duration" class="value_d form-control"
                                                     style="width:60px;" value="{{ $duration }}">
                                             </div>
                                         </td>
                                         <td>
                                             <div class="form-group">
-                                                <input type="text" name="quantity" id="quantity" class="quantity form-control"
+                                                <input type="text" name="quantity[]" id="quantity" class="quantity form-control"
                                                     style="width:70px;" value="{{ $o_i->quantity }}">
                                             </div>
                                         </td>
                                         <td>
                                             <div class="form-group">
-                                                <input type="number" name="selling_price" id="selling_price"
+                                                <input type="number" name="selling_price[]" id="selling_price"
                                                     class="price form-control" step="0.01" style="width:70px;" value="{{ $orderItemSelected[$k]->selling_price }}">
                                             </div>
                                         </td>
                                         <td>
                                             <div class="form-group">
-                                                <input type="text" name="price" id="price" class="form-control"
+                                                <input type="text" name="price[]" id="price" class="form-control"
                                                     style="width:70px;" value="{{ $o_i->price }}">
                                             </div>
                                         </td>
@@ -270,14 +272,13 @@
                                     @if ($k+1==$total)
                                     <tr>
                                         <td colspan="11" style="vertical-align: top;">
-                                            <button class="btn waves-effect btn-info btn-sm" type="submit">Add
-                                                Item</button>
+                                            <button class="btn waves-effect btn-info btn-sm" type="submit">Update</button>
                                         </td>
                                     </tr>
                                     @endif
-                                </form>
                                 </tbody>
                             @endforeach
+                            </form>
                         @endif
                         <tfoot>
                         <tr>
@@ -300,6 +301,8 @@
         </div>
     </div>
     <br>
+
+
     @if ($resubmission == 1)
         <form action="{{ url('/order/' . $order->id . '/resubmission') }}" method="post" enctype="multipart/form-data">
     @else
@@ -375,6 +378,7 @@
                 </div>
             </div>
         </div>
+        <br>
         <!--  DELIVERY INFO  -->
         <div class="row delivery Delivery">
             <div class="col-12">
@@ -474,6 +478,7 @@
                 </div>
             </div>
         </div>
+        <br>
         <!--  PRESCRIPTION INFO  -->
         <div class="row" onload="formRX()">
             <div class="col-12">
@@ -581,6 +586,8 @@
                 </div>
             </div>
         </div>
+        <br>
+
         <div class="row">
             <div class="col-12">
                 <div class="card">

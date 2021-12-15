@@ -569,84 +569,75 @@ class OrderController extends Controller
 
     public function store_item_resubmission(Request $request)
     {
-        $order = Order::where('id',  $request->input('order_id'))->first();
 
-        $od = new Order; 
-        $od->patient_id = $order->patient_id;
-        $od->total_amount = $order->total_amount;
-        $od->do_number = $this->getDONumber($order->dispense_date);
-        $od->dispense_date = null;
-        $od->dispensing_method = $order->dispensing_method;
-        $od->rx_interval = 1;
-        $od->salesperson_id = $order->sales_person_id;
-        $od->batch_id = $order->batch_id;
-        $od->order_document_path = $order->order_document_path;
-        $od->order_original_filename = $order->order_original_filename;
-        $od->total_amount = $order->total_amount;
-        $od->status_id = $order->status_id;
-        $od->dispensing_by = $order->dispensing_by;
-        $od->save();
+        $count = count($request->input('item_id'));
 
-        if ($order->prescription) {
-            $pre = new Prescription;
-            $pre->order_id = $od->id;
-            $pre->clinic_id = $order->prescription->clinic_id;
-            $pre->hospital_id = $order->prescription->hospital_id;
-            $pre->rx_number = $order->prescription->rx_number;
-            $pre->rx_original_filename = $order->prescription->rx_original_filename;
-            $pre->rx_document_path = $order->prescription->rx_document_path;
-            $pre->rx_start = $order->prescription->rx_start;
-            $pre->rx_end = $order->prescription->rx_end;
-            $pre->next_supply_date = $order->prescription->next_supply_date;
-            $pre->save();
+        for ($i=0; $i < $count; $i++) { 
+
+            $order = Order::where('id',  $request->input('order_id')[$i])->first();
+
+            $od = new Order; 
+            $od->patient_id = $order->patient_id;
+            $od->total_amount = $order->total_amount;
+            $od->do_number = $this->getDONumber($order->dispense_by);
+            $od->dispense_date = null;
+            $od->dispensing_method = $order->dispensing_method;
+            $od->rx_interval = 1;
+            $od->salesperson_id = $order->sales_person_id;
+            $od->batch_id = $order->batch_id;
+            $od->order_document_path = $order->order_document_path;
+            $od->order_original_filename = $order->order_original_filename;
+            $od->total_amount = $order->total_amount;
+            $od->status_id = 1;
+            $od->dispensing_by = $order->dispensing_by;
+            $od->save();
+
+            if ($order->prescription) {
+                $pre = new Prescription;
+                $pre->order_id = $od->id;
+                $pre->clinic_id = $order->prescription->clinic_id;
+                $pre->hospital_id = $order->prescription->hospital_id;
+                $pre->rx_number = $order->prescription->rx_number;
+                $pre->rx_original_filename = $order->prescription->rx_original_filename;
+                $pre->rx_document_path = $order->prescription->rx_document_path;
+                $pre->rx_start = $order->prescription->rx_start;
+                $pre->rx_end = $order->prescription->rx_end;
+                $pre->next_supply_date = $order->prescription->next_supply_date;
+                $pre->save();
+            }
+
+            $order_id = $od->id;
+            $location = Location::where('item_id', $request->input('item_id')[$i])->first();
+            if ($order->dispensing_method == 'Walkin' && $location->counter >= $request->input('quantity')[$i]) {
+                $location->counter = $location->counter - $request->input('quantity')[$i];
+                $location->save();
+            } elseif ($order->dispensing_method == 'Delivery' && $location->courier >= $request->input('quantity')[$i]) {
+                $location->courier = $location->courier - $request->input('quantity')[$i];
+                $location->save();
+            } else {
+                return redirect()->action('OrderController@create_orderEntry', ['patient' => $order->patient_id, 'order_id', $order->id])->with(['status' => false, 'message' => 'Item quantity exceeded the number of quantity available']);
+            }
+
+            $record = new OrderItem();
+            $record->order_id = $order_id;
+            $record->myob_product_id = $request->input('item_id')[$i];
+            $record->dose_quantity = $request->input('dose_quantity')[$i];
+            $record->duration = $request->input('duration')[$i];
+            $record->frequency = $request->input('frequency')[$i];
+            $record->quantity = $request->input('quantity')[$i];
+            $record->price = $request->input('price')[$i];
+            $record->save();
+
+            $stock = new Stock();
+            $stock->item_id = $request->input('item_id')[$i];
+            $stock->quantity = -$request->input('quantity')[$i];
+            $stock->balance = 0;
+            $stock->source = 'sale';
+            $stock->source_id = $record->id;
+            $stock->source_date = Carbon::now()->format('Y-m-d');
+            $stock->save();
+
         }
-
-        $order_id = $od->id;
-        $location = Location::where('item_id', $request->input('item_id'))->first();
-        if ($order->dispensing_method == 'Walkin' && $location->counter >= $request->input('quantity')) {
-            $location->counter = $location->counter - $request->input('quantity');
-            $location->save();
-        } elseif ($order->dispensing_method == 'Delivery' && $location->courier >= $request->input('quantity')) {
-            $location->courier = $location->courier - $request->input('quantity');
-            $location->save();
-        } else {
-            return redirect()->action('OrderController@create_orderEntry', ['patient' => $order->patient_id, 'order_id', $order->id])->with(['status' => false, 'message' => 'Item quantity exceeded the number of quantity available']);
-        }
-
-        if($order->orderItem){
-            if (count($order->orderItem)>0){
-                foreach ($order->orderItem as $oi){
-                    $oin = new OrderItem;
-                    $oin->order_id = $order_id;
-                    $oin->myob_product_id = $oi->myob_product_id;
-                    $oin->dose_quantity = $oi->dose_quantity;
-                    $oin->duration = $oi->duration;
-                    $oin->quantity = $oi->quantity;
-                    $oin->frequency = $oi->frequency;
-                    $oin->price = $oi->price;
-                    $oin->save();
-                } 
-            }            
-        }
-
-        $record = new OrderItem();
-        $record->order_id = $order_id;
-        $record->myob_product_id = $request->input('item_id');
-        $record->dose_quantity = $request->input('dose_quantity');
-        $record->duration = $request->input('duration');
-        $record->frequency = $request->input('frequency');
-        $record->quantity = $request->input('quantity');
-        $record->price = $request->input('price');
-        $record->save();
-
-        $stock = new Stock();
-        $stock->item_id = $request->input('item_id');
-        $stock->quantity = -$request->input('quantity');
-        $stock->balance = 0;
-        $stock->source = 'sale';
-        $stock->source_id = $record->id;
-        $stock->source_date = Carbon::now()->format('Y-m-d');
-        $stock->save();
 
         return redirect('order/'.$order_id.'/new_resubmission?added=1')->with(['status' => true, 'message' => 'Successfully add item']);
     }
