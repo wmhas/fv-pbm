@@ -289,12 +289,14 @@
                                         </td>
                                     </tr>
                                     @else
-                                    <tr>
-                                        <td colspan="11" style="vertical-align: top;">
-                                            <input type="hidden" name="addAction" value="1">
-                                            <button class="btn waves-effect btn-info btn-sm" type="submit">Add Item</button>
-                                        </td>
-                                    </tr>
+                                        @if ($k+1==$total)
+                                        <tr>
+                                            <td colspan="11" style="vertical-align: top;">
+                                                <input type="hidden" name="addAction" value="1">
+                                                <button class="btn waves-effect btn-info btn-sm" type="submit">Add Item</button>
+                                            </td>
+                                        </tr>
+                                        @endif
                                     @endif
                                 </tbody>
                             @endforeach
@@ -542,12 +544,14 @@
                                             </td>
                                         </tr>
                                         @else
-                                        <tr>
-                                            <td colspan="11" style="vertical-align: top;">
-                                                <input type="hidden" name="addAction" value="1">
-                                                <button class="btn waves-effect btn-info btn-sm" type="submit">Add Item</button>
-                                            </td>
-                                        </tr>
+                                            @if ($k+1==$total)
+                                                <tr>
+                                                    <td colspan="11" style="vertical-align: top;">
+                                                        <input type="hidden" name="addAction" value="1">
+                                                        <button class="btn waves-effect btn-info btn-sm" type="submit">Add Item</button>
+                                                    </td>
+                                                </tr>
+                                            @endif
                                         @endif
                                     </tbody>
                                 @endforeach
