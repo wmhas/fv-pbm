@@ -590,23 +590,23 @@ class OrderController extends Controller
         $od->resubmission = 1;
         $od->save();
 
+        if ($order->prescription) {
+            $pre = new Prescription;
+            $pre->order_id = $od->id;
+            $pre->clinic_id = $order->prescription->clinic_id;
+            $pre->hospital_id = $order->prescription->hospital_id;
+            $pre->rx_number = $order->prescription->rx_number;
+            $pre->rx_original_filename = $order->prescription->rx_original_filename;
+            $pre->rx_document_path = $order->prescription->rx_document_path;
+            $pre->rx_start = $order->prescription->rx_start;
+            $pre->rx_end = $order->prescription->rx_end;
+            $pre->next_supply_date = $order->prescription->next_supply_date;
+            $pre->save();
+        }
+
         for ($i=0; $i < $count; $i++) {
 
             $order_id = $od->id;
-
-            if ($order->prescription) {
-                $pre = new Prescription;
-                $pre->order_id = $order_id;
-                $pre->clinic_id = $order->prescription->clinic_id;
-                $pre->hospital_id = $order->prescription->hospital_id;
-                $pre->rx_number = $order->prescription->rx_number;
-                $pre->rx_original_filename = $order->prescription->rx_original_filename;
-                $pre->rx_document_path = $order->prescription->rx_document_path;
-                $pre->rx_start = $order->prescription->rx_start;
-                $pre->rx_end = $order->prescription->rx_end;
-                $pre->next_supply_date = $order->prescription->next_supply_date;
-                $pre->save();
-            }
 
             $location = Location::where('item_id', $request->input('item_id')[$i])->first();
             if ($order->dispensing_method == 'Walkin' && $location->counter >= $request->input('quantity')[$i]) {
