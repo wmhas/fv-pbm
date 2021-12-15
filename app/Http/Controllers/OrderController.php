@@ -572,26 +572,25 @@ class OrderController extends Controller
 
         $count = count($request->input('item_id'));
 
+        $order = Order::where('id',  $request->input('order_id')[0])->first();
+        $od = new Order; 
+        $od->patient_id = $order->patient_id;
+        $od->total_amount = $order->total_amount;
+        $od->do_number = $this->getDONumber($order->dispensing_by);
+        $od->dispense_date = null;
+        $od->dispensing_method = $order->dispensing_method;
+        $od->rx_interval = 1;
+        $od->salesperson_id = $order->sales_person_id;
+        $od->batch_id = $order->batch_id;
+        $od->order_document_path = $order->order_document_path;
+        $od->order_original_filename = $order->order_original_filename;
+        $od->total_amount = $order->total_amount;
+        $od->status_id = 1;
+        $od->dispensing_by = $order->dispensing_by;
+        $od->resubmission = 1;
+        $od->save();
+
         for ($i=0; $i < $count; $i++) { 
-
-            $order = Order::where('id',  $request->input('order_id')[$i])->first();
-
-            $od = new Order; 
-            $od->patient_id = $order->patient_id;
-            $od->total_amount = $order->total_amount;
-            $od->do_number = $this->getDONumber($order->dispensing_by);
-            $od->dispense_date = null;
-            $od->dispensing_method = $order->dispensing_method;
-            $od->rx_interval = 1;
-            $od->salesperson_id = $order->sales_person_id;
-            $od->batch_id = $order->batch_id;
-            $od->order_document_path = $order->order_document_path;
-            $od->order_original_filename = $order->order_original_filename;
-            $od->total_amount = $order->total_amount;
-            $od->status_id = 1;
-            $od->dispensing_by = $order->dispensing_by;
-            $od->resubmission = 1;
-            $od->save();
 
             if ($order->prescription) {
                 $pre = new Prescription;
