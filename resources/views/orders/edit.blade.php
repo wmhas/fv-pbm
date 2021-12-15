@@ -281,13 +281,15 @@
                                         <input type="hidden" id="formula_value" class="formula_value" value="{{ $orderItemSelected[$k]->value }}">
                                     </tr>
                                     @if ($order->resubmission==1)
-                                    <tr>
-                                        <td colspan="11" style="vertical-align: top;">
-                                            <input type="hidden" name="addAction" value="0">
-                                            <button id="rbEditButton" class="btn waves-effect btn-info btn-sm" type="button">Edit</button>
-                                            <button style="display:none;" id="rbUpdateButton" class="btn waves-effect btn-info btn-sm" type="submit">Update</button>
-                                        </td>
-                                    </tr>
+                                        @if ($k+1==$total)
+                                        <tr>
+                                            <td colspan="11" style="vertical-align: top;">
+                                                <input type="hidden" name="addAction" value="0">
+                                                <button id="rbEditButton" class="btn waves-effect btn-info btn-sm" type="button">Edit</button>
+                                                <button style="display:none;" id="rbUpdateButton" class="btn waves-effect btn-info btn-sm" type="submit">Update</button>
+                                            </td>
+                                        </tr>
+                                        @endif
                                     @else
                                         @if ($k+1==$total)
                                         <tr>
