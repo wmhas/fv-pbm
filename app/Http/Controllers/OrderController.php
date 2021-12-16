@@ -1004,7 +1004,7 @@ class OrderController extends Controller
 
         $prev_order = Order::where('id', $id)->first();
         $items = Item::all();  
-        $order = new Order();
+        $order = Order::find($prev_order->id);
         if (!empty($prev_order)) {
             $order->patient_id = $prev_order->patient_id;
             $order->status_id = 2;
@@ -1016,12 +1016,8 @@ class OrderController extends Controller
             $order->total_amount = $request->input('total_amount');
             $order->save();
 
-            $prev_order->rx_interval = 3;
-            $prev_order->save();
-
             if (!empty($prev_order->delivery)) {
-                $delivery = new Delivery();
-                $delivery->order_id = $order->id;
+                $delivery = Delivery::where("order_id",$order_id)->first();
                 $delivery->states_id = $prev_order->delivery->states_id;
                 $delivery->address_1 = $prev_order->delivery->address_1;
                 $delivery->address_2 = $prev_order->delivery->address_2;
@@ -1030,8 +1026,7 @@ class OrderController extends Controller
                 $delivery->save();
             }
             if (!empty($prev_order->prescription)) {
-                $prescription = new Prescription();
-                $prescription->order_id = $order->id;
+                $prescription = Prescription::where("order_id",$order_id)->first();
                 $prescription->clinic_id = $request->input('rx_clinic');
                 $prescription->hospital_id = $request->input('rx_hospital');
                 $prescription->rx_number = $request->input('rx_number');
