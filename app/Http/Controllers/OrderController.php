@@ -1017,7 +1017,7 @@ class OrderController extends Controller
             $order->save();
 
             if (!empty($prev_order->delivery)) {
-                $delivery = Delivery::where("order_id",$order_id)->first();
+                $delivery = Delivery::where("order_id",$order->id)->first();
                 $delivery->states_id = $prev_order->delivery->states_id;
                 $delivery->address_1 = $prev_order->delivery->address_1;
                 $delivery->address_2 = $prev_order->delivery->address_2;
@@ -1026,7 +1026,7 @@ class OrderController extends Controller
                 $delivery->save();
             }
             if (!empty($prev_order->prescription)) {
-                $prescription = Prescription::where("order_id",$order_id)->first();
+                $prescription = Prescription::where("order_id",$order->id)->first();
                 $prescription->clinic_id = $request->input('rx_clinic');
                 $prescription->hospital_id = $request->input('rx_hospital');
                 $prescription->rx_number = $request->input('rx_number');
