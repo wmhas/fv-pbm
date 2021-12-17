@@ -1079,22 +1079,22 @@ class OrderController extends Controller
             }
         }
 
-        $prev_order_item = OrderItem::where('order_id', $order->id)->orderBy("id","desc")->limit(1)->get();
+        $prev_order_item = OrderItem::where('order_id', $order->id)->orderBy("id","desc")->get();
         foreach ($prev_order_item as $item) {
             $location = Location::where('item_id', $item->myob_product_id)->first();
             if ($order->dispensing_method == 'Walkin' && $location->counter >= $item->quantity) {
                 $location->counter = $location->counter - $item->quantity;
                 $location->save();
 
-                $record = new OrderItem();
-                $record->order_id = $order->id;
-                $record->myob_product_id = $item->myob_product_id;
-                $record->dose_quantity = $item->dose_quantity;
-                $record->duration = $item->duration;
-                $record->frequency = $item->frequency;
-                $record->quantity = $item->quantity;
-                $record->price = $item->price;
-                $record->save();
+                // $record = new OrderItem();
+                // $record->order_id = $order->id;
+                // $record->myob_product_id = $item->myob_product_id;
+                // $record->dose_quantity = $item->dose_quantity;
+                // $record->duration = $item->duration;
+                // $record->frequency = $item->frequency;
+                // $record->quantity = $item->quantity;
+                // $record->price = $item->price;
+                // $record->save();
 
                 $stock = new Stock();
                 $stock->item_id = $item->myob_product_id;
@@ -1108,15 +1108,15 @@ class OrderController extends Controller
                 $location->courier = $location->courier - $item->quantity;
                 $location->save();
 
-                $record = new OrderItem();
-                $record->order_id = $order->id;
-                $record->myob_product_id = $item->myob_product_id;
-                $record->dose_quantity = $item->dose_quantity;
-                $record->duration = $item->duration;
-                $record->frequency = $item->frequency;
-                $record->quantity = $item->quantity;
-                $record->price = $item->price;
-                $record->save();
+                // $record = new OrderItem();
+                // $record->order_id = $order->id;
+                // $record->myob_product_id = $item->myob_product_id;
+                // $record->dose_quantity = $item->dose_quantity;
+                // $record->duration = $item->duration;
+                // $record->frequency = $item->frequency;
+                // $record->quantity = $item->quantity;
+                // $record->price = $item->price;
+                // $record->save();
 
                 $stock = new Stock();
                 $stock->item_id = $item->myob_product_id;
