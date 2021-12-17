@@ -1096,14 +1096,14 @@ class OrderController extends Controller
                 // $record->price = $item->price;
                 // $record->save();
 
-                $stock = new Stock();
-                $stock->item_id = $item->myob_product_id;
-                $stock->quantity = -$item->quantity;
-                $stock->balance = 0;
-                $stock->source = 'sale';
-                $stock->source_id = $record->id;
-                $stock->source_date = Carbon::now()->format('Y-m-d');
-                $stock->save();
+                // $stock = new Stock();
+                // $stock->item_id = $item->myob_product_id;
+                // $stock->quantity = -$item->quantity;
+                // $stock->balance = 0;
+                // $stock->source = 'sale';
+                // $stock->source_id = $record->id;
+                // $stock->source_date = Carbon::now()->format('Y-m-d');
+                // $stock->save();
             } elseif ($order->dispensing_method == 'Delivery' && $location->courier >= $item->quantity) {
                 $location->courier = $location->courier - $item->quantity;
                 $location->save();
@@ -1118,14 +1118,14 @@ class OrderController extends Controller
                 // $record->price = $item->price;
                 // $record->save();
 
-                $stock = new Stock();
-                $stock->item_id = $item->myob_product_id;
-                $stock->quantity = -$item->quantity;
-                $stock->balance = 0;
-                $stock->source = 'sale';
-                $stock->source_id = $record->id;
-                $stock->source_date = Carbon::now()->format('Y-m-d');
-                $stock->save();
+                // $stock = new Stock();
+                // $stock->item_id = $item->myob_product_id;
+                // $stock->quantity = -$item->quantity;
+                // $stock->balance = 0;
+                // $stock->source = 'sale';
+                // $stock->source_id = $record->id;
+                // $stock->source_date = Carbon::now()->format('Y-m-d');
+                // $stock->save();
             } else {
             }
         }
