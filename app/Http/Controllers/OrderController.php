@@ -1079,7 +1079,7 @@ class OrderController extends Controller
             }
         }
 
-        $prev_order_item = OrderItem::where('order_id', $order->id)->orderBy("id","desc")->first();
+        $prev_order_item = OrderItem::where('order_id', $order->id)->orderBy("id","desc")->limit(1)->get();
         foreach ($prev_order_item as $item) {
             $location = Location::where('item_id', $item->myob_product_id)->first();
             if ($order->dispensing_method == 'Walkin' && $location->counter >= $item->quantity) {
