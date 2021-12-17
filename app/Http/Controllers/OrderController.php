@@ -604,6 +604,17 @@ class OrderController extends Controller
             $pre->save();
         }
 
+        if ($order->delivery){
+            $delivery = new Delivery;
+            $delivery->order_id = $od->id;
+            $delivery->states_id = $order->delivery->states_id;
+            $delivery->address_1 = $order->delivery->address_1;
+            $delivery->address_2 = $order->delivery->address_2;
+            $delivery->postcode = $order->delivery->postcode;
+            $delivery->city = $order->delivery->city;
+            $delivery->save();
+        }
+
         for ($i=0; $i < $count; $i++) {
 
             $order_id = $od->id;
@@ -1068,7 +1079,7 @@ class OrderController extends Controller
             }
         }
 
-        $prev_order_item = OrderItem::where('order_id', $order->id)->get();
+        $prev_order_item = OrderItem::where('order_id', $order->id)->orderBy("id","desc")->first();
         foreach ($prev_order_item as $item) {
             $location = Location::where('item_id', $item->myob_product_id)->first();
             if ($order->dispensing_method == 'Walkin' && $location->counter >= $item->quantity) {
