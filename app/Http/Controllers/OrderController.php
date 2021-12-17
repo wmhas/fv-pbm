@@ -1029,20 +1029,24 @@ class OrderController extends Controller
 
             if (!empty($prev_order->delivery)) {
                 $delivery = Delivery::where("order_id",$order->id)->first();
-                $delivery->states_id = $prev_order->delivery->states_id;
-                $delivery->address_1 = $prev_order->delivery->address_1;
-                $delivery->address_2 = $prev_order->delivery->address_2;
-                $delivery->postcode = $prev_order->delivery->postcode;
-                $delivery->city = $prev_order->delivery->city;
+                $delivery->states_id = ($request->dispensing_state) ? $request->dispensing_state : $prev_order->delivery->states_id;
+                $delivery->address_1 = ($request->dispensing_add1) ? $request->dispensing_add1 : $prev_order->delivery->address_1;
+                $delivery->address_2 = ($request->dispensing_add2) ? $request->dispensing_add2 : $prev_order->delivery->address_2;
+                $delivery->postcode = ($request->dispensing_postcode) ? $request->dispensing_postcode : $prev_order->delivery->postcode;
+                $delivery->city = ($request->dispensing_city) ? $request->dispensing_city : $prev_order->delivery->city;
+                $delivery->method = ($request->dispensing_method) ? $request->dispensing_method : $prev_order->method;
+                $delivery->tracking_number = ($request->tracking_number) ? $request->tracking_number : $prev_order->tracking_number;
+                $delivery->send_date = ($request->send_date) ? $request->send_date : $prev_order->send_date;
                 $delivery->save();
             }
+
             if (!empty($prev_order->prescription)) {
                 $prescription = Prescription::where("order_id",$order->id)->first();
-                $prescription->clinic_id = $request->input('rx_clinic');
-                $prescription->hospital_id = $request->input('rx_hospital');
-                $prescription->rx_number = $request->input('rx_number');
-                $prescription->rx_start = $request->input('rx_start_date');
-                $prescription->rx_end = $request->input('rx_end_date');
+                $prescription->clinic_id = ($request->input('rx_clinic')) ? $request->input('rx_clinic') : $prev_order->prescription->clinic_id;
+                $prescription->hospital_id = ($request->input('rx_hospital')) ? $request->input('rx_hospital') : $prev_order->prescription->hospital_id;
+                $prescription->rx_number = ($request->input('rx_number')) ? $request->input('rx_number') : $prev_order->prescription->rx_number;
+                $prescription->rx_start = ($request->input('rx_start_date')) ? $request->input('rx_start_date') : $prev_order->prescription->rx_start;
+                $prescription->rx_end = ($request->input('rx_end_date')) ? $request->input('rx_end_date') : $prev_order->prescription->rx_end;
 
                 if ($request->hasFile('rx_attach')) {
                     $fileNameWithExt = $request->file('rx_attach')->getClientOriginalName();
