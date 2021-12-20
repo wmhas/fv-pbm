@@ -651,7 +651,13 @@ class OrderController extends Controller
 
         }
 
-        return redirect('order/'.$order_id.'/new_resubmission')->with(['status' => true, 'message' => 'Successfully add item']);
+        $parentOrder = "";
+
+        if ($request->parent){
+            $parentOrder = "?parent=".$request->get('parent');
+        }
+
+        return redirect('order/'.$order_id.'/new_resubmission'.$parentOrder)->with(['status' => true, 'message' => 'Successfully add item']);
     }
 
     public function update_item(Request $request)
@@ -1013,6 +1019,10 @@ class OrderController extends Controller
     public function resubmission(Request $request, $id)
     {
 
+        if ($request->parent){
+            Order::where('id', $request->get('parent'))->update(['rx_interval'=>3]);
+        }
+        
         $prev_order = Order::where('id', $id)->first();
         $items = Item::all();  
         $order = Order::find($prev_order->id);

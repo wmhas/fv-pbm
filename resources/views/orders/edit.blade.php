@@ -194,6 +194,7 @@
                                 <tbody>
                                     @csrf
                                     <input type="hidden" name="patient_id[]" value="{{ $order->patient->id }}">
+                                    <input type="hidden" name="parent" value="{{ \Request::get('parent') }}">
                                     <tr class="row-table">
                                         <td>
                                             @if ($order->id == null)
@@ -334,6 +335,8 @@
     @endif
     
         @csrf
+
+        <input type="hidden" name="parent" value="{{ \Request::get('parent') }}">
 
         <!--  ORDER ENTRY  -->
         <div class="row" style="display:none;">
