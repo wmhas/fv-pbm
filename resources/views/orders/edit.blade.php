@@ -189,7 +189,7 @@
                                     $disabled_select = "";
                                 }
 
-                                $quantity = calculateQuantityPhp($o_i->quantity, $orderItemSelected[$k]->formula_id, $o_i->dose_quantity, $orderItemSelected[$k]->freq_id, $duration, $orderItemSelected[$k]->value);
+                                $quantity = calculateQuantityPhp($orderItemSelected[$k]->formula_id, $o_i->dose_quantity, $orderItemSelected[$k]->freq_id, $duration, $orderItemSelected[$k]->value);
 
                             @endphp
 
