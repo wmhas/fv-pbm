@@ -189,21 +189,6 @@
                                     $disabled_select = "";
                                 }
 
-                                function calculateQuantityPhp($quantity, $formula_id, $dose_quantity, $frequency, $duration, $formula_value){
-                                    if ($quantity === null) {
-                                        if ($formula_id == 1) {
-                                            $quantity = $dose_quantity * $frequency * $duration;
-                                        } else if ($formula_id == 6) {
-                                            $quantity = 1;
-                                        } else {
-                                            $quantity = ($dose_quantity * $frequency * $duration) / $formula_value;
-                                        }
-                                    } else {
-                                        $quantity = $quantity;
-                                    }
-                                    return $quantity;
-                                }
-
                                 $quantity = calculateQuantityPhp($o_i->quantity, $orderItemSelected[$k]->formula_id, $o_i->dose_quantity, $orderItemSelected[$k]->freq_id, $duration, $orderItemSelected[$k]->value);
 
                             @endphp
