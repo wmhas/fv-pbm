@@ -1020,7 +1020,7 @@ class OrderController extends Controller
     {
 
         if ($request->parent){
-            Order::where('id', $request->get('parent'))->update(['rx_interval'=>3]);
+            $up = Order::where('id', (int) $request->parent)->update(['rx_interval'=>3]);
         }
         
         $prev_order = Order::where('id', $id)->first();
