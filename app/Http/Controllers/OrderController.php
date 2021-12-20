@@ -571,6 +571,7 @@ class OrderController extends Controller
     {
 
         $count = count($request->input('item_id'));
+        $parentOrder = "";
 
         DB::beginTransaction();
 
@@ -632,7 +633,13 @@ class OrderController extends Controller
                     $location->save();
                 } else {
                     DB::rollback();
-                    return redirect()->action('OrderController@create_orderEntry', ['patient' => $order->patient_id, 'order_id', $order->id])->with(['status' => false, 'message' => 'Item quantity exceeded the number of quantity available']);
+
+                    if ($request->parent){
+                        $parentOrder = "?parent=".$request->get('parent');
+                    }
+
+                    return redirect('order/'.$order_id.'/new_resubmission'.$parentOrder)->with(['status' => false, 'message' => 'Item quantity exceeded the number of quantity available']);
+
                 }
 
                 $record = new OrderItem();
@@ -657,8 +664,6 @@ class OrderController extends Controller
             }
 
             DB::commit();
-
-            $parentOrder = "";
 
             if ($request->parent){
                 $parentOrder = "?parent=".$request->get('parent');
