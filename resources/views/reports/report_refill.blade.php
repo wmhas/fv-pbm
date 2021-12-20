@@ -119,7 +119,7 @@
                                     <td>{{ $o->dispensing_method }}</td>
                                     @if ($o->rx_interval == 2)
                                         <td style="text-align: center;">
-                                            <form method="get" action="{{ url('/order/'.$o->id.'/new_resubmission') }}">
+                                            <form method="get" action="{{ url('/order/'.$o->id.'/new_resubmission').'?parent='.$o->id }}">
                                                 @csrf
                                                 <button class="btn btn-primary" type="submit">
                                                     <i class="mdi mdi-repeat"></i>

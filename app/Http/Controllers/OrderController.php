@@ -1044,7 +1044,7 @@ class OrderController extends Controller
                 $delivery->address_2 = ($request->dispensing_add2) ? $request->dispensing_add2 : $prev_order->delivery->address_2;
                 $delivery->postcode = ($request->dispensing_postcode) ? $request->dispensing_postcode : $prev_order->delivery->postcode;
                 $delivery->city = ($request->dispensing_city) ? $request->dispensing_city : $prev_order->delivery->city;
-                $delivery->method = ($request->dispensing_method) ? $request->dispensing_method : $prev_order->method;
+                $delivery->method = ($request->delivery_method) ? $request->delivery_method : $prev_order->method;
                 $delivery->tracking_number = ($request->tracking_number) ? $request->tracking_number : $prev_order->tracking_number;
                 $delivery->send_date = ($request->send_date) ? $request->send_date : $prev_order->send_date;
                 $delivery->save();
