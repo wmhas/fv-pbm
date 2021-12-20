@@ -189,6 +189,23 @@
                                     $disabled_select = "";
                                 }
 
+                                function calculateQuantity($quantity, $formula_id, $dose_quantity, $frequency, $duration, $formula_value){
+                                    if ($quantity === null) {
+                                        if ($formula_id == 1) {
+                                            $quantity = $dose_quantity * $frequency * $duration;
+                                        } else if ($formula_id == 6) {
+                                            $quantity = 1;
+                                        } else {
+                                            $quantity = ($dose_quantity * $frequency * $duration) / $formula_value;
+                                        }
+                                    } else {
+                                        $quantity = $quantity;
+                                    }
+                                    return $quantity;
+                                }
+
+                                $quantity = calculateQuantity($o_i->quantity, $orderItemSelected[$k]->formula_id, $o_i->dose_quantity, $orderItemSelected[$k]->freq_id, $duration, $orderItemSelected[$k]->value);
+
                             @endphp
 
                                 <tbody>
@@ -260,7 +277,7 @@
                                         <td>
                                             <div class="form-group">
                                                 <input {{ $disabled }} type="text" name="quantity[]" id="quantity" class="quantity form-control"
-                                                    style="width:70px;" value="{{ $o_i->quantity }}">
+                                                    style="width:70px;" value="{{ $quantity }}">
                                             </div>
                                         </td>
                                         <td>
