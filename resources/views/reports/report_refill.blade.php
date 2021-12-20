@@ -120,7 +120,6 @@
                                     @if ($o->rx_interval == 2)
                                         <td style="text-align: center;">
                                             <a href="{{ url('/order/'.$o->id.'/new_resubmission').'?parent='.$o->id }}">
-                                                @csrf
                                                 <button class="btn btn-primary" type="submit">
                                                     <i class="mdi mdi-repeat"></i>
                                                 </button>
