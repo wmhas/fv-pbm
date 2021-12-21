@@ -191,6 +191,8 @@
 
                                 $quantity = calculateQuantityPhp($orderItemSelected[$k]->formula_id, $o_i->dose_quantity, $orderItemSelected[$k]->freq_id, $duration, $orderItemSelected[$k]->value);
 
+                                $total_price = $quantity * $orderItemSelected[$k]->selling_price;
+
                             @endphp
 
                                 <tbody>
@@ -274,7 +276,7 @@
                                         <td>
                                             <div class="form-group">
                                                 <input {{ $disabled }} type="text" name="price[]" id="price" class="form-control"
-                                                    style="width:70px;" value="{{ $o_i->price }}">
+                                                    style="width:70px;" value="{{ $total_price }}">
                                             </div>
                                         </td>
                                         <td style="vertical-align: middle;">
