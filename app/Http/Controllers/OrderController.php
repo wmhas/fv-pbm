@@ -637,9 +637,7 @@ class OrderController extends Controller
                     if ($request->parent){
                         $parentOrder = "?parent=".$request->get('parent');
                     }
-
-                    return redirect('order/'.$order_id.'/new_resubmission'.$parentOrder)->with(['status' => false, 'message' => 'Item quantity exceeded the number of quantity available']);
-
+                    return redirect('order/'.$order->id.'/new_resubmission'.$parentOrder)->with(['status' => false, 'message' => 'Item quantity exceeded the number of quantity available']);
                 }
 
                 $record = new OrderItem();
