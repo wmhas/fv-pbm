@@ -1087,11 +1087,14 @@
         });
 
         $('#dispensing_method').change(function(){
-            if($(this).val() == 'Walkin'){
-                $('.Delivery').hide();
-            } else if($(this).val() == 'Delivery'){
-                $('.Delivery').show();
-            }
+            // if($(this).val() == 'Walkin'){
+            //     $('.Delivery').hide();
+            // } else if($(this).val() == 'Delivery'){
+            //     $('.Delivery').show();
+            // }
+            valDis = $(this).val();
+            d = "{{ \Request::segment(2) }}"
+            window.location.href = "{!! url('order') !!}" + "/" + d + "/new_resubmission?sdm=" + valDis;
         });
 
         function calculateQuantity(thisParent, except = [], quantity = null){

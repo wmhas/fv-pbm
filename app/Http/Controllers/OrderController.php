@@ -1162,7 +1162,7 @@ class OrderController extends Controller
         // return redirect()->action('OrderController@new_resubmission', ['order' => $order->id]);
     }
 
-    public function new_resubmission($id)
+    public function new_resubmission(Request $request, $id)
     {
         $states = State::all();
         $hospitals = Hospital::all();
@@ -1176,22 +1176,42 @@ class OrderController extends Controller
         foreach ($items as $item) {
             $location = DB::table('locations')->select('counter','courier')->where('item_id', $item->id)->first();
 
-            if ($order->dispensing_method == "Walkin") {
-                array_push($item_lists, [
-                    'id' => $item->id,
-                    'brand_name' => $item->brand_name,
-                    'code' => $item->item_code,
-                    'quantity' => $location->counter != null ? $location->counter : 0,
-                    'frequency' => $item->frequency_id,
-                ]);
+            if ($request->sdm) {
+                if ($request->sdm == "Walkin") {
+                    array_push($item_lists, [
+                        'id' => $item->id,
+                        'brand_name' => $item->brand_name,
+                        'code' => $item->item_code,
+                        'quantity' => $location->counter != null ? $location->counter : 0,
+                        'frequency' => $item->frequency_id,
+                    ]);
+                } else {
+                    array_push($item_lists, [
+                        'id' => $item->id,
+                        'brand_name' => $item->brand_name,
+                        'code' => $item->item_code,
+                        'quantity' => $location->courier != null ? $location->courier : 0,
+                        'frequency' => $item->frequency_id,
+                    ]);
+                }
             } else {
-                array_push($item_lists, [
-                    'id' => $item->id,
-                    'brand_name' => $item->brand_name,
-                    'code' => $item->item_code,
-                    'quantity' => $location->courier != null ? $location->courier : 0,
-                    'frequency' => $item->frequency_id,
-                ]);
+                if ($order->dispensing_method == "Walkin") {
+                    array_push($item_lists, [
+                        'id' => $item->id,
+                        'brand_name' => $item->brand_name,
+                        'code' => $item->item_code,
+                        'quantity' => $location->counter != null ? $location->counter : 0,
+                        'frequency' => $item->frequency_id,
+                    ]);
+                } else {
+                    array_push($item_lists, [
+                        'id' => $item->id,
+                        'brand_name' => $item->brand_name,
+                        'code' => $item->item_code,
+                        'quantity' => $location->courier != null ? $location->courier : 0,
+                        'frequency' => $item->frequency_id,
+                    ]);
+                }
             }
         }
 
