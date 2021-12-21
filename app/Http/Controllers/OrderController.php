@@ -664,7 +664,9 @@ class OrderController extends Controller
             DB::commit();
 
             if ($request->parent){
-                $parentOrder = "?parent=".$request->get('parent');
+                $parentOrder = "?parent=".$request->get('parent')."&item=added";
+            } else {
+                $parentOrder = "?item=added";
             }
 
             return redirect('order/'.$order_id.'/new_resubmission'.$parentOrder)->with(['status' => true, 'message' => 'Successfully add item']);

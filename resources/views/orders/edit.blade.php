@@ -642,7 +642,7 @@
                                 </div>
                             </div>
                             @php
-                                if (\Request::query('parent')) {
+                                if (\Request::query('item')) {
                                     $disabledm = "disabled";
                                 } else {
                                     $disabledm = "";
