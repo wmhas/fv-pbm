@@ -647,13 +647,31 @@
                                 } else {
                                     $disabledm = "";
                                 }
+
+                                $selected_walk = "";
+                                $selected_del = "";
+
+                                if (\Request::query('sdm')) {
+                                    if (\Request::query('sdm')=="Walkin") {
+                                        $selected_walk = "selected";
+                                    } else {
+                                        $selected_del = "selected";
+                                    }
+                                } else {
+                                    if (!empty($order) && $order->dispensing_method == 'Walkin') {
+                                        $selected_walk = "walk";
+                                    } else {
+                                        $selected_walk = "del";
+                                    }
+                                }
+
                             @endphp
                             <div class="col-4">
                                 <div class="form-group">
                                     <label>Dispensing Method</label>
                                     <select {{ $disabledm }} id="dispensing_method" name="dispensing_method" class="form-control">
-                                        <option value="Walkin" @if (!empty($order) && $order->dispensing_method == 'Walkin') selected @endif>Walk In</option>
-                                        <option value="Delivery" @if (!empty($order) && $order->dispensing_method == 'Delivery') selected @endif>Delivery</option>
+                                        <option value="Walkin" {{ $selected_walk }}>Walk In</option>
+                                        <option value="Delivery" {{ $selected_del }}>Delivery</option>
                                     </select>
                                 </div>
                             </div>
