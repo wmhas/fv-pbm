@@ -182,6 +182,7 @@
                                 @else
                                     <input type="hidden" name="dispensing_method" value="{{ $order->dispensing_method }}">
                                 @endif
+                                <input type="hidden" name="parent" value="{{ \Request::query('parent') }}">
                             @foreach ($order->orderItem as $k => $o_i)
 
                             @php 
@@ -1124,7 +1125,8 @@
             // }
             valDis = $(this).val();
             d = "{{ \Request::segment(2) }}"
-            window.location.href = "{!! url('order') !!}" + "/" + d + "/new_resubmission?sdm=" + valDis;
+            p = "{{ \Request::query('parent') }}"
+            window.location.href = "{!! url('order') !!}" + "/" + d + "/new_resubmission?sdm=" + valDis + "&parent=" + p;
         });
 
         function calculateQuantity(thisParent, except = [], quantity = null){

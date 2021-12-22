@@ -664,7 +664,7 @@ class OrderController extends Controller
             DB::commit();
 
             if ($request->parent){
-                $parentOrder = "?parent=".$request->get('parent')."&item=added";
+                $parentOrder = "?parent=".$request->parent."&item=added";
             } else {
                 $parentOrder = "?item=added";
             }
