@@ -669,6 +669,10 @@ class OrderController extends Controller
                 $parentOrder = "?item=added";
             }
 
+            if ($request->dispensing_method){
+                $parentOrder = $parentOrder."&sdm=".$request->dispensing_method;
+            }
+
             return redirect('order/'.$order_id.'/new_resubmission'.$parentOrder)->with(['status' => true, 'message' => 'Successfully add item']);
 
         } catch (\Exception $e) {
