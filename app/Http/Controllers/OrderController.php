@@ -635,8 +635,13 @@ class OrderController extends Controller
                     DB::rollback();
 
                     if ($request->parent){
-                        $parentOrder = "?parent=".$request->get('parent');
+                        $parentOrder = "?parent=".$request->parent;
                     }
+
+                    if ($request->dispensing_method){
+                        $parentOrder = $parentOrder."&sdm=".$request->dispensing_method;
+                    }
+
                     return redirect('order/'.$order->id.'/new_resubmission'.$parentOrder)->with(['status' => false, 'message' => 'Item quantity exceeded the number of quantity available']);
                 }
 
