@@ -177,6 +177,11 @@
                         @php $total = count($order->orderItem); @endphp
                         @if ($order->orderItem != null)
                             <form id="resubmissionForm" name="resubmissionForm" method="post" action="{{ url('order/store_item_resubmission/') }}">
+                                @if (\Request::query('sdm'))
+                                    <input type="hidden" name="dispensing_method" value="{{ \Request::query('sdm') }}">
+                                @else
+                                    <input type="hidden" name="dispensing_method" value="{{ $order->dispensing_method }}">
+                                @endif
                             @foreach ($order->orderItem as $k => $o_i)
 
                             @php 

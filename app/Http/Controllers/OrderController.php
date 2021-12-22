@@ -625,10 +625,10 @@ class OrderController extends Controller
                 $order_id = $od->id;
 
                 $location = Location::where('item_id', $request->input('item_id')[$i])->first();
-                if ($order->dispensing_method == 'Walkin' && $location->counter >= $request->input('quantity')[$i]) {
+                if ($request->dispensing_method == 'Walkin' && $location->counter >= $request->input('quantity')[$i]) {
                     $location->counter = $location->counter - $request->input('quantity')[$i];
                     $location->save();
-                } elseif ($order->dispensing_method == 'Delivery' && $location->courier >= $request->input('quantity')[$i]) {
+                } elseif ($request->dispensing_method == 'Delivery' && $location->courier >= $request->input('quantity')[$i]) {
                     $location->courier = $location->courier - $request->input('quantity')[$i];
                     $location->save();
                 } else {
