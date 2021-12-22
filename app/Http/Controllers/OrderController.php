@@ -583,7 +583,7 @@ class OrderController extends Controller
             $od->total_amount = $order->total_amount;
             $od->do_number = $this->getDONumber($order->dispensing_by);
             $od->dispense_date = null;
-            $od->dispensing_method = $order->dispensing_method;
+            $od->dispensing_method = $request->dispensing_method;
             $od->rx_interval = 1;
             $od->salesperson_id = $order->sales_person_id;
             $od->batch_id = $order->batch_id;
@@ -609,14 +609,14 @@ class OrderController extends Controller
                 $pre->save();
             }
 
-            if ($order->delivery){
+            if ($request->dispensing_method=="Delivery"){
                 $delivery = new Delivery;
                 $delivery->order_id = $od->id;
-                $delivery->states_id = $order->delivery->states_id;
-                $delivery->address_1 = $order->delivery->address_1;
-                $delivery->address_2 = $order->delivery->address_2;
-                $delivery->postcode = $order->delivery->postcode;
-                $delivery->city = $order->delivery->city;
+                $delivery->states_id = 1;
+                // $delivery->address_1 = $order->delivery->address_1;
+                // $delivery->address_2 = $order->delivery->address_2;
+                // $delivery->postcode = $order->delivery->postcode;
+                // $delivery->city = $order->delivery->city;
                 $delivery->save();
             }
 
@@ -673,6 +673,7 @@ class OrderController extends Controller
 
         } catch (\Exception $e) {
             DB::rollback();
+            dd($e);
         }
     }
 
