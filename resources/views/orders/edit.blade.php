@@ -643,7 +643,7 @@
                             </div>
                             @php
                                 if (\Request::query('item')) {
-                                    $disabledm = "disabled";
+                                    $disabledm = "readonly";
                                 } else {
                                     $disabledm = "";
                                 }
