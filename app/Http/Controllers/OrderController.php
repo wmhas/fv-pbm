@@ -612,11 +612,11 @@ class OrderController extends Controller
             if ($request->dispensing_method=="Delivery"){
                 $delivery = new Delivery;
                 $delivery->order_id = $od->id;
-                $delivery->states_id = 1;
-                // $delivery->address_1 = $order->delivery->address_1;
-                // $delivery->address_2 = $order->delivery->address_2;
-                // $delivery->postcode = $order->delivery->postcode;
-                // $delivery->city = $order->delivery->city;
+                $delivery->states_id = $order->patient->state_id;
+                $delivery->address_1 = $order->patient->address_1;
+                $delivery->address_2 = $order->patient->address_2;
+                $delivery->postcode = $order->patient->postcode;
+                $delivery->city = $order->patient->city;
                 $delivery->save();
             }
 
