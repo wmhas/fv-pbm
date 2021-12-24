@@ -58,7 +58,13 @@
 											JPA/JHEV
 										@endif
 									</td>
-									<td>{{ $batch->patient_status }}</td>
+									<td>
+										@if ($batch->patient_status == 1)
+											{{ "Berpencen" }}
+										@else
+											{{ "Tidak Berpencen" }}
+										@endif
+									</td>
 									<td>{{ $batch->sales_person->name }}</td>
 									<td>
 										<form action="{{ url('/batch/'.$batch->id.'/batch_list') }}" method="POST">
@@ -131,7 +137,13 @@
 											JPA/JHEV
 										@endif	
 									</td>
-									<td>{{ $batch->patient_status }}</td>
+									<td>
+										@if ($batch->patient_status == 1)
+											{{ "Berpencen" }}
+										@else
+											{{ "Tidak Berpencen" }}
+										@endif
+									</td>
 									<td>{{ $batch->sales_person->name }}</td>
 								</tr>
 								@endforeach

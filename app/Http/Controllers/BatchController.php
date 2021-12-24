@@ -61,6 +61,12 @@ class BatchController extends Controller
         $batch_status = 'batching';
         $patient_status = $order->patient->card->type;
 
+        if ($patient_status == "Veteran Berpencen" || $patient_status == "JPA Berpencen") {
+            $patient_status = 1;
+        } else {
+            $patient_status = 0;
+        }
+
         $total_batch = NewBatch::count();
         $batch = NewBatch::where('batch_person', $batch_person)
             ->where('batch_status', 'batching')
@@ -137,5 +143,13 @@ class BatchController extends Controller
                 ->where('batch_status', 'batched')->paginate(5),
             'keyword' => $keyword,
         ]);
+    }
+
+    public function removeOrder() {
+
+    }
+
+    public function deleteBatch() {
+
     }
 }

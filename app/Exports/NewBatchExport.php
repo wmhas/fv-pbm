@@ -52,7 +52,13 @@ class NewBatchExport implements WithColumnFormatting, WithHeadings, FromCollecti
         $this->batch_no = $batch->batch_no;
         $this->batch_person = strtoupper($batch->batch_person);
         $this->submission_date = date_format(date_create($batch->submission_date), 'd/m/Y');
-        $this->patient_status = strtoupper($batch->patient_status);
+
+        if ($batch->patient_status == 1)
+            $this->patient_status = "Berpencen";
+        else 
+            $this->patient_status = "Tidak Berpencen";
+
+        // $this->patient_status = strtoupper($batch->patient_status);
 
         if ($batch->tariff == 3)
             $this->payor = "MINDEF";
@@ -74,6 +80,7 @@ class NewBatchExport implements WithColumnFormatting, WithHeadings, FromCollecti
             'patients.full_name',
             'patients.identification',
             'cards.army_pension',
+            'cards.type',
             'tariffs.name',
             'orders.dispense_date',
             'items.brand_name',
@@ -93,6 +100,7 @@ class NewBatchExport implements WithColumnFormatting, WithHeadings, FromCollecti
             $collection[$k]['PATIENT NAME'] = strtoupper($v->full_name);
             $collection[$k]['NRIC'] = $v->identification;
             $collection[$k]['PENSIONER NUMBER'] = $v->army_pension;
+            $collection[$k]['PATIENT STATUS'] = $v->type;
             $collection[$k]['AGENCY'] = strtoupper($v->name);
             $collection[$k]['QUOTATION DATE'] = date_format(date_create($v->dispense_date), 'd/m/Y');
             $collection[$k]['ITEM'] = strtoupper($v->brand_name);
@@ -114,6 +122,7 @@ class NewBatchExport implements WithColumnFormatting, WithHeadings, FromCollecti
                 'PATIENT NAME',
                 'NRIC',
                 'PENSIONER NUMBER',
+                'PATIENT STATUS',
                 'AGENCY',
                 'QUOTATION DATE',
                 'ITEM',
@@ -127,6 +136,7 @@ class NewBatchExport implements WithColumnFormatting, WithHeadings, FromCollecti
                 'PATIENT NAME',
                 'NRIC',
                 'PENSIONER NUMBER',
+                'PATIENT STATUS',
                 'AGENCY',
                 'QUOTATION DATE',
                 'ITEM',
@@ -140,6 +150,7 @@ class NewBatchExport implements WithColumnFormatting, WithHeadings, FromCollecti
                 'PATIENT NAME',
                 'NRIC',
                 'PENSIONER NUMBER',
+                'PATIENT STATUS',
                 'AGENCY',
                 'QUOTATION DATE',
                 'ITEM',
@@ -153,6 +164,7 @@ class NewBatchExport implements WithColumnFormatting, WithHeadings, FromCollecti
                 'PATIENT NAME',
                 'NRIC',
                 'PENSIONER NUMBER',
+                'PATIENT STATUS',
                 'AGENCY',
                 'QUOTATION DATE',
                 'ITEM',
@@ -166,6 +178,7 @@ class NewBatchExport implements WithColumnFormatting, WithHeadings, FromCollecti
                 'PATIENT NAME',
                 'NRIC',
                 'PENSIONER NUMBER',
+                'PATIENT STATUS',
                 'AGENCY',
                 'QUOTATION DATE',
                 'ITEM',
@@ -179,6 +192,7 @@ class NewBatchExport implements WithColumnFormatting, WithHeadings, FromCollecti
                 'PATIENT NAME',
                 'NRIC',
                 'PENSIONER NUMBER',
+                'PATIENT STATUS',
                 'AGENCY',
                 'QUOTATION DATE',
                 'ITEM',
@@ -192,6 +206,7 @@ class NewBatchExport implements WithColumnFormatting, WithHeadings, FromCollecti
                 'PATIENT NAME',
                 'NRIC',
                 'PENSIONER NUMBER',
+                'PATIENT STATUS',
                 'AGENCY',
                 'QUOTATION DATE',
                 'ITEM',
@@ -205,6 +220,7 @@ class NewBatchExport implements WithColumnFormatting, WithHeadings, FromCollecti
                 'PATIENT NAME',
                 'NRIC',
                 'PENSIONER NUMBER',
+                'PATIENT STATUS',
                 'AGENCY',
                 'QUOTATION DATE',
                 'ITEM',
@@ -241,15 +257,16 @@ class NewBatchExport implements WithColumnFormatting, WithHeadings, FromCollecti
             $sheet->setCellValue('I' .$i, '');
             $sheet->setCellValue('J' .$i, '');
             $sheet->setCellValue('K' .$i, '');
+            $sheet->setCellValue('L' .$i, '');
 
             $sheet->mergeCells('B' . $i . ':D' . $i);
-            $sheet->mergeCells('E' . $i . ':K' . $i);
+            $sheet->mergeCells('E' . $i . ':L' . $i);
 
             $sheet->getStyle('B' . $i)->getFont()->setBold(true);
             $sheet->getStyle('B' . $i)->applyFromArray($right);
         }
 
-        $sheet->getStyle('A8:K8')->getFont()->setBold(true);
+        $sheet->getStyle('A8:L8')->getFont()->setBold(true);
 
         $sheet->setCellValue('B2', 'BATCH NUMBER :');
         $sheet->setCellValue('B3', 'BATCH PERSON :');
@@ -287,10 +304,10 @@ class NewBatchExport implements WithColumnFormatting, WithHeadings, FromCollecti
 
         $lastRow = $sheet->getHighestRow() + 1;
 
-        $sheet->mergeCells('B' . $lastRow . ':J' . $lastRow);
+        $sheet->mergeCells('B' . $lastRow . ':K' . $lastRow);
         $sheet->setCellValue('B' . $lastRow, 'GRAND TOTAL :');
-        $sheet->setCellValue('K' . $lastRow, number_format($this->grand_total, 2));
-        $sheet->getStyle('B' . $lastRow . ':K' . $lastRow)->getFont()->setBold(true);
+        $sheet->setCellValue('L' . $lastRow, number_format($this->grand_total, 2));
+        $sheet->getStyle('B' . $lastRow . ':L' . $lastRow)->getFont()->setBold(true);
         $sheet->getStyle('B' . $lastRow)->applyFromArray($right);
         
         $sheet->getColumnDimension('B')->setAutoSize(true);
@@ -303,6 +320,7 @@ class NewBatchExport implements WithColumnFormatting, WithHeadings, FromCollecti
         $sheet->getColumnDimension('I')->setAutoSize(true);
         $sheet->getColumnDimension('J')->setAutoSize(true);
         $sheet->getColumnDimension('K')->setAutoSize(true);
+        $sheet->getColumnDimension('L')->setAutoSize(true);
     }
 
     public function merge($sheet, $start_row, $end_row, $num) {
@@ -314,14 +332,15 @@ class NewBatchExport implements WithColumnFormatting, WithHeadings, FromCollecti
         $sheet->mergeCells('F' .$start_row. ':F' .$end_row);
         $sheet->mergeCells('G' .$start_row. ':G' .$end_row);
         $sheet->mergeCells('H' .$start_row. ':H' .$end_row);
-        $sheet->mergeCells('K' .$start_row. ':K' .$end_row);
+        $sheet->mergeCells('I' .$start_row. ':I' .$end_row);
+        $sheet->mergeCells('L' .$start_row. ':L' .$end_row);
 
         $sheet->setCellValue('B'.$start_row, $num); 
     }
 
     public function columnFormats(): array {
         return [
-            'K' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
+            'L' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
         ];
     }
 }

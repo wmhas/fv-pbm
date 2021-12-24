@@ -59,11 +59,12 @@
                                     <th style="width: 10px">No</th>
                                     <th>DO Number</th>
                                     <th>Patient Detail</th>
-                                    <th>Agency</th>
+                                    <th>Status</th>
                                     <th>Quotation Date</th>
                                     <th>Item</th>
                                     <th>Qty</th>
                                     <th>Total Price (RM)</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -84,7 +85,7 @@
                                         <small class="text-muted">(IC: {{ $order->patient->identification }})</small><br>
                                         <small class="text-muted">(Pensioner No : {{ $order->patient->card->army_pension }})</small>
                                     </td>
-                                    <td> @if (!empty($order->patient->tariff_id)) {{ $order->patient->tariff->name }} @else MINDEF @endif</td>
+                                    <td>{{ $order->patient->card->type }}</td>
                                     <td>{{ date("d/m/Y", strtotime($order->dispense_date))}}</td>
                                     <td class="p-0">                                        
                                         <table class="table table-borderless">
@@ -109,6 +110,7 @@
                                         </table>
                                     </td>
                                     <td class="text-right">{{ number_format((float)$order->total_amount, 2, '.', '') }}</td>
+                                    <td><button class="btn btn-danger"><i class="mdi mdi-trash-can"></i> Remove</button></td>
                                 </tr>
                                 @endforeach
                                 <tr>
