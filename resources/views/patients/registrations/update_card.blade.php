@@ -59,10 +59,10 @@
                                         <label>Status</label>
                                         <select class="form-control" name="card_type">
                                             <option  value="">--Please Select--</option>
-                                            <option  value="Veteran Berpencen" @if (!empty($patient) && $patient->card->type == 'Veteran Berpencen') selected @endif>Pensionable Veteran</option>
-                                            <option value="Veteran Tidak Berpencen"  @if (!empty($patient) && $patient->card->type == 'Veteran Tidak Berpencen') selected @endif>Non-Pensionable Veteran</option>
+                                            <option  value="Veteran Berpencen" @if (!empty($patient) && $patient->card->type == 'Veteran Berpencen') selected @endif>Veteran Berpencen</option>
+                                            <option value="Veteran Tidak Berpencen"  @if (!empty($patient) && $patient->card->type == 'Veteran Tidak Berpencen') selected @endif>Veteran Tidak Berpencen</option>
                                             {{-- <option value="Tidak Berpencen" @if (!empty($patient) && $patient->card->type == 'Tidak Berpencen') selected @endif>Non-Pensionable</option> --}}
-                                            <option value="Berpencen" @if (!empty($patient) && $patient->card->type == 'Berpencen') selected @endif >Pensionable</option>
+                                            <option value="JPA Berpencen" @if (!empty($patient) && $patient->card->type == 'JPA Berpencen') selected @endif >JPA Berpencen</option>
                                         </select>
                                     </div>
                                 </div>
@@ -76,6 +76,7 @@
                                             <option value="Force 136" @if (!empty($patient) && $patient->card->army_type == 'Force 136') selected @endif>Force 136</option>
                                             <option value="Tentera British" @if (!empty($patient) && $patient->card->army_type == 'Tentera British') selected @endif>Tentera British</option>
                                             <option value="Sarawak Rangers" @if (!empty($patient) && $patient->card->army_type == 'Sarawak Rangers') selected @endif>Sarawak Rangers</option>
+                                            <option value="JPA" @if (!empty($patient) && $patient->card->army_type == 'JPA') selected @endif>JPA</option>
                                         </select>
                                     </div>
                                 </div>

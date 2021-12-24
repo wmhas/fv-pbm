@@ -112,10 +112,10 @@
                                 @else
                                     <select  name="card_type" class="form-control" placeholder="Relation" required >
                                         <option  value="">--Please Select--</option>
-                                        <option  value="Veteran Berpencen">Pensionable Veteran</option>
-                                        <option value="Veteran Tidak Berpencen">Non-Pensionable Veteran</option>
+                                        <option  value="Veteran Berpencen">Veteran Berpencen</option>
+                                        <option value="Veteran Tidak Berpencen">Veteran Tidak Berpencen</option>
                                         {{-- <option value="Tidak Berpencen">Non-Pensionable</option> --}}
-                                        <option value="Berpencen">Pensionable</option>
+                                        <option value="JPA Berpencen">JPA Berpencen</option>
                                     </select>
                                 @endif
                             </div>
@@ -139,6 +139,7 @@
                                         <option value="Force 136">Force 136</option>
                                         <option value="Tentera British">British Army</option>
                                         <option value="Sarawak Rangers">Sarawak Rangers</option>
+                                        <option value="JPA">JPA</option>
                                     </select>
                                 @endif
                             </div>

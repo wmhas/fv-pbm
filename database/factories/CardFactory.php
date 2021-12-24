@@ -14,6 +14,6 @@ $factory->define(Card::class, function (Faker $faker) {
         'card_ic_no' => $faker->numerify('############'),
         'card_name' => $faker->name(),
         'card_type' => $faker->randomElement(['PENSIONABLE VETERAN', 'NON-PENSIONABLE VETERAN']), 
-        'army_type' => $faker->randomElement(['ATM', 'Kerahan Sepenuh Masa', 'Force 136', 'Tentera British', 'Sarawak Rangers']),          
+        'army_type' => $faker->randomElement(['ATM', 'Kerahan Sepenuh Masa', 'Force 136', 'Tentera British', 'Sarawak Rangers', 'JPA']),          
      ];
 });
