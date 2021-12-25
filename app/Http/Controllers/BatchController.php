@@ -11,6 +11,7 @@ use App\Models\NewBatch;
 use App\Models\BatchOrder;
 use App\Exports\NewBatchExport;
 use Excel;
+use Carbon\Carbon;
 
 class BatchController extends Controller
 {
@@ -28,8 +29,8 @@ class BatchController extends Controller
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
         return view('batch.index', [
             'roles' => $roles,
-            'batching' => NewBatch::where('batch_status', 'batching')->with(['orders', 'sales_person'])->paginate(5),
-            'batched' => NewBatch::where('batch_status', 'batched')->with(['orders', 'sales_person'])->paginate(5),
+            'batching' => NewBatch::where('batch_status', 'batching')->where('deleted_at', null)->with(['orders', 'sales_person'])->paginate(5),
+            'batched' => NewBatch::where('batch_status', 'batched')->where('deleted_at', null)->with(['orders', 'sales_person'])->paginate(5),
             'keyword' => $keyword,
         ]);
     }
@@ -72,6 +73,7 @@ class BatchController extends Controller
             ->where('batch_status', 'batching')
             ->where('tariff', $tariff)
             ->where('patient_status', $patient_status)
+            ->where('deleted_at', NULL)
             ->first();
         
         if ($batch == NULL) {
@@ -133,23 +135,48 @@ class BatchController extends Controller
 
     public function search_batch(Request $request)
     {
-        $keyword = $request->get('keyword');
-        $keyword = preg_replace("/[^a-zA-Z0-9 ]/", "", $keyword);
-        $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
-        return view('batch.index', [
-            'roles' => $roles,
-            'unbatches' => Batch::where('batch_status', 'unbatch')->paginate(5),
-            'batches' => Batch::where('batch_no', 'like', '%' . strtoupper($keyword) . '%')
-                ->where('batch_status', 'batched')->paginate(5),
-            'keyword' => $keyword,
-        ]);
+        // $keyword = $request->get('keyword');
+        // $keyword = preg_replace("/[^a-zA-Z0-9 ]/", "", $keyword);
+        // $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
+        // return view('batch.index', [
+        //     'roles' => $roles,
+        //     'unbatches' => Batch::where('batch_status', 'unbatch')->paginate(5),
+        //     'batches' => Batch::where('batch_no', 'like', '%' . strtoupper($keyword) . '%')
+        //         ->where('batch_status', 'batched')->paginate(5),
+        //     'keyword' => $keyword,
+        // ]);
     }
 
-    public function removeOrder() {
+    public function remove_order($batch, $order) {
+        $order = Order::where('id', $order)->first();
+        $order->status_id = 4;
+        $order->batch_id = null;
+        $order->update();
 
+        $batch = NewBatch::where('id', $batch)->first();
+        
+        if (sizeOf($batch->orders) == 0) {
+            $batch->deleted_at = Carbon::now();
+            $batch->update();
+            
+            return redirect('/batch'); 
+        }
+        
+        return redirect('/batch/' . $batch->id . '/batch_list');
     }
 
-    public function deleteBatch() {
+    public function delete_batch($batch) {
+        $orders = Order::where('batch_id', $batch)->get();
+        foreach($orders as $order) {
+            $order->status_id = 4;
+            $order->batch_id = null;
+            $order->update();
+        }
 
+        $batch = NewBatch::where('id', $batch)->first();
+        $batch->deleted_at = Carbon::now();
+        $batch->update();
+        
+        return redirect('/batch'); 
     }
 }

@@ -71,6 +71,7 @@
 											@csrf
 											<button  class="btn btn-dark" type="submit">Batch This Order</button>
 										</form>
+										<a href="{{ route('batch.delete', ['batch'=>$batch->id]) }}" class="btn btn-danger" type="submit"><i class="mdi mdi-trash-can"></i> Delete Batch</a>
 									</td>
 								</tr>
 								@endforeach

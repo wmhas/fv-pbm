@@ -64,7 +64,9 @@
                                     <th>Item</th>
                                     <th>Qty</th>
                                     <th>Total Price (RM)</th>
-                                    <th>Action</th>
+                                    @if ($batch->batch_status == "batching")
+                                        <th>Action</th>
+                                    @endif
                                 </tr>
                             </thead>
                             <tbody>
@@ -110,7 +112,9 @@
                                         </table>
                                     </td>
                                     <td class="text-right">{{ number_format((float)$order->total_amount, 2, '.', '') }}</td>
-                                    <td><button class="btn btn-danger"><i class="mdi mdi-trash-can"></i> Remove</button></td>
+                                    @if ($batch->batch_status == "batching")
+                                        <td><a href="{{ route('batch.remove', ['batch'=>$batch->id, 'order'=>$order->id]) }}" class="btn btn-danger"><i class="mdi mdi-trash-can"></i> Remove</a></td>
+                                    @endif
                                 </tr>
                                 @endforeach
                                 <tr>
@@ -132,6 +136,7 @@
                             </form>
                         @endif
                         @if ($batch->batch_status == "batching")
+                            <a href="{{ route('batch.delete', ['batch'=>$batch->id]) }}" class="btn btn-danger"><i class="mdi mdi-trash-can"></i> Delete Batch</a>
                             <form action="{{ url('/batch/'.$batch->id.'/batch_list') }}" method="POST" class="ml-auto">
                                 @csrf
                                 <button  class="btn btn-primary" type="submit" data-toggle="tooltip" title="Batch This Order">Batch This Order</button>

@@ -138,6 +138,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/{batch}/batch_list', 'BatchController@changeStatus');
         Route::get('/search/batched', 'BatchController@search_batch');
         Route::post('/export-excel', 'BatchController@export_batch_excel')->name('batch.export.excel');
+        Route::get('/{batch}/delete_batch', 'BatchController@delete_batch')->name('batch.delete');
+        Route::get('/{batch}/remove_order/{order}', 'BatchController@remove_order')->name('batch.remove');
     });
 
     // AJAX
