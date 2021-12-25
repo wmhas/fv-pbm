@@ -135,16 +135,15 @@ class BatchController extends Controller
 
     public function search_batch(Request $request)
     {
-        // $keyword = $request->get('keyword');
-        // $keyword = preg_replace("/[^a-zA-Z0-9 ]/", "", $keyword);
-        // $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
-        // return view('batch.index', [
-        //     'roles' => $roles,
-        //     'unbatches' => Batch::where('batch_status', 'unbatch')->paginate(5),
-        //     'batches' => Batch::where('batch_no', 'like', '%' . strtoupper($keyword) . '%')
-        //         ->where('batch_status', 'batched')->paginate(5),
-        //     'keyword' => $keyword,
-        // ]);
+        $keyword = $request->get('keyword');
+        $keyword = preg_replace("/[^a-zA-Z0-9 ]/", "", $keyword);
+        $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
+        return view('batch.index', [
+            'roles' => $roles,
+            'batching' => NewBatch::where('batch_status', 'batching')->where('deleted_at', null)->with(['orders', 'sales_person'])->paginate(5),
+            'batched' => NewBatch::where('batch_status', 'batched')->where('deleted_at', null)->where('batch_no', 'like', '%' . strtoupper($keyword) . '%')->with(['orders', 'sales_person'])->paginate(5),
+            'keyword' => $keyword,
+        ]);
     }
 
     public function remove_order($batch, $order) {
