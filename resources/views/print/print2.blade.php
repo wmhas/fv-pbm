@@ -127,7 +127,7 @@
             </td>
         </tr>
     </table>
-    <div style="border: 1px solid black; height: 400px; margin-top: 20px;">
+    <div style="border: 1px solid black; height: 380px; margin-top: 20px;">
         <table style="width: 100%; border-collapse: collapse;">
             <tr>
                 <th style="border-bottom: 1px solid black;">QTY</th>
@@ -177,7 +177,7 @@
         </tr>
         <tr>
             <td>
-                <table style="width: 90%; border: 1px solid black; margin-top: 20px;">
+                <table style="width: 90%; border: 1px solid black; margin-top: 10px;">
                     <tr>
                         <th style="text-align: left;" colspan="2">SST SUMMARY</th>
                         <th style="text-align: right;">AMOUNT (RM)</th>
@@ -192,7 +192,9 @@
                 </table>
             </td>
             <td colspan="2">
-                <div style="border-bottom: 1px dotted black; margin-top: 30px;"></div>
+                <div style="border-bottom: 1px dotted black; margin-top: 10px; padding-bottom: 10px;">
+                    <img src="Cop Rasumi.jpg" alt="Cop Rasumi" width="90px" height="90px" style="margin-left: 180px;">
+                </div>
             </td>
         </tr>
         <tr>
