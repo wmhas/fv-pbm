@@ -185,7 +185,7 @@
                                     </tbody>
                                 </table>
                             </div>
-                            @if (!$rx_expireds->isEmpty())
+                            @if ($rx_expireds)
                             <div class="text-center">
                             <form action="{{ url('home/order_end') }}" method="get" > 
                                 <button type="submit" class="btn btn-link" > See More... </button>
