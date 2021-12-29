@@ -48,7 +48,13 @@ class HomeController extends Controller
             ->join('patients as C', 'C.id', 'B.patient_id')->skip(0)->take(4)
             ->get();
 
-        $rx_expireds = Prescription::whereDate('rx_end', $today)->get();
+        $rx_expireds1 = Prescription::whereDate('rx_end', $today)->get();
+        $rx_expireds = [];
+        foreach ($rx_expireds1 as $rx) {
+            if ($rx->order != NULL) {
+                array_push($rx_expireds, $rx);
+            }
+        }
 
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
         if ($roles->role_id == 1) {
