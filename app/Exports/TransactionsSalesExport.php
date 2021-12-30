@@ -84,33 +84,107 @@ class TransactionsSalesExport implements FromCollection, WithHeadings, WithStyle
 
                 $address = "";
                 
-                if (!empty($v->patient->address_1))
-                    $address .= $v->patient->address_1;
-                if (!empty($v->patient->address_2))
-                    $address .= " " .$v->patient->address_2;
-                if (!empty($v->patient->address_3))
-                    $address .= " " .$v->patient->address_3;
-                if (!empty($v->patient->postcode))
-                    $address .= " " .$v->patient->postcode;
-                if (!empty($v->patient->city))
-                    $address .= " " .$v->patient->city;
-                if (!empty($v->patient->state->name))
-                    $address .= " " .$v->patient->state->name;
-
-                $orders[$k]['ORDER ID'] = $v->id;
+                if (!empty($v->patient)) {
+                    if (!empty($v->patient->address_1))
+                        $address .= $v->patient->address_1;
+                    if (!empty($v->patient->address_2))
+                        $address .= " " .$v->patient->address_2;
+                    if (!empty($v->patient->address_3))
+                        $address .= " " .$v->patient->address_3;
+                    if (!empty($v->patient->postcode))
+                        $address .= " " .$v->patient->postcode;
+                    if (!empty($v->patient->city))
+                        $address .= " " .$v->patient->city;
+                    if (!empty($v->patient->state))
+                        if (!empty($v->patient->state->name))
+                            $address .= " " .$v->patient->state->name;
+                }
+                
+                if (!empty($v->id)) {
+                    $orders[$k]['ORDER ID'] = $v->id;
+                } else {
+                    $orders[$k]['ORDER ID'] = "";
+                }
+                
                 $orders[$k]['NO'] = $num;
-                $orders[$k]['DISPENSING DATE']=$v->dispense_date;
-                $orders[$k]['DO NUMBER']=$v->do_number;
-                $orders[$k]['IC']=$v->patient->identification;
-                $orders[$k]['FULLANME']=$v->patient->full_name;
+
+                if (!empty($v->dispense_date)) {
+                    $orders[$k]['DISPENSING DATE'] = $v->dispense_date;
+                } else {
+                    $orders[$k]['DISPENSING DATE'] = "";
+                }
+                
+                if (!empty($v->do_number)) {
+                    $orders[$k]['DO NUMBER'] = $v->do_number;
+                } else {
+                    $orders[$k]['DO NUMBER'] = "";
+                }
+                
+                if (!empty($v->patient)) {
+                    if (!empty($v->patient->identification)) {
+                        $orders[$k]['IC'] = $v->patient->identification;
+                    } else {
+                        $orders[$k]['IC'] = "";
+                    }    
+                } else {
+                    $orders[$k]['IC'] = "";
+                }
+                
+                if (!empty($v->patient)) {
+                    if (!empty($v->patient->full_name)) {
+                        $orders[$k]['FULLANME'] = $v->patient->full_name;
+                    } else {
+                        $orders[$k]['FULLANME'] = "";
+                    }
+                } else {
+                    $orders[$k]['FULLANME'] = "";
+                }
+                
                 $orders[$k]['ADDRESS']=trim($address);
-                $orders[$k]['RX NUMBER']=$v->prescription->rx_number;
-                $orders[$k]['PANEL']=$v->patient->tariff->name;
+
+                if (!empty($v->prescription)) {
+                    if (!empty($v->prescription->rx_number)) {
+                        $orders[$k]['RX NUMBER'] = $v->prescription->rx_number;
+                    } else {
+                        $orders[$k]['RX NUMBER'] = "";
+                    }
+                } else {
+                    $orders[$k]['RX NUMBER'] = "";
+                }
+                
+                
+                if (!empty($v->patient)) {
+                    if (!empty($v->patient->tariff)) {
+                        if (!empty($v->patient->tariff->name)) {
+                            $orders[$k]['PANEL'] = $v->patient->tariff->name;
+                        } else {
+                            $orders[$k]['PANEL'] = "";
+                        }
+                    } else {
+                        $orders[$k]['PANEL'] = "";
+                    }
+                } else {
+                    $orders[$k]['PANEL'] = "";
+                }
+
                 $orders[$k]['CLINIC']=$v->prescription->clinic->name;
                 $orders[$k]['DISPENSING METHOD']=$v->dispensing_method;
                 $orders[$k]['TOTAL AMOUNT'] = $v->total_amount;
-                $orders[$k]['STATUS'] = $v->patient->card->type;
 
+                if (!empty($v->patient)) {
+                    if (!empty($v->patient->card)) {
+                        if (!empty($v->patient->card->type)) {
+                            $orders[$k]['STATUS'] = $v->patient->card->type;
+                        } else {
+                            $orders[$k]['STATUS'] = "";
+                        }
+                    } else {
+                        $orders[$k]['STATUS'] = "";
+                    }
+                } else {
+                    $orders[$k]['STATUS'] = "";
+                }
+                
                 $num++;
 
                 $this->grand_total += $v->total_amount;

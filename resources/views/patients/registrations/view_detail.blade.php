@@ -245,7 +245,9 @@
                     <div class="row">
                         <div class="col">
                             <a href="{{ route('patient') }}" >BACK</a>
-                            <a href="{{ url('/order/' . $patient->id . '/create') }}" class="btn btn-primary float-right">Create Order</a>
+                            @if (!$patient->tariff_id == null)
+                                <a href="{{ url('/order/' . $patient->id . '/create') }}" class="btn btn-primary float-right">Create Order</a>
+                            @endif
                         </div>
                         {{-- @if ($patient->confirmation == 1)
                             <div class="col-md-auto">
