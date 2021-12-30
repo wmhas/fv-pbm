@@ -174,6 +174,17 @@ class OrderController extends Controller
                 ]);
             }
         }
+        $orderItemSelected = [];
+        foreach ($order->orderItem as $key => $value) {
+            $orderItemSelected[] = DB::table('items as a')
+            ->join('frequencies as b', 'b.id', 'a.frequency_id')
+            ->join('formulas as c', 'c.id', 'a.formula_id')
+            ->select('a.id', 'a.selling_price as selling_price', 'a.selling_uom as selling_uom', 'a.instruction', 'a.indikasi as indication', 'a.formula_id', 'b.name', 'b.id as freq_id', 'c.value')
+            ->where('a.id', $value->items->id)
+            ->first();
+        }
+
+
         // Get rx_start and rx_end from table prescription
         $prescription = Prescription::select('rx_start', 'rx_end')->where('order_id', $order->id)->first();
 
@@ -182,7 +193,7 @@ class OrderController extends Controller
         $frequencies = Frequency::all();
         $resubmission = 0;
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
-        return view('orders.edit', compact('states', 'hospitals', 'clinics', 'salesPersons', 'order', 'items', 'item_lists', 'frequencies', 'roles', 'resubmission','duration'));
+        return view('orders.edit', compact('states', 'hospitals', 'clinics', 'salesPersons', 'order', 'items', 'item_lists', 'frequencies', 'roles', 'resubmission','duration', 'orderItemSelected'));
     }
 
     public function store_edit($id, Request $request)

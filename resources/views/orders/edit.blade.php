@@ -796,7 +796,7 @@
                         <div class="card-tools">
                             <div class="form-group">
                                 <div class="custom-control custom-switch">
-                                    <input type="checkbox" class="custom-control-input" id="NSD" checked>
+                                    <input type="checkbox" class="custom-control-input" id="NSD" @if (\Request::get('parent') !== NULL) checked @endif>
                                     <label class="custom-control-label" for="NSD">Set One Off Supply</label>
                                     <input type="hidden" name="rx_interval" id="rx_interval"
                                         value="1">
@@ -883,7 +883,7 @@
                                     <input type="date" class="form-control" name="rx_end_date" @if (!empty($order->prescription)) value="{{ $order->prescription->rx_end }}" @endif required>
                                 </div>
                             </div>
-                            <div class="col-md-4" id="colNSD" style="display: none;">
+                            <div class="col-md-4" id="colNSD" @if (\Request::get('parent') !== NULL) style="display: none;" @endif>
                                 <div class="form-group">
                                     <label>Next Supply Date</label>
                                     <input type="date" class="form-control" id="rx_supply_date" name="rx_supply_date" @if (!empty($order->prescription)) value="{{ $order->prescription->next_supply_date }}" @endif>
