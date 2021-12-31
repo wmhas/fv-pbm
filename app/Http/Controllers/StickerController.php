@@ -65,7 +65,7 @@ class StickerController extends Controller
                 }
 
                 $item = new \stdClass();
-                $item->name = $orderItem->items->generic_name.' ('.$orderItem->items->brand_name.')';
+                $item->name = $orderItem->items->generic_name;
                 $item->instruction = $instruction;
                 $item->indication = $orderItem->items->indikasi;
                 $item->quantity_uom_duration = $orderItem->quantity.' '.$sellingUom.' ('.$orderItem->duration.' HARI)';
