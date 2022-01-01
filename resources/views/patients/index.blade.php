@@ -28,7 +28,7 @@
                                     <div class="col-md-2">
                                         <select class="form-control" name="method" required>
                                             <option value="">Please Choose</option>
-                                            <option value="identification" <?php if ($method == "identification") echo "selected"; ?>>Search By IC / Passport</option>
+                                            <option value="identification" selected>Search By IC / Passport</option>
                                             <option value="army_pension" <?php if ($method == "army_pension") echo "selected"; ?>>Search By Army No.</option>
                                         </select>
                                     </div>
