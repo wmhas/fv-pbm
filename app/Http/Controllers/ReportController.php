@@ -416,6 +416,7 @@ class ReportController extends Controller
 
     public function export_sales_item_excel(Request $request)
     {
+        ini_set('max_execution_time', 0);
         if($request->filter == 1){
             return $this->search_report_sales($request);
         }
