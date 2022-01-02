@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 
 class AjaxController extends Controller
 {
-    public function getDONumber($dispensing_by)
+    public function getDONumberOld($dispensing_by)
     {
         if($dispensing_by == 'FVKL'){
             $count_order = DB::table('orders')->where('dispensing_by', 'FVKL')->where('do_number', '!=', '')->count();
@@ -22,6 +22,13 @@ class AjaxController extends Controller
         }
         $number = str_pad($count_order + 1, 6, "0", STR_PAD_LEFT);
         $do_number = $code.$number;
+        return response()->json($do_number);
+    }
+
+    public function getDONumber($dispensing_by)
+    {
+        $count_order = DB::table('orders')->where('do_number', '!=', '')->count();
+        $do_number = str_pad($count_order + 1, 8, "0", STR_PAD_LEFT);
         return response()->json($do_number);
     }
 
