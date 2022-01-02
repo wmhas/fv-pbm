@@ -48,7 +48,8 @@ class StickerController extends Controller
             $data->patient_name = $order->patient->full_name;
             $data->salutation = $order->patient->salutation;
             $data->identification = str_replace('-', '', substr($order->patient->identification, 6, 12));
-            $data->do_date = (new Carbon($order->updated_at))->translatedFormat('Y-m-d');
+            // $data->do_date = (new Carbon($order->updated_at))->translatedFormat('Y-m-d H:i:s');    
+            $data->do_date = (new Carbon())->translatedFormat('Y-m-d');
             $data->items = [];
 
             foreach ($order->orderitem AS $orderItem) {
