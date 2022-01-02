@@ -582,7 +582,7 @@ class OrderController extends Controller
     {
         $count_order = DB::table('orders')->where('do_number', '!=', '')->count();
         $do_number = str_pad($count_order + 1, 8, "0", STR_PAD_LEFT);
-        return response()->json($do_number);
+        return $do_number;
     }
 
     public function store_item_resubmission(Request $request)
