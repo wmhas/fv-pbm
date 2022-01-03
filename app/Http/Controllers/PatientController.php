@@ -188,7 +188,13 @@ class PatientController extends Controller
             }
         }
 
-        $exists = Card::whereNull('deleted_at')->where("ic_no", $request->identification)->orWhere("army_pension", $request->army_pension)->first();
+        $exists = Card::where(function ($query) use ($request) {
+            $query->where("ic_no", $request->identification)->whereNull('deleted_at');
+        })
+            ->orWhere(function ($query) use ($request) {
+                $query->where("army_pension", $request->army_pension)->whereNull('deleted_at');
+            })
+            ->first();
 
         if ($exists) {
             return redirect()->action('PatientController@create_card',[
