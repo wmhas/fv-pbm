@@ -71,7 +71,7 @@ class PatientController extends Controller
     {
         if (!($request->update)) {
 
-            $exists = Patient::where("identification", $request->identification)->first();
+            $exists = Patient::where("identification", $request->identification)->whereNull('deleted_at')->first();
 
             if ($exists) {
                 return redirect()->action('PatientController@create', [
@@ -135,7 +135,7 @@ class PatientController extends Controller
     public function create_card($id)
     {
         $patient = Patient::find($id);
-        $cardchecking = Card::where('ic_no', $patient->identification)->first();
+        $cardchecking = Card::where('ic_no', $patient->identification)->whereNull('deleted_at')->first();
         // dd($cardchecking);
         $card = Card::all();
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
@@ -188,10 +188,7 @@ class PatientController extends Controller
             }
         }
 
-        // DB::enableQueryLog();
-        $exists = Card::where("ic_no", $request->identification)->orWhere("army_pension", $request->army_pension)->first();
-        // dump(DB::getQueryLog());
-        // dump($exists);
+        $exists = Card::whereNull('deleted_at')->where("ic_no", $request->identification)->orWhere("army_pension", $request->army_pension)->first();
 
         if ($exists) {
             return redirect()->action('PatientController@create_card',[
@@ -200,10 +197,8 @@ class PatientController extends Controller
             ]);
         }
 
-        // dd("hahaha");
-
         if ($request->relation == 'CardOwner') {
-            $cardchecking = Card::where('ic_no', $patient->identification)->first();
+            $cardchecking = Card::where('ic_no', $patient->identification)->whereNull('deleted_at')->first();
             if (!empty($cardchecking)) {
                 $patient->card_id = $cardchecking->id;
                 $patient->confirmation = 1;
@@ -225,7 +220,7 @@ class PatientController extends Controller
                 $card->remark = $request->remark;
                 $card->save();
 
-                $latest_card = Card::where('patient_id', $patient->id)->first();
+                $latest_card = Card::where('patient_id', $patient->id)->whereNull('deleted_at')->first();
 
                 $patient->card_id = $latest_card->id;
                 $patient->confirmation = 1;
@@ -244,7 +239,7 @@ class PatientController extends Controller
             $card->remark = $request->remark;
             $card->save();
 
-            $latest_card = Card::latest()->first();
+            $latest_card = Card::latest()->whereNull('deleted_at')->first();
             $patient->card_id = $latest_card->id;
             $patient->confirmation = 1;
             $patient->relation = $request->relation;
