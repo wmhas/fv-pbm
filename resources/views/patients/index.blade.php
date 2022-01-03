@@ -115,8 +115,13 @@
                                             </td>
                                             <td>
                                                 <div class="mt-2 d-flex justify-content-center">
-                                                    <a id="deletePatient" href="#" data-id="{{ $patient->id }}"><i
-                                                            class="mdi mdi-trash-can"></i></a>
+                                                    {{-- <a id="deletePatient" href="#" data-id="{{ $patient->id }}"><i
+                                                            class="mdi mdi-trash-can"></i></a> --}}
+                                                    <form action="{{ route('patient.delete') }}" method="post">
+                                                        @csrf
+                                                        <input type="hidden" name="patient_id" value="{{ $patient->id }}">
+                                                        <button type="submit" class="btn btn-link"><i class="mdi mdi-trash-can"></i></button>
+                                                    </form>
                                                 </div>
                                             </td>
                                             <td>

@@ -414,6 +414,7 @@
                                 <td>
                                     @if (isset($_GET['parent']))
                                         @if ($order->resubmission==1)
+                                        {{ dd($order->orderitem->toArray()) }}
                                         <input type="text" class="form-control" style="width:70px;"
                                             value="{{ number_format($order->orderitem->sum('price'), 2) }}" disabled>
                                         @else

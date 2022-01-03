@@ -188,7 +188,10 @@ class PatientController extends Controller
             }
         }
 
+        // DB::enableQueryLog();
         $exists = Card::where("ic_no", $request->identification)->orWhere("army_pension", $request->army_pension)->first();
+        // dump(DB::getQueryLog());
+        // dump($exists);
 
         if ($exists) {
             return redirect()->action('PatientController@create_card',[
@@ -196,6 +199,8 @@ class PatientController extends Controller
                 'error'=> 'Identification or Army Pension Number already exist!'
             ]);
         }
+
+        // dd("hahaha");
 
         if ($request->relation == 'CardOwner') {
             $cardchecking = Card::where('ic_no', $patient->identification)->first();
@@ -221,6 +226,7 @@ class PatientController extends Controller
                 $card->save();
 
                 $latest_card = Card::where('patient_id', $patient->id)->first();
+
                 $patient->card_id = $latest_card->id;
                 $patient->confirmation = 1;
                 $patient->relation = $request->relation;
@@ -614,7 +620,7 @@ class PatientController extends Controller
         return redirect()->action('PatientController@index')->with(['status' => true, 'message' => 'Register Sucessfully !']);
     }
 
-    public function delete(Request $request){
+    public function delete_old(Request $request){
         $messages = [
             'id.required' => 'ID required!'
         ];
@@ -632,15 +638,28 @@ class PatientController extends Controller
         try {
 
             $patient = Patient::find($request->id);
-            $deleted = false;
+            $deletedPatient = false;
+            $deletedCard = false;
 
             if ($patient) {
                 $patient->deleted_at = date('Y-m-d H:i:s');
-                $deleted = $patient->save();
+                $deletedPatient = $patient->save();
+
+                $relative = Patient::where('card_id', $patient->card_id)->whereNull('deleted_at')->get();
+
+                if (empty($relative)) {
+                    $card = Card::find($patient->card_id);
+                    $card->deleted_at = date('Y-m-d H:i:s');
+                    $deletedCard = $card->save();
+                }
             }
         
-            if ($deleted){
+            if ($deletedPatient && !$deletedCard){
                 return response()->json("success", 200);
+            }
+
+            if ($deletedPatient && $deletedCard){
+                return response()->json("success2", 200);
             }
 
             return response()->json("Patient not exist!", 404);
@@ -648,6 +667,35 @@ class PatientController extends Controller
         } catch (\Exception $e){
             return response()->json($e->getMessage(), 500);
         }
+    }
+
+    public function delete(Request $request)
+    {
+        $patient = Patient::where('id', $request->patient_id)->first();
+        $patient->deleted_at = date('Y-m-d H:i:s');
+        $patient->save();
+
+        if (!empty($patient->card)) {
+            $relatives = Patient::where('card_id', $patient->card->id)->whereNull('deleted_at')->get();
+            if (sizeOf($relatives) == 0) {
+                $card = Card::where('id', $patient->card->id)->first();
+                $card->deleted_at = date('Y-m-d H:i:s');
+                $card->save();
+            }
+        }
+
+        $method = "";
+        $keyword = "";
+        $cards = null;
+        $patients = Patient::with('card')->whereNull('deleted_at')->orderBy('id', 'desc')->paginate(10);
+
+        $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
+        
+        return redirect()
+            ->route('patient')
+            ->with([
+                'patients' => $patients, 'cards' => $cards, 'roles' => $roles, 'method' => $method, 'keyword' => $keyword
+            ]);
     }
 
 }
