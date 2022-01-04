@@ -191,15 +191,15 @@
                                             </td>
                                             <td>
                                                 <div class="form-group">
-                                                    <input {{ $disabled }} type="hidden" name="hidden_duration[]" id="hidden_duration" value="{{ $duration }}">
+                                                    <input {{ $disabled }} type="hidden" name="hidden_duration[]" id="hidden_duration" value="{{ $o_i->duration }}">
                                                     <input {{ $disabled }} type="number" name="duration[]" id="duration" class="value_d form-control"
-                                                        style="width:60px;" value="{{ $duration }}">
+                                                        style="width:60px;" value="{{ $o_i->duration }}">
                                                 </div>
                                             </td>
                                             <td>
                                                 <div class="form-group">
                                                     <input {{ $disabled }} type="text" name="quantity[]" id="quantity" class="quantity form-control"
-                                                        style="width:70px;" value="{{ $quantity }}">
+                                                        style="width:70px;" value="{{ $o_i->quantity }}">
                                                 </div>
                                             </td>
                                             <td>
@@ -211,7 +211,7 @@
                                             <td>
                                                 <div class="form-group">
                                                     <input {{ $disabled }} type="text" name="price[]" id="price" class="form-control"
-                                                        style="width:70px;" value="{{ $total_price }}">
+                                                        style="width:70px;" value="{{ $o_i->price }}">
                                                 </div>
                                             </td>
                                             <td style="vertical-align: middle;">
@@ -414,7 +414,6 @@
                                 <td>
                                     @if (isset($_GET['parent']))
                                         @if ($order->resubmission==1)
-                                        {{ dd($order->orderitem->toArray()) }}
                                         <input type="text" class="form-control" style="width:70px;"
                                             value="{{ number_format($order->orderitem->sum('price'), 2) }}" disabled>
                                         @else
