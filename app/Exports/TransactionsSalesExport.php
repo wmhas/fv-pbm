@@ -45,13 +45,13 @@ class TransactionsSalesExport implements FromCollection, WithHeadings, WithStyle
             ->join("order_items","order_items.order_id","=","orders.id")
             ->join("items","items.id","=","order_items.myob_product_id")
             ->join("states","states.id","=","patients.state_id")
-            ->whereIn('orders.status_id', [4, 5]);
+            ->whereIn('orders.status_id', [3, 4, 5]);
 
-        $order = Order::whereIn('orders.status_id', [4, 5]);
+        $order = Order::whereIn('orders.status_id', [3, 4, 5]);
         
         if ($this->startDate && $this->endDate){
-            $order = $order->whereDate('orders.created_at', '>=', $this->startDate)
-                    ->whereDate('orders.created_at', '<=', $this->endDate);
+            $order = $order->whereDate('orders.dispense_date', '>=', $this->startDate)
+                    ->whereDate('orders.dispense_date', '<=', $this->endDate);
         }
 
         // $order = $order->select("orders.id",
@@ -67,7 +67,7 @@ class TransactionsSalesExport implements FromCollection, WithHeadings, WithStyle
         //     DB::raw("(CASE WHEN orders.status_id = 4 THEN 'Complete Order' ELSE 'Batch Order' END) as status"),
         // )->orderBy('orders.created_at', 'DESC');
 
-        $order->orderBy('orders.created_at', 'DESC');
+        $order->orderBy('orders.dispense_date', 'DESC');
 
         if ($this->page) {
             $order = $order->paginate(10, ['*'], 'page', $this->page);

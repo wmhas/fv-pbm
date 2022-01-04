@@ -45,13 +45,13 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
             ->join("order_items","order_items.order_id","=","orders.id")
             ->join("items","items.id","=","order_items.myob_product_id")
             ->join("states","states.id","=","patients.state_id")
-            ->whereIn('orders.status_id', [4, 5]);
+            ->whereIn('orders.status_id', [3, 4, 5]);
 
         if ($this->startDate && $this->endDate){
-            $order = $order->whereDate('orders.created_at', '>=', $this->startDate)
-                    ->whereDate('orders.created_at', '<=', $this->endDate);
+            $order = $order->whereDate('orders.dispense_date', '>=', $this->startDate)
+                    ->whereDate('orders.dispense_date', '<=', $this->endDate);
         } else {
-            $order = $order->whereDate('orders.created_at', Carbon::today());
+            $order = $order->whereDate('orders.dispense_date', Carbon::today());
         }
 
         $order = $order->select("orders.id",
@@ -76,7 +76,7 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
             "items.selling_price as unit_price",
             "order_items.price as total_price",
             "cards.type as type",
-        )->orderBy('orders.created_at','DESC');
+        )->orderBy('orders.dispense_date','DESC');
 
         if ($this->page) {
             $order = $order->paginate(10, ['*'], 'page', $this->page);

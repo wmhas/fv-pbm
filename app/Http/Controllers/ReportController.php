@@ -72,10 +72,10 @@ class ReportController extends Controller
             // ->orderBy('orders.created_at', 'DESC')
             // ->paginate(10, ['*'], 'page', $page);
 
-        $orders = Order::whereIn('orders.status_id', [4, 5])
-            ->whereDate('orders.created_at', '>=', $startDate)
-            ->whereDate('orders.created_at', '<=', $endDate)
-            ->orderBy('orders.created_at', 'DESC')
+        $orders = Order::whereIn('orders.status_id', [3, 4, 5])
+            ->whereDate('orders.dispense_date', '>=', $startDate)
+            ->whereDate('orders.dispense_date', '<=', $endDate)
+            ->orderBy('orders.dispense_date', 'DESC')
             ->paginate(10, ['*'], 'page', $page);
 
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
@@ -106,10 +106,10 @@ class ReportController extends Controller
             // ->orderBy('orders.created_at', 'DESC')
             // ->paginate(10, ['*'], 'page', $page);
 
-            $orders = Order::whereIn('orders.status_id', [4, 5])
-                ->whereDate('orders.created_at', '>=', $request->startDate)
-                ->whereDate('orders.created_at', '<=', $request->endDate)
-                ->orderBy('orders.created_at', 'DESC')
+            $orders = Order::whereIn('orders.status_id', [3, 4, 5])
+                ->whereDate('orders.dispense_date', '>=', $request->startDate)
+                ->whereDate('orders.dispense_date', '<=', $request->endDate)
+                ->orderBy('orders.dispense_date', 'DESC')
                 ->paginate(10, ['*'], 'page', $page);
         }
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
@@ -359,10 +359,11 @@ class ReportController extends Controller
         $startDate = $endDate = date('Y-m-d');
 
         if ($startDate != null && $endDate != null) {
-            $orders = Order::whereIn('orders.status_id', [4, 5])
-                ->whereDate('orders.created_at', '>=', $startDate)
-                ->whereDate('orders.created_at', '<=', $endDate)
-                ->orderBy('orders.created_at', 'DESC')
+            
+            $orders = Order::whereIn('orders.status_id', [3, 4, 5])
+                ->whereDate('orders.dispense_date', '>=', $startDate)
+                ->whereDate('orders.dispense_date', '<=', $endDate)
+                ->orderBy('orders.dispense_date', 'DESC')
                 ->paginate(10, ['*'], 'page', $page);
         }
 
@@ -400,10 +401,10 @@ class ReportController extends Controller
         $page = $request->page;
 
         if ($request->startDate != null && $request->endDate != null) {
-            $orders = Order::whereIn('orders.status_id', [4, 5])
-                ->whereDate('orders.created_at', '>=', $request->startDate)
-                ->whereDate('orders.created_at', '<=', $request->endDate)
-                ->orderBy('orders.created_at', 'DESC')
+            $orders = Order::whereIn('orders.status_id', [3, 4, 5])
+                ->whereDate('orders.dispense_date', '>=', $request->startDate)
+                ->whereDate('orders.dispense_date', '<=', $request->endDate)
+                ->orderBy('orders.dispense_date', 'DESC')
                 ->paginate(10, ['*'], 'page', $page);
         }
 
