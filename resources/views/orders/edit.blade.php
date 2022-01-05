@@ -723,10 +723,9 @@
                                     <label>DO Number</label>
                                     @if ($resubmission == 1)
                                         <input type="text" class="form-control" id="do_number" name="do_number"
-                                            value="{{ ($order->do_number)?$order->do_number:$do_number }}" readonly>
+                                            value="{{ ($order->do_number)?$order->do_number:$do_number }}">
                                     @else
-                                        <input type="text" class="form-control" id="do_number" name="do_number" @if (!empty($order)) value="{{ $order->do_number }}" @endif
-                                            readonly>
+                                        <input type="text" class="form-control" id="do_number" name="do_number" @if (!empty($order)) value="{{ $order->do_number }}" @endif>
                                     @endif
                                 </div>
                             </div>
@@ -893,10 +892,10 @@
                         <div class="card-tools">
                             <div class="form-group">
                                 <div class="custom-control custom-switch">
-                                    <input type="checkbox" class="custom-control-input" id="NSD" @if (\Request::get('parent') !== NULL) checked @endif>
+                                    <input type="checkbox" class="custom-control-input" id="NSD" @if (\Request::get('parent') !== NULL) checked @else  @if ($order->rx_interval == 1) checked @endif @endif>
                                     <label class="custom-control-label" for="NSD">Set One Off Supply</label>
                                     <input type="hidden" name="rx_interval" id="rx_interval"
-                                        value="1">
+                                        value="{{ $order->rx_interval }}">
                                 </div>
                             </div>
                         </div>

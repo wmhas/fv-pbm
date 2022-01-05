@@ -245,6 +245,7 @@ class OrderController extends Controller
             $prescription->rx_number = $request->input('rx_number');
             $prescription->rx_start = $request->input('rx_start_date');
             $prescription->rx_end = $request->input('rx_end_date');
+            $prescription->next_supply_date = $request->input('rx_supply_date');
             $prescription->save();
         } else {
             $order->prescription->hospital_id = $request->input('rx_hospital');
@@ -252,6 +253,7 @@ class OrderController extends Controller
             $order->prescription->rx_number = $request->input('rx_number');
             $order->prescription->rx_start = $request->input('rx_start_date');
             $order->prescription->rx_end = $request->input('rx_end_date');
+            $order->prescription->next_supply_date = $request->input('rx_supply_date');
             $order->prescription->save();
         }
         $prescription = Prescription::where('order_id', $id)->first();

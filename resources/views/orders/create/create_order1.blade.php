@@ -77,7 +77,7 @@
                             <div class="col-4">
                                 <div class="form-group">
                                     <label>DO Number</label>
-                                    <input type="text" id="do_number" class="form-control" name="do_number" @if (!empty($order)) value="{{ $order->do_number }}" @endif required readonly>
+                                    <input type="text" id="do_number" class="form-control" name="do_number" @if (!empty($order)) value="{{ $order->do_number }}" @endif required>
                                 </div>
                             </div>
                             <div class="col-4">
