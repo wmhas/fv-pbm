@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Models\Item;
+use App\Models\Location;
 use App\Models\Frequency;
 use App\Models\Formula;
 use Illuminate\Support\Facades\DB;
@@ -109,6 +110,16 @@ class ItemController extends Controller
                 'purchase_uom' => $request->purchase_uom,
                 'purchase_quantity' => $request->purchase_quantity,
             ]);
+
+            Location::create([
+                'item_id' => $item->id,
+                'store' => 0,
+                'counter' => 0,
+                'staff' => 0,
+                'courier' => 0,
+                'on_hand' => 0
+            ]);
+
 
             return redirect()->action('ItemController@view', ['item' => $item, 'roles' => $roles])->with(['status' => true, 'message' => 'Successfully added this item!']);
         }

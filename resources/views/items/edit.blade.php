@@ -106,7 +106,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Selling Price (RM)</label>
-                                    <input type="text" class="form-control" name="selling_price" @if (!empty($item)) value="{{ number_format($item->selling_price, 2) }}" @endif>
+                                    <input type="number" class="form-control" name="selling_price" @if (!empty($item)) value="{{ $item->selling_price }}" @endif step="0.01">
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -118,7 +118,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Purchase Price (RM)</label>
-                                    <input type="text" class="form-control" name="purchase_price" @if (!empty($item)) value="{{ number_format($item->purchase_price, 2) }}" @endif>
+                                    <input type="number" class="form-control" name="purchase_price" @if (!empty($item)) value="{{ $item->purchase_price }}" @endif step="0.01">
                                 </div>
                             </div>
                             <div class="col-md-6">
