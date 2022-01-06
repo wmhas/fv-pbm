@@ -512,13 +512,14 @@ class PatientController extends Controller
         $card->remark = $request->remark;
         $card->save();
 
-        $patient=Patient::where('id', $patient->card->patient->id)->first();
-        $patient->salutation= $request->salutation;
-        $patient->full_name = $request->full_name;
-        $patient->identification  = $request->identification;
-        $patient->save();
-
-
+        if (!empty($patient->card->patient)) {
+            $patient=Patient::where('id', $patient->card->patient->id)->first();
+            $patient->salutation= $request->salutation;
+            $patient->full_name = $request->full_name;
+            $patient->identification  = $request->identification;
+            $patient->save();
+        }
+        
         return redirect()->action('PatientController@update_card_owner', [
             'patient'  => $patient,
             'relations' => $relation = Patient::where('card_id', $patient->card_id)->get(),
