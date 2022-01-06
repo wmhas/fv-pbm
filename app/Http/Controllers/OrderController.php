@@ -198,7 +198,14 @@ class OrderController extends Controller
 
     public function store_edit($id, Request $request)
     {
+        $exists = Order::where('do_number', $request->input('do_number'))->whereNull('deleted_at')->count();
         $order = Order::where('id', $id)->first();
+
+        if ($exists > 0) {
+            if ($order->do_number != $request->input('do_number'))
+                return back()->with(['status' => false, 'message' => 'DO number ' . $request->input('do_number') . ' already exist.']);
+        }
+            
         $order->salesperson_id = $request->input('salesperson');
         if ($order->status_id == 1)
             $order->status_id = $order->status_id + 1;
@@ -322,6 +329,11 @@ class OrderController extends Controller
 
     public function store_dispense($patient, $order_id, Request $request)
     {
+        $exists = Order::where('do_number', $request->input('do_number'))->whereNull('deleted_at')->count();
+
+        if ($exists > 0)
+            return back()->with(['status' => false, 'message' => 'DO number ' . $request->input('do_number') . ' already exist.']);
+
         $order = Order::where('id', $order_id)->first();
         $order->salesperson_id = $request->input('salesperson');
         $order->do_number = $request->input('do_number');
@@ -612,7 +624,7 @@ class OrderController extends Controller
             $od = new Order; 
             $od->patient_id = $order->patient_id;
             $od->total_amount = $order->total_amount;
-            $od->do_number = $this->getDONumber($order->dispensing_by);
+            $od->do_number = "";
             $od->dispense_date = null;
             $od->dispensing_method = $request->dispensing_method;
             $od->rx_interval = 1;
@@ -1089,14 +1101,22 @@ class OrderController extends Controller
 
     public function resubmission(Request $request, $id)
     {
+        $exists = Order::where('do_number', $request->input('do_number'))->whereNull('deleted_at')->count();
+        $prev_order = Order::where('id', $id)->first();
+        $order = Order::find($prev_order->id);
+
+        if ($exists > 0) {
+            if ($order->do_number != $request->input('do_number'))
+                return back()->with(['status' => false, 'message' => 'DO number ' . $request->input('do_number') . ' already exist.']);
+        }
 
         if ($request->parent){
             $up = Order::where('id', (int) $request->parent)->update(['rx_interval'=>3]);
         }
         
-        $prev_order = Order::where('id', $id)->first();
+        
         $items = Item::all();  
-        $order = Order::find($prev_order->id);
+        
         if (!empty($prev_order)) {
             $order->patient_id = $prev_order->patient_id;
             $order->status_id = 2;
@@ -1289,7 +1309,8 @@ class OrderController extends Controller
         $duration = floor(abs(strtotime($order->prescription->rx_end) - strtotime($order->prescription->next_supply_date)) / (60 * 60 * 24));
 
         $do = Order::select('do_number')->orderBy('do_number','DESC')->first();
-        $do_number = (int)$do->do_number+1;
+        // $do_number = (int)$do->do_number+1;
+        $do_number = $this->getDONumber($order->dispensing_by);
 
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
         return view('orders.edit', compact(
