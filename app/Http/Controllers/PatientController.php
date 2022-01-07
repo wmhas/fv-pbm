@@ -136,7 +136,19 @@ class PatientController extends Controller
     {
         $patient = Patient::find($id);
         $cardchecking = Card::where('ic_no', $patient->identification)->whereNull('deleted_at')->first();
-        // dd($cardchecking);
+
+        if (!empty($cardchecking)) {
+            $cardchecking->patient_id = $id;
+            $cardchecking->save();
+
+            $patient->card_id = $cardchecking->id;
+            $patient->confirmation = 1;
+            $patient->relation = "CardOwner";
+            $patient->save();
+
+            return redirect()->action('PatientController@update_card_owner', ['patient' => $id])->with(['status' => true, 'message' => 'Patient successfully registered using the existing card. Please update the card.']);
+        }
+
         $card = Card::all();
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
         return view('patients.registrations.create_2', ['patient' => $patient, 'cards' => $card, 'cardchecking' => $cardchecking, 'roles' => $roles]);
@@ -495,7 +507,7 @@ class PatientController extends Controller
         return view('patients.registrations.update_card', [
             'patient'  => $patient,
             'roles' => $roles,
-            'relations' => $relation = Patient::where('card_id', $patient->card_id)->get()
+            'relations' => $relation = Patient::where('card_id', $patient->card_id)->whereNull('deleted_at')->get()
         ]);
     }
 
