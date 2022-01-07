@@ -38,7 +38,7 @@ class ItemExport implements FromCollection, WithHeadings, WithStyles, WithColumn
                 if ($orderItem->order) {
                     $quantity += $orderItem->quantity;
                     $price += $orderItem->price;
-                    $date = (new Carbon($orderItem->order->updated_at))->translatedFormat('d-m-Y');
+                    $date = (new Carbon($orderItem->order->dispense_date))->translatedFormat('d-m-Y');
                 }
             }
             $data[] = [
