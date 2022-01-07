@@ -59,6 +59,7 @@
                                             <th>Dispense Date</th>
                                             <th>DO Number</th>
                                             <th>IC</th>
+                                            <th>Army No</th>
                                             <th>Fullname</th>
                                             <th>Address</th>
                                             <th>Clinic</th>
@@ -95,6 +96,7 @@
                                                 <td>{{ $order->dispense_date }}</td>
                                                 <td>{{ $order->do_number }}</td>
                                                 <td>{{ $order->patient->identification }}</td>
+                                                <td>{{ $order->patient->card->army_pension }}</td>
                                                 <td>{{ $order->patient->full_name }}</td>
                                                 <td>{{ $address }}</td>
                                                 <td>{{ $order->prescription->clinic->name }}</td>

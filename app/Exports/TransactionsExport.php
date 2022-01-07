@@ -58,6 +58,7 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
             "orders.dispense_date as dates",
             "orders.do_number", 
             "patients.identification as ic",
+            "cards.army_pension as army",
             "patients.full_name",
             "patients.address_1",
             "patients.address_2",
@@ -113,6 +114,7 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
                 $orders[$k]['DATE']=$v->dates;
                 $orders[$k]['DO NUMBER']=$v->do_number;
                 $orders[$k]['IC']=$v->ic;
+                $orders[$k]['ARMY NO']=$v->army;
                 $orders[$k]['FULLANME']=$v->full_name;
                 $orders[$k]['ADDRESS']= trim($address);
                 $orders[$k]['CLINIC']=$v->clinic;
@@ -145,6 +147,7 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
                 'DISPENSE DATE',
                 'DO NUMBER',
                 'IC',
+                'ARMY NO',
                 'FULLNAME',
                 'ADDRESS',
                 'CLINIC',
@@ -164,6 +167,7 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
                 'DISPENSE DATE',
                 'DO NUMBER',
                 'IC',
+                'ARMY NO',
                 'FULLNAME',
                 'ADDRESS',
                 'CLINIC',
@@ -183,6 +187,7 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
                 'DISPENSE DATE',
                 'DO NUMBER',
                 'IC',
+                'ARMY NO',
                 'FULLNAME',
                 'ADDRESS',
                 'CLINIC',
@@ -202,6 +207,7 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
                 'DISPENSE DATE',
                 'DO NUMBER',
                 'IC',
+                'ARMY NO',
                 'FULLNAME',
                 'ADDRESS',
                 'CLINIC',
@@ -221,6 +227,7 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
                 'DISPENSE DATE',
                 'DO NUMBER',
                 'IC',
+                'ARMY NO',
                 'FULLNAME',
                 'ADDRESS',
                 'CLINIC',
@@ -246,7 +253,7 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
             )
         );
 
-        $sheet->getStyle('A5:Q5')->getFont()->setBold(true);
+        $sheet->getStyle('A5:R5')->getFont()->setBold(true);
 
         $last_row = $sheet->getHighestRow();
         $current_row = 6;
@@ -270,7 +277,7 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
         $this->merge($sheet, $start_row, $end_row, $num);
 
         for ($i = 1; $i < 5; $i++) {
-            for ($j = 'A'; $j < 'R'; $j++) {
+            for ($j = 'A'; $j < 'S'; $j++) {
                 $sheet->setCellValue($j.$i, '');
             }
         }
@@ -302,14 +309,15 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
         $sheet->getColumnDimension('O')->setAutoSize(true);
         $sheet->getColumnDimension('P')->setAutoSize(true);
         $sheet->getColumnDimension('Q')->setAutoSize(true);
+        $sheet->getColumnDimension('R')->setAutoSize(true);
 
         $lastRow = $sheet->getHighestRow() + 1;
 
-        $sheet->getStyle('B' . $lastRow . ':O' . $lastRow)->getFont()->setBold(true);
+        $sheet->getStyle('B' . $lastRow . ':P' . $lastRow)->getFont()->setBold(true);
         $sheet->getStyle('B' . $lastRow)->applyFromArray($right);
-        $sheet->mergeCells('B' . $lastRow . ':N' . $lastRow);
+        $sheet->mergeCells('B' . $lastRow . ':O' . $lastRow);
         $sheet->setCellValue('B' . $lastRow, 'GRAND TOTAL :');
-        $sheet->setCellValue('O' . $lastRow, $this->grand_total);
+        $sheet->setCellValue('P' . $lastRow, $this->grand_total);
     }
 
     public function merge($sheet, $start_row, $end_row, $num) {
@@ -323,8 +331,9 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
         $sheet->mergeCells('H' .$start_row. ':H' .$end_row);
         $sheet->mergeCells('I' .$start_row. ':I' .$end_row);
         $sheet->mergeCells('J' .$start_row. ':J' .$end_row);
-        $sheet->mergeCells('P' .$start_row. ':P' .$end_row);
+        $sheet->mergeCells('K' .$start_row. ':K' .$end_row);
         $sheet->mergeCells('Q' .$start_row. ':Q' .$end_row);
+        $sheet->mergeCells('R' .$start_row. ':R' .$end_row);
 
         $sheet->setCellValue('B'.$start_row, $num); 
     }
@@ -332,8 +341,8 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
     public function columnFormats(): array
     {
         return [
-            'N' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
             'O' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
+            'P' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
         ];
     }
 }

@@ -129,6 +129,20 @@ class TransactionsSalesExport implements FromCollection, WithHeadings, WithStyle
                 } else {
                     $orders[$k]['IC'] = "";
                 }
+
+                if (!empty($v->patient)) {
+                    if (!empty($v->patient->card)) {
+                        if (!empty($v->patient->card->army_pension)) {
+                            $orders[$k]['ARMY NO'] = $v->patient->card->army_pension;
+                        } else {
+                            $orders[$k]['ARMY NO'] = "";
+                        }
+                    } else {
+                        $orders[$k]['ARMY NO'] = "";
+                    }    
+                } else {
+                    $orders[$k]['ARMY NO'] = "";
+                }
                 
                 if (!empty($v->patient)) {
                     if (!empty($v->patient->full_name)) {
@@ -203,6 +217,7 @@ class TransactionsSalesExport implements FromCollection, WithHeadings, WithStyle
                 'DISPENSING DATE',
                 'DO NUMBER',
                 'IC',
+                'ARMY NO',
                 'FULLNAME',
                 'ADDRESS',
                 'RX NUMBER',
@@ -219,6 +234,7 @@ class TransactionsSalesExport implements FromCollection, WithHeadings, WithStyle
                 'DISPENSING DATE',
                 'DO NUMBER',
                 'IC',
+                'ARMY NO',
                 'FULLNAME',
                 'ADDRESS',
                 'RX NUMBER',
@@ -235,6 +251,7 @@ class TransactionsSalesExport implements FromCollection, WithHeadings, WithStyle
                 'DISPENSING DATE',
                 'DO NUMBER',
                 'IC',
+                'ARMY NO',
                 'FULLNAME',
                 'ADDRESS',
                 'RX NUMBER',
@@ -251,6 +268,7 @@ class TransactionsSalesExport implements FromCollection, WithHeadings, WithStyle
                 'DISPENSING DATE',
                 'DO NUMBER',
                 'IC',
+                'ARMY NO',
                 'FULLNAME',
                 'ADDRESS',
                 'RX NUMBER',
@@ -267,6 +285,7 @@ class TransactionsSalesExport implements FromCollection, WithHeadings, WithStyle
                 'DISPENSING DATE',
                 'DO NUMBER',
                 'IC',
+                'ARMY NO',
                 'FULLNAME',
                 'ADDRESS',
                 'RX NUMBER',
@@ -289,11 +308,11 @@ class TransactionsSalesExport implements FromCollection, WithHeadings, WithStyle
             )
         );
 
-        $sheet->getStyle('A5:N5')->getFont()->setBold(true);
+        $sheet->getStyle('A5:O5')->getFont()->setBold(true);
         $sheet->getColumnDimension('A')->setVisible(false);
 
         for ($i = 1; $i < 5; $i++) {
-            for ($j = 'A'; $j < 'O'; $j++) {
+            for ($j = 'A'; $j < 'P'; $j++) {
                 $sheet->setCellValue($j.$i, '');
             }
         }
@@ -322,20 +341,21 @@ class TransactionsSalesExport implements FromCollection, WithHeadings, WithStyle
         $sheet->getColumnDimension('L')->setAutoSize(true);
         $sheet->getColumnDimension('M')->setAutoSize(true);
         $sheet->getColumnDimension('N')->setAutoSize(true);
+        $sheet->getColumnDimension('O')->setAutoSize(true);
 
         $lastRow = $sheet->getHighestRow() + 1;
 
-        $sheet->getStyle('B' . $lastRow . ':L' . $lastRow)->getFont()->setBold(true);
+        $sheet->getStyle('B' . $lastRow . ':M' . $lastRow)->getFont()->setBold(true);
         $sheet->getStyle('B' . $lastRow)->applyFromArray($right);
-        $sheet->mergeCells('B' . $lastRow . ':K' . $lastRow);
+        $sheet->mergeCells('B' . $lastRow . ':L' . $lastRow);
         $sheet->setCellValue('B' . $lastRow, 'GRAND TOTAL :');
-        $sheet->setCellValue('L' . $lastRow, $this->grand_total);
+        $sheet->setCellValue('M' . $lastRow, $this->grand_total);
     }
 
     public function columnFormats(): array
     {
         return [
-            'L' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
+            'M' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
         ];
     }
 }
