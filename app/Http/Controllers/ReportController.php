@@ -162,7 +162,7 @@ class ReportController extends Controller
             ->with(['prescription', 'patient'])
             ->where('rx_interval', '>', '1')
             ->where('total_amount', '!=', '0')
-            ->whereIn('status_id', [4, 5]);
+            ->whereIn('status_id', [3, 4, 5]);
 
         if ($searchType === 'do_no' && $keyword) {
             $orders->where('do_number', 'like', '%' . $keyword . '%');
@@ -261,7 +261,7 @@ class ReportController extends Controller
             ->where('b.myob_product_id', $item->id)
             ->whereDate('a.dispense_date', '>=', $request->startDate)
             ->whereDate('a.dispense_date', '<=', $request->endDate)
-            ->whereIn('a.status_id', [4,5])
+            ->whereIn('a.status_id', [3,4,5])
             ->whereNull('a.deleted_at')
             ->whereNull('a.return_timestamp')
             ->whereNull('b.deleted_at')
@@ -284,7 +284,7 @@ class ReportController extends Controller
             ->where('b.myob_product_id', $request->item_id)
             ->whereDate('a.dispense_date', '>=', $request->startDate)
             ->whereDate('a.dispense_date', '<=', $request->endDate)
-            ->whereIn('a.status_id', [4,5])
+            ->whereIn('a.status_id', [3,4,5])
             ->whereNull('a.deleted_at')
             ->whereNull('a.return_timestamp')
             ->whereNull('b.deleted_at')
