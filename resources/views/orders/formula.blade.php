@@ -44,9 +44,8 @@
                 quantity = parseFloat(quantity);
             }
 
-            var sum = quantity * unit_price;
-
             ceilQ = Math.ceil(quantity.toFixed(2));
+            var sum = ceilQ * unit_price;
 
             if (!except.includes('quantity')) {
                 parseFloat(thisParent.find("input#quantity").val(ceilQ));
@@ -94,9 +93,8 @@
                 quantity = parseFloat(quantity);
             }
 
-            var sum = quantity * unit_price;
-
             ceilQ = Math.ceil(quantity.toFixed(2));
+            var sum = ceilQ * unit_price;
 
             if (!except.includes('quantity')) {
                 parseFloat(thisParent.find("input#u_quantity").val(ceilQ));

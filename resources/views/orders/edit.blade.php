@@ -1147,7 +1147,7 @@
                                     </td>
                                     <td>
                                         <div class="form-group">
-                                            <input type="number" name="dose_quantity" id="u_dose_quantity"
+                                            <input type="text" name="dose_quantity" id="u_dose_quantity"
                                                    class="u_value_dq form-control" style="width:60px;">
                                         </div>
                                     </td>
@@ -1263,9 +1263,8 @@
                 quantity = parseFloat(quantity);
             }
 
-            var sum = quantity * unit_price;
-
             ceilQ = Math.ceil(quantity.toFixed(2));
+            var sum = ceilQ * unit_price;
 
             if (!except.includes('quantity')) {
                 parseFloat(thisParent.find("input#quantity").val(ceilQ));
@@ -1313,9 +1312,10 @@
                 quantity = parseFloat(quantity);
             }
 
-            var sum = quantity * unit_price;
+            
 
             ceilQ = Math.ceil(quantity.toFixed(2));
+            var sum = ceilQ * unit_price;
 
             if (!except.includes('quantity')) {
                 parseFloat(thisParent.find("input#u_quantity").val(ceilQ));
