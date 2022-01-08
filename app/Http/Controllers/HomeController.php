@@ -90,6 +90,8 @@ class HomeController extends Controller
                 break;
         }
 
+        $patients = $patients->whereNull('deleted_at');
+
         $patients = $patients
             ->with('card')
             ->limit(500)
