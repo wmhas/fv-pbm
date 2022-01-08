@@ -79,6 +79,8 @@ class TransactionsSalesExport implements FromCollection, WithHeadings, WithStyle
 
         $num = 1;
 
+        $this->grand_total = 0;
+
         if (count($order)>0){
             foreach ($order as $k => $v) {
 
@@ -181,9 +183,31 @@ class TransactionsSalesExport implements FromCollection, WithHeadings, WithStyle
                     $orders[$k]['PANEL'] = "";
                 }
 
-                $orders[$k]['CLINIC']=$v->prescription->clinic->name;
-                $orders[$k]['DISPENSING METHOD']=$v->dispensing_method;
-                $orders[$k]['TOTAL AMOUNT'] = $v->total_amount;
+                if (!empty($v->prescription)) {
+                    if (!empty($v->prescription->clinic)) {
+                        if (!empty($v->prescription->clinic->name)) {
+                            $orders[$k]['CLINIC'] = $v->prescription->clinic->name;
+                        } else {
+                            $orders[$k]['CLINIC'] = "";
+                        }
+                    } else {
+                        $orders[$k]['CLINIC'] = "";
+                    }
+                } else {
+                    $orders[$k]['CLINIC'] = "";
+                }
+
+                if (!empty($v->dispensing_method)) {
+                    $orders[$k]['DISPENSING METHOD'] = $v->dispensing_method;
+                } else {
+                    $orders[$k]['DISPENSING METHOD'] = "";
+                }
+
+                if (!empty($v->total_amount)) {
+                    $orders[$k]['TOTAL AMOUNT'] = $v->total_amount;
+                } else {
+                    $orders[$k]['TOTAL AMOUNT'] = "";
+                }
 
                 if (!empty($v->patient)) {
                     if (!empty($v->patient->card)) {

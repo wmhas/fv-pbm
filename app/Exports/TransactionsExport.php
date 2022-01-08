@@ -45,7 +45,9 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
             ->join("order_items","order_items.order_id","=","orders.id")
             ->join("items","items.id","=","order_items.myob_product_id")
             ->join("states","states.id","=","patients.state_id")
-            ->whereIn('orders.status_id', [3, 4, 5]);
+            ->whereIn('orders.status_id', [3, 4, 5])
+            ->whereNull('orders.deleted_at')
+            ->whereNull('order_items.deleted_at');
 
         if ($this->startDate && $this->endDate){
             $order = $order->whereDate('orders.dispense_date', '>=', $this->startDate)
@@ -89,6 +91,7 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
         $orders = [];
 
         $num = 1;
+        $this->grand_total = 0;
 
         if (count($order)>0){
 
