@@ -1131,10 +1131,10 @@
                                     </td>
                                     <td>
                                         <div class="form-group">
-                                            <select name="frequency" id="u_frequency" class="u_value_f form-control">
+                                            <select name="frequency" id="u_frequency" class="u_value_f form-control" required>
                                                 <option value="0">-</option>
                                                 @foreach ($frequencies as $freq)
-                                                    <option value="{{ $freq->value }}"  >{{ $freq->name }}</option>
+                                                    <option value="{{ $freq->id }}" >{{ $freq->name }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
