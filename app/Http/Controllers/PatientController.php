@@ -560,7 +560,7 @@ class PatientController extends Controller
     {
         // dd($request->relation);
 
-        $exists = Patient::where("identification", $request->identification)->first();
+        $exists = Patient::where("identification", $request->identification)->whereNull('deleted_at')->first();
 
         if ($exists) {
             return redirect()->action('PatientController@register_relation',[
