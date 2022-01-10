@@ -318,7 +318,7 @@ class PatientController extends Controller
         $patient->save();
 
         if($patient->relation == "CardOwner"){
-            $card=Card::where('patient_id',$patient->id)->first();
+            $card=Card::where('id',$patient->card_id)->first();
             $card->salutation = $request->salutation;
             $card->name = $request->full_name;
             $card->ic_no = $request->identification;
