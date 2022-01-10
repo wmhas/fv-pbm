@@ -246,7 +246,7 @@
                     </tr>
                     <tr>
                         <td><b>NRIC</b></td>
-                        <td>: {{ $order->patient->card->patient->identification }}</td>
+                        <td>: {{ $order->patient->card->ic_no }}</td>
                     </tr>
                     <tr>
                         <td><b>Phone</b></td>
