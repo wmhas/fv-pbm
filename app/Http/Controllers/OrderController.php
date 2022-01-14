@@ -749,10 +749,10 @@ class OrderController extends Controller
         $order = Order::where('id', $order_item->order_id)->first();
         $location = Location::where('item_id', $order_item->myob_product_id)->first();
         if ($order->dispensing_method == 'Walkin' && $location->counter >= $request->input('quantity')) {
-            $location->counter = $location->counter - $request->input('quantity');
+            $location->counter = $location->counter - $request->input('quantity') + $order_item->quantity;
             $location->save();
         } elseif ($order->dispensing_method == 'Delivery' && $location->courier >= $request->input('quantity')) {
-            $location->courier = $location->courier - $request->input('quantity');
+            $location->courier = $location->courier - $request->input('quantity') + $order_item->quantity;
             $location->save();
         } else {
             return redirect()->action('OrderController@create_orderEntry', ['patient' => $order->patient_id, 'order_id', $order->id])->with(['status' => false, 'message' => 'Item quantity exceeded the number of quantity available']);
@@ -771,6 +771,15 @@ class OrderController extends Controller
         $item = Item::find($order_item->myob_product_id);
         $item->frequency_id = $request->input('frequency');
         $item->save();
+
+        $stock = new Stock();
+        $stock->item_id = $order_item->myob_product_id;
+        $stock->quantity = $order_item->quantity;
+        $stock->balance = 0;
+        $stock->source = 'edit';
+        $stock->source_id = $order_item->id;
+        $stock->source_date = Carbon::now()->format('Y-m-d');
+        $stock->save();
 
         $stock = new Stock();
         $stock->item_id = $request->input('item_id');
@@ -863,7 +872,7 @@ class OrderController extends Controller
             $location->save();
 
             $stock = new Stock();
-            $stock->item_id = $oi->item_id;
+            $stock->item_id = $oi->myob_product_id;
             $stock->quantity = $oi->quantity;
             $stock->balance = 0;
             $stock->source = 'return';

@@ -398,14 +398,16 @@
 										<input type="text" class="form-control"
 											value="{{ number_format($o_i->price, 2) }}" style="width:70px;" disabled>
 									</td>
-									<td>
-										<form action="{{url('/order/'.$order->patient->id.'/'.$o_i->id.'/return')}}" method="post">
-											@method('DELETE')
-											@csrf
-											<input type="hidden" name="patient_info" value="{{$order->patient->id}}">
-											<button type="submit" class="btn waves-effect btn-warning btn-sm" @if ($loop->count == 1) disabled @endif>Return Order</button>
-										</form>
-									</td>
+									@if ($order->status_id == 3)
+										<td>
+											<form action="{{url('/order/'.$order->patient->id.'/'.$o_i->id.'/return')}}" method="post">
+												@method('DELETE')
+												@csrf
+												<input type="hidden" name="patient_info" value="{{$order->patient->id}}">
+												<button type="submit" class="btn waves-effect btn-warning btn-sm" @if ($loop->count == 1) disabled @endif>Return Order</button>
+											</form>
+										</td>
+									@endif
 								</tr>
 								@endforeach
 								<tr>

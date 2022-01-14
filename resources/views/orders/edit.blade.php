@@ -295,115 +295,126 @@
                                                 value="{{ number_format($o_i->price, 2) }}" style="width:70px;" disabled>
                                         </td>
                                         <td>
-                                            <form 
-                                                action="{{ url('/order/delete_item/' . $order->patient->id . '/' . $o_i->id) }}"
-                                                method="post">
-                                                @method('DELETE')
-                                                @csrf
-                                                <input type="hidden" name="patient_info"
-                                                    value="{{ $order->patient->id }}">
-                                                <button type="submit"
-                                                        class="btn waves-effect btn-danger btn-sm">Delete</button>
-                                            </form><br/>
-                                            <div>
-                                                <input type="hidden" id="i_patient_id"
-                                                    value="{{ $order->patient->id }}">
-                                                <input type="hidden" id="i_order_id"
-                                                    value="{{ $order->id }}">
-                                                <button id="editItem" class="btn waves-effect btn-success btn-sm">Edit</button>
-                                            </div>
+                                            @if ($order->status_id >= 3)
+                                                <form action="{{url('/order/'.$order->patient->id.'/'.$o_i->id.'/return')}}" method="post">
+                                                    @method('DELETE')
+                                                    @csrf
+                                                    <input type="hidden" name="patient_info" value="{{$order->patient->id}}">
+                                                    <button type="submit" class="btn waves-effect btn-warning btn-sm" @if ($loop->count == 1) disabled @endif>Return Order</button>
+                                                </form>
+                                            @else
+                                                <form 
+                                                    action="{{ url('/order/delete_item/' . $order->patient->id . '/' . $o_i->id) }}"
+                                                    method="post">
+                                                    @method('DELETE')
+                                                    @csrf
+                                                    <input type="hidden" name="patient_info"
+                                                        value="{{ $order->patient->id }}">
+                                                    <button type="submit"
+                                                            class="btn waves-effect btn-danger btn-sm">Delete</button>
+                                                </form>
+                                                <div>
+                                                    <input type="hidden" id="i_patient_id"
+                                                        value="{{ $order->patient->id }}">
+                                                    <input type="hidden" id="i_order_id"
+                                                        value="{{ $order->id }}">
+                                                    <button id="editItem" class="btn waves-effect btn-success btn-sm">Edit</button>
+                                                </div>
+                                            @endif
                                         </td>
                                     </tr>
                                     </tbody>
                                 @endforeach
                             @endif
-                            <form action="{{ url('order/store_item/') }}" method="post">
-                                @csrf
-                                <input type="hidden" name="order_id" value="{{ $order->id }}">
-                                <tr class="row-table">
-                                    <td>
-                                        <div class="form-group">
-                                            <select class="js-single form-control" name="item_id" id="item_id"
-                                                    style="width: 230px">
-                                                <option>--Select--</option>
-                                                @foreach ($item_lists as $item)
-                                                    <option value="{{ $item['id'] }}">
-                                                        {{ $item['code'] }}
-                                                        {{ $item['brand_name'] }}
-                                                        ({{ $item['quantity'] }}) </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="form-group">
-                                            <input type="text" name="indication" id="indication" class="form-control"
-                                                style="width:150px;">
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="form-group">
-                                            <input type="text" name="instruction" id="instruction" class="form-control"
-                                                style="width:200px;">
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="form-group">
-                                            <select name="frequency" id="frequency" class="value_f form-control">
-                                                <option value="0">-</option>
-                                                @foreach ($frequencies as $freq)
-                                                    <option value="{{ $freq->id }}">{{ $freq->name }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="form-group">
-                                            <input type="text" name="selling_uom" id="selling_uom" class="uom form-control"
-                                                style="width:50px;">
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="form-group">
-                                            <input type="number" name="dose_quantity" id="dose_quantity"
-                                                class="value_dq form-control" style="width:60px;" step="0.1">
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="form-group">
-                                            <input type="number" name="duration" id="duration" class="value_d form-control"
-                                                style="width:60px;" value="{{ $duration }}">
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="form-group">
-                                            <input type="text" name="quantity" id="quantity" class="quantity form-control"
-                                                style="width:70px;">
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="form-group">
-                                            <input type="number" name="selling_price" id="selling_price"
-                                                class="price form-control" step="0.01" style="width:70px;">
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="form-group">
-                                            <input type="text" name="price" id="price" class="form-control"
-                                                style="width:70px;">
-                                        </div>
-                                    </td>
-                                    <td style="vertical-align: middle;">
-                                    </td>
-                                    <input type="hidden" id="formula_id" class="formula_id">
-                                    <input type="hidden" id="formula_value" class="formula_value">
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <button type="submit" class="btn btn-primary">Add Item</button>
-                                    </td>
-                                </tr>
-                            </form>
+                            @if ($order->status_id < 3)
+                                <form action="{{ url('order/store_item/') }}" method="post">
+                                    @csrf
+                                    <input type="hidden" name="order_id" value="{{ $order->id }}">
+                                    <tr class="row-table">
+                                        <td>
+                                            <div class="form-group">
+                                                <select class="js-single form-control" name="item_id" id="item_id"
+                                                        style="width: 230px">
+                                                    <option>--Select--</option>
+                                                    @foreach ($item_lists as $item)
+                                                        <option value="{{ $item['id'] }}">
+                                                            {{ $item['code'] }}
+                                                            {{ $item['brand_name'] }}
+                                                            ({{ $item['quantity'] }}) </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group">
+                                                <input type="text" name="indication" id="indication" class="form-control"
+                                                    style="width:150px;">
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group">
+                                                <input type="text" name="instruction" id="instruction" class="form-control"
+                                                    style="width:200px;">
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group">
+                                                <select name="frequency" id="frequency" class="value_f form-control">
+                                                    <option value="0">-</option>
+                                                    @foreach ($frequencies as $freq)
+                                                        <option value="{{ $freq->id }}">{{ $freq->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group">
+                                                <input type="text" name="selling_uom" id="selling_uom" class="uom form-control"
+                                                    style="width:50px;">
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group">
+                                                <input type="number" name="dose_quantity" id="dose_quantity"
+                                                    class="value_dq form-control" style="width:60px;" step="0.1">
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group">
+                                                <input type="number" name="duration" id="duration" class="value_d form-control"
+                                                    style="width:60px;" value="{{ $duration }}">
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group">
+                                                <input type="text" name="quantity" id="quantity" class="quantity form-control"
+                                                    style="width:70px;">
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group">
+                                                <input type="number" name="selling_price" id="selling_price"
+                                                    class="price form-control" step="0.01" style="width:70px;">
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group">
+                                                <input type="text" name="price" id="price" class="form-control"
+                                                    style="width:70px;">
+                                            </div>
+                                        </td>
+                                        <td style="vertical-align: middle;">
+                                        </td>
+                                        <input type="hidden" id="formula_id" class="formula_id">
+                                        <input type="hidden" id="formula_value" class="formula_value">
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <button type="submit" class="btn btn-primary">Add Item</button>
+                                        </td>
+                                    </tr>
+                                </form>
+                            @endif
                         @endif
                         
                         <tfoot>
