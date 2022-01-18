@@ -782,10 +782,14 @@
                             <div class="col-4">
                                 <div class="form-group">
                                     <label>Dispensing Method</label>
-                                    <select {{ $disabledm }} id="dispensing_method" name="dispensing_method" class="form-control">
-                                        <option value="Walkin" {{ $selected_walk }}>Walk In</option>
-                                        <option value="Delivery" {{ $selected_del }}>Delivery</option>
-                                    </select>
+                                    @if ($order->status_id <= 2)
+                                        <select {{ $disabledm }} id="dispensing_method" name="dispensing_method" class="form-control">
+                                            <option value="Walkin" {{ $selected_walk }} @if ($order->dispensing_method == 'Walkin') selected @endif>Walk In</option>
+                                            <option value="Delivery" {{ $selected_del }} @if ($order->dispensing_method == 'Delivery') selected @endif>Delivery</option>
+                                        </select>
+                                    @else
+                                        <input type="text" class="form-control" id="dispensing_method" name="dispensing_method" value="{{ $order->dispensing_method }}" readonly>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -1225,15 +1229,18 @@
         });
 
         $('#dispensing_method').change(function(){
-            // if($(this).val() == 'Walkin'){
-            //     $('.Delivery').hide();
-            // } else if($(this).val() == 'Delivery'){
-            //     $('.Delivery').show();
-            // }
-            valDis = $(this).val();
-            d = "{{ \Request::segment(2) }}"
-            p = "{{ \Request::query('parent') }}"
-            window.location.href = "{!! url('order') !!}" + "/" + d + "/new_resubmission?sdm=" + valDis + "&parent=" + p;
+            if($(this).val() == 'Walkin'){
+                $('.Delivery').hide();
+            } else if($(this).val() == 'Delivery'){
+                $('.Delivery').show();
+            }
+            if({{ $order->resubmission }}) {
+                valDis = $(this).val();
+                d = "{{ \Request::segment(2) }}"
+                p = "{{ \Request::query('parent') }}"
+                window.location.href = "{!! url('order') !!}" + "/" + d + "/new_resubmission?sdm=" + valDis + "&parent=" + p;
+            }
+            
         });
 
         function calculateQuantity(thisParent, except = [], quantity = null){

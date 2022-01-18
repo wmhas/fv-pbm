@@ -205,6 +205,43 @@ class OrderController extends Controller
             if ($order->do_number != $request->input('do_number'))
                 return back()->with(['status' => false, 'message' => 'DO number ' . $request->input('do_number') . ' already exist.']);
         }
+
+        if ($request->dispensing_method != $order->dispensing_method) {
+            if ($request->dispensing_method == "Walkin") {
+                foreach ($order->orderItem as $order_item) {
+                    $current_stock = Location::where('item_id', $order_item->myob_product_id)->first()->counter;
+                    if ($current_stock < $order_item->quantity) {
+                        return back()->with(['status' => false, 'message' => 'Insufficient stock balance for item ' . $order_item->items->brand_name . '. Cannot change dispensing method.']);
+                    }
+                }
+
+                foreach ($order->orderItem as $order_item) {
+                    $location = Location::where('item_id', $order_item->myob_product_id)->first();
+                    $location->counter = $location->counter - $order_item->quantity;
+                    $location->courier = $location->courier + $order_item->quantity;
+                    $location->save();
+                }
+
+                $delivery = Delivery::where('order_id', $order->id)->first();
+                $delivery->delete();
+            } 
+            
+            if ($request->dispensing_method == 'Delivery') {
+                foreach ($order->orderItem as $order_item) {
+                    $current_stock = Location::where('item_id', $order_item->myob_product_id)->first()->courier;
+                    if ($current_stock < $order_item->quantity) {
+                        return back()->with(['status' => false, 'message' => 'Insufficient stock balance for item ' . $order_item->items->brand_name . '. Cannot change dispensing method.']);
+                    }
+                }
+
+                foreach ($order->orderItem as $order_item) {
+                    $location = Location::where('item_id', $order_item->myob_product_id)->first();
+                    $location->counter = $location->counter + $order_item->quantity;
+                    $location->courier = $location->courier - $order_item->quantity;
+                    $location->save();
+                }
+            }
+        }
             
         $order->salesperson_id = $request->input('salesperson');
         if ($order->status_id == 1)
