@@ -186,10 +186,12 @@ class OrderController extends Controller
 
 
         // Get rx_start and rx_end from table prescription
-        $prescription = Prescription::select('rx_start', 'rx_end')->where('order_id', $order->id)->first();
+        $prescription = Prescription::select('rx_start', 'rx_end', 'next_supply_date')->where('order_id', $order->id)->first();
 
         // Get duration in days
-        $duration = floor(abs(strtotime($prescription->rx_end) - strtotime($prescription->rx_start)) / (60 * 60 * 24));
+        // $duration = floor(abs(strtotime($prescription->rx_end) - strtotime($prescription->rx_start)) / (60 * 60 * 24));
+        $duration = $this->getDuration($order, $prescription);
+
         $frequencies = Frequency::all();
         $resubmission = 0;
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
@@ -482,7 +484,7 @@ class OrderController extends Controller
             if ($order->rx_interval==1) {
                 $duration = floor(abs(strtotime($prescription->rx_end) - strtotime($prescription->rx_start)) / (60 * 60 * 24));
             } else if ($order->rx_interval == 2 && $order->do_number != NULL) {
-                $duration = floor(abs(strtotime($prescription->next_supply_date) - strtotime($prescription->rx_start)) / (60 * 60 * 24));
+                $duration = floor(abs(strtotime($prescription->next_supply_date) - strtotime($prescription->rx_start)) / (60 * 60 * 24)) + 1;
             } else if ($order->rx_interval == 2 && $order->do_number == NULL) {
                 $duration = floor(abs(strtotime($prescription->rx_end) - strtotime($prescription->next_supply_date)) / (60 * 60 * 24));
             }
