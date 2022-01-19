@@ -24,6 +24,8 @@
                     <tr>
                         <th>No</th>
                         <th>Dispense Date</th>
+                        {{-- <th>DO Number</th>
+                        <th>Dispensing Method</th> --}}
                         <th>Customer Name</th>
                         <th>Quantity</th>
                         <th>Amount (RM)</th>     
@@ -34,7 +36,10 @@
                     <tr>
                         <td>{{$loop->iteration}}</td>
                         <td>{{ date_format(date_create($list->dispense_date), 'd/m/Y') }}</td>
-                        <td>{{$list->full_name}}</td>
+                        {{-- <td><a href="{{ url('/order/' . $list->id . '/view') }}">{{ $list->do_number }}</a></td>
+                        <td>{{ $list->dispensing_method }}</td>
+                        <td><a href="{{ url('/patient/' . $list->patient . '/detail') }}">{{$list->full_name}}</a></td> --}}
+                        <td>{{ $list->full_name }}</td>
                         <td>{{$list->quantity}}</td>
                         <td style="text-align: right;">{{number_format($list->amount,2)}}</td>
                     </tr>
