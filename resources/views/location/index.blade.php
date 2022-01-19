@@ -52,7 +52,7 @@
                                             <th>Store</th>
                                             <th>Counter</th>
                                             <th>Courier</th>
-                                            <th>Staff</th>
+                                            <th>Loan</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
