@@ -300,7 +300,7 @@
                                                     @method('DELETE')
                                                     @csrf
                                                     <input type="hidden" name="patient_info" value="{{$order->patient->id}}">
-                                                    <button type="submit" class="btn waves-effect btn-warning btn-sm" @if ($loop->count == 1) disabled @endif>Return Order</button>
+                                                    <button type="submit" class="btn waves-effect btn-warning btn-sm" @if ($loop->count == 1) disabled @endif>Return Item</button>
                                                 </form>
                                             @else
                                                 <form 
