@@ -45,6 +45,7 @@ class TransactionsSalesExport implements FromCollection, WithHeadings, WithStyle
             ->join("order_items","order_items.order_id","=","orders.id")
             ->join("items","items.id","=","order_items.myob_product_id")
             ->join("states","states.id","=","patients.state_id")
+            ->join("statuses","statuses.id","=","orders.status_id")
             ->whereIn('orders.status_id', [3, 4, 5]);
 
         $order = Order::whereIn('orders.status_id', [3, 4, 5]);
@@ -222,13 +223,23 @@ class TransactionsSalesExport implements FromCollection, WithHeadings, WithStyle
                 } else {
                     $orders[$k]['STATUS'] = "";
                 }
-                
+
+                if (!empty($v->status)){
+                    if (!empty($v->status->name)){
+                        $orders[$k]['ORDER STATUS'] = $v->status->name;
+                    } else {
+                        $orders[$k]['ORDER STATUS'] = "";
+                    }
+                } else {
+                    $orders[$k]['ORDER STATUS'] = "";
+                }
+
                 $num++;
 
                 $this->grand_total += $v->total_amount;
             }
         }
-        
+
         return collect($orders);
     }
 
@@ -250,6 +261,7 @@ class TransactionsSalesExport implements FromCollection, WithHeadings, WithStyle
                 'DISPENSING METHOD',
                 'TOTAL AMOUNT',
                 'STATUS',
+                'ORDER STATUS',
                 'REMARKS',
             ],
             [
@@ -267,6 +279,7 @@ class TransactionsSalesExport implements FromCollection, WithHeadings, WithStyle
                 'DISPENSING METHOD',
                 'TOTAL AMOUNT',
                 'STATUS',
+                'ORDER STATUS',
                 'REMARKS',
             ],
             [
@@ -284,6 +297,7 @@ class TransactionsSalesExport implements FromCollection, WithHeadings, WithStyle
                 'DISPENSING METHOD',
                 'TOTAL AMOUNT',
                 'STATUS',
+                'ORDER STATUS',
                 'REMARKS',
             ],
             [
@@ -301,6 +315,7 @@ class TransactionsSalesExport implements FromCollection, WithHeadings, WithStyle
                 'DISPENSING METHOD',
                 'TOTAL AMOUNT',
                 'STATUS',
+                'ORDER STATUS',
                 'REMARKS',
             ],
             [
@@ -318,6 +333,7 @@ class TransactionsSalesExport implements FromCollection, WithHeadings, WithStyle
                 'DISPENSING METHOD',
                 'TOTAL AMOUNT (RM)',
                 'STATUS',
+                'ORDER STATUS',
                 'REMARKS',
             ]
         ];
@@ -332,11 +348,11 @@ class TransactionsSalesExport implements FromCollection, WithHeadings, WithStyle
             )
         );
 
-        $sheet->getStyle('A5:O5')->getFont()->setBold(true);
+        $sheet->getStyle('A5:P5')->getFont()->setBold(true);
         $sheet->getColumnDimension('A')->setVisible(false);
 
         for ($i = 1; $i < 5; $i++) {
-            for ($j = 'A'; $j < 'P'; $j++) {
+            for ($j = 'A'; $j < 'Q'; $j++) {
                 $sheet->setCellValue($j.$i, '');
             }
         }
@@ -366,6 +382,7 @@ class TransactionsSalesExport implements FromCollection, WithHeadings, WithStyle
         $sheet->getColumnDimension('M')->setAutoSize(true);
         $sheet->getColumnDimension('N')->setAutoSize(true);
         $sheet->getColumnDimension('O')->setAutoSize(true);
+        $sheet->getColumnDimension('P')->setAutoSize(true);
 
         $lastRow = $sheet->getHighestRow() + 1;
 
