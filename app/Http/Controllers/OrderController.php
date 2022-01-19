@@ -787,14 +787,17 @@ class OrderController extends Controller
         $order_item = OrderItem::where('id', $request->input('order_item_id'))->first();
         $order = Order::where('id', $order_item->order_id)->first();
         $location = Location::where('item_id', $order_item->myob_product_id)->first();
-        if ($order->dispensing_method == 'Walkin' && $location->counter >= $request->input('quantity')) {
+        if ($order->dispensing_method == 'Walkin' && ($location->counter + $order_item->quantity) >= $request->input('quantity')) {
             $location->counter = $location->counter - $request->input('quantity') + $order_item->quantity;
             $location->save();
-        } elseif ($order->dispensing_method == 'Delivery' && $location->courier >= $request->input('quantity')) {
+        } elseif ($order->dispensing_method == 'Delivery' && ($location->courier + $order_item->quantity) >= $request->input('quantity')) {
             $location->courier = $location->courier - $request->input('quantity') + $order_item->quantity;
             $location->save();
         } else {
-            return redirect()->action('OrderController@create_orderEntry', ['patient' => $order->patient_id, 'order_id', $order->id])->with(['status' => false, 'message' => 'Item quantity exceeded the number of quantity available']);
+            if ($order->status_id == 1)
+                return redirect()->action('OrderController@create_orderEntry', ['patient' => $order->patient_id, 'order_id', $order->id])->with(['status' => false, 'message' => 'Item quantity exceeded the number of quantity available']);
+            else
+                return back()->with(['status' => false, 'message' => 'Item quantity exceeded the number of quantity available']);
         }
 
         $record = OrderItem::find($order_item->id);
