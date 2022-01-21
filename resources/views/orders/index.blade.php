@@ -123,7 +123,11 @@
                                     <td>{{ date("d/m/Y", strtotime($o->created_at))}}</td>
                                     <td style="text-align: center;">
                                         @if ($o->total_amount != "0")
-                                        <a href="{{ url('/order/'.$o->id.'/view') }}" data-toggle="tooltip" data-placement="left" title="View Order" style="color:green" class = "mdi mdi-checkbox-marked-circle-outline mdi-24px"></a> 
+                                            @if ($o->resubmission == 1 && $o->status_id == 1)
+                                                <a href="{{ url('/order/'.$o->id.'/new_resubmission?sdm=' . $o->dispensing_method . '&parent=1') }}" data-toggle="tooltip" data-placement="left" title="View Order" style="color:green" class = "mdi mdi-checkbox-marked-circle-outline mdi-24px"></a>
+                                            @else
+                                                <a href="{{ url('/order/'.$o->id.'/view') }}" data-toggle="tooltip" data-placement="left" title="View Order" style="color:green" class = "mdi mdi-checkbox-marked-circle-outline mdi-24px"></a>
+                                            @endif
                                         @else
                                         <a href="{{ url('/order/'.$o->id.'/view') }}" data-toggle="tooltip" data-placement="left"   title="Update Order" style="color:red" class = "mdi mdi-close-circle-outline mdi-24px"></a>      
                                         @endif

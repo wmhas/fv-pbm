@@ -1164,6 +1164,43 @@ class OrderController extends Controller
         if ($request->parent){
             $up = Order::where('id', (int) $request->parent)->update(['rx_interval'=>3]);
         }
+
+        if ($request->dispensing_method != $order->dispensing_method) {
+            if ($request->dispensing_method == "Walkin") {
+                foreach ($order->orderItem as $order_item) {
+                    $current_stock = Location::where('item_id', $order_item->myob_product_id)->first()->counter;
+                    if ($current_stock < $order_item->quantity) {
+                        return back()->with(['status' => false, 'message' => 'Insufficient stock balance for item ' . $order_item->items->brand_name . '. Cannot change dispensing method.']);
+                    }
+                }
+
+                foreach ($order->orderItem as $order_item) {
+                    $location = Location::where('item_id', $order_item->myob_product_id)->first();
+                    $location->counter = $location->counter - $order_item->quantity;
+                    $location->courier = $location->courier + $order_item->quantity;
+                    $location->save();
+                }
+
+                $delivery = Delivery::where('order_id', $order->id)->first();
+                $delivery->delete();
+            } 
+            
+            if ($request->dispensing_method == 'Delivery') {
+                foreach ($order->orderItem as $order_item) {
+                    $current_stock = Location::where('item_id', $order_item->myob_product_id)->first()->courier;
+                    if ($current_stock < $order_item->quantity) {
+                        return back()->with(['status' => false, 'message' => 'Insufficient stock balance for item ' . $order_item->items->brand_name . '. Cannot change dispensing method.']);
+                    }
+                }
+
+                foreach ($order->orderItem as $order_item) {
+                    $location = Location::where('item_id', $order_item->myob_product_id)->first();
+                    $location->counter = $location->counter + $order_item->quantity;
+                    $location->courier = $location->courier - $order_item->quantity;
+                    $location->save();
+                }
+            }
+        }
         
         
         $items = Item::all();  
@@ -1235,56 +1272,56 @@ class OrderController extends Controller
             }
         }
 
-        $prev_order_item = OrderItem::where('order_id', $order->id)->orderBy("id","desc")->get();
-        foreach ($prev_order_item as $item) {
-            $location = Location::where('item_id', $item->myob_product_id)->first();
-            if ($order->dispensing_method == 'Walkin' && $location->counter >= $item->quantity) {
-                $location->counter = $location->counter - $item->quantity;
-                $location->save();
+        // $prev_order_item = OrderItem::where('order_id', $order->id)->orderBy("id","desc")->get();
+        // foreach ($prev_order_item as $item) {
+        //     $location = Location::where('item_id', $item->myob_product_id)->first();
+        //     if ($order->dispensing_method == 'Walkin' && $location->counter >= $item->quantity) {
+        //         $location->counter = $location->counter - $item->quantity;
+        //         $location->save();
 
-                // $record = new OrderItem();
-                // $record->order_id = $order->id;
-                // $record->myob_product_id = $item->myob_product_id;
-                // $record->dose_quantity = $item->dose_quantity;
-                // $record->duration = $item->duration;
-                // $record->frequency = $item->frequency;
-                // $record->quantity = $item->quantity;
-                // $record->price = $item->price;
-                // $record->save();
+        //         // $record = new OrderItem();
+        //         // $record->order_id = $order->id;
+        //         // $record->myob_product_id = $item->myob_product_id;
+        //         // $record->dose_quantity = $item->dose_quantity;
+        //         // $record->duration = $item->duration;
+        //         // $record->frequency = $item->frequency;
+        //         // $record->quantity = $item->quantity;
+        //         // $record->price = $item->price;
+        //         // $record->save();
 
-                // $stock = new Stock();
-                // $stock->item_id = $item->myob_product_id;
-                // $stock->quantity = -$item->quantity;
-                // $stock->balance = 0;
-                // $stock->source = 'sale';
-                // $stock->source_id = $record->id;
-                // $stock->source_date = Carbon::now()->format('Y-m-d');
-                // $stock->save();
-            } elseif ($order->dispensing_method == 'Delivery' && $location->courier >= $item->quantity) {
-                $location->courier = $location->courier - $item->quantity;
-                $location->save();
+        //         // $stock = new Stock();
+        //         // $stock->item_id = $item->myob_product_id;
+        //         // $stock->quantity = -$item->quantity;
+        //         // $stock->balance = 0;
+        //         // $stock->source = 'sale';
+        //         // $stock->source_id = $record->id;
+        //         // $stock->source_date = Carbon::now()->format('Y-m-d');
+        //         // $stock->save();
+        //     } elseif ($order->dispensing_method == 'Delivery' && $location->courier >= $item->quantity) {
+        //         $location->courier = $location->courier - $item->quantity;
+        //         $location->save();
 
-                // $record = new OrderItem();
-                // $record->order_id = $order->id;
-                // $record->myob_product_id = $item->myob_product_id;
-                // $record->dose_quantity = $item->dose_quantity;
-                // $record->duration = $item->duration;
-                // $record->frequency = $item->frequency;
-                // $record->quantity = $item->quantity;
-                // $record->price = $item->price;
-                // $record->save();
+        //         // $record = new OrderItem();
+        //         // $record->order_id = $order->id;
+        //         // $record->myob_product_id = $item->myob_product_id;
+        //         // $record->dose_quantity = $item->dose_quantity;
+        //         // $record->duration = $item->duration;
+        //         // $record->frequency = $item->frequency;
+        //         // $record->quantity = $item->quantity;
+        //         // $record->price = $item->price;
+        //         // $record->save();
 
-                // $stock = new Stock();
-                // $stock->item_id = $item->myob_product_id;
-                // $stock->quantity = -$item->quantity;
-                // $stock->balance = 0;
-                // $stock->source = 'sale';
-                // $stock->source_id = $record->id;
-                // $stock->source_date = Carbon::now()->format('Y-m-d');
-                // $stock->save();
-            } else {
-            }
-        }
+        //         // $stock = new Stock();
+        //         // $stock->item_id = $item->myob_product_id;
+        //         // $stock->quantity = -$item->quantity;
+        //         // $stock->balance = 0;
+        //         // $stock->source = 'sale';
+        //         // $stock->source_id = $record->id;
+        //         // $stock->source_date = Carbon::now()->format('Y-m-d');
+        //         // $stock->save();
+        //     } else {
+        //     }
+        // }
         return redirect()->action('OrderController@show', ['order' => $order->id])
                 ->with(['status' => true, 'message' => 'Resubmission Success!']);
         // return redirect()->action('OrderController@new_resubmission', ['order' => $order->id]);
@@ -1355,7 +1392,7 @@ class OrderController extends Controller
 
         $resubmission = 1;
         // Get rx_start and rx_end from table prescription
-        $prescription = Prescription::select('rx_start', 'rx_end')->where('order_id', $order->id)->first();
+        $prescription = Prescription::select('rx_start', 'rx_end', 'next_supply_date')->where('order_id', $order->id)->first();
         // Get duration in days
         $duration = floor(abs(strtotime($order->prescription->rx_end) - strtotime($order->prescription->next_supply_date)) / (60 * 60 * 24));
 

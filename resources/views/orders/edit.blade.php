@@ -216,12 +216,31 @@
                                             </td>
                                             <td style="vertical-align: middle;">
                                                 {{-- <button class="btn waves-effect btn-danger btn-sm">Delete</button> --}}
+                                                {{-- @if ($order->resubmission == 1)
+                                                    <form 
+                                                        action="{{ url('/order/delete_item/' . $order->patient->id . '/' . $o_i->id) }}"
+                                                        method="post">
+                                                        @method('DELETE')
+                                                        @csrf
+                                                        <input type="hidden" name="patient_info"
+                                                            value="{{ $order->patient->id }}">
+                                                        <button type="submit"
+                                                                class="btn waves-effect btn-danger btn-sm">Delete</button>
+                                                    </form>
+                                                    <div>
+                                                        <input type="hidden" id="i_patient_id"
+                                                            value="{{ $order->patient->id }}">
+                                                        <input type="hidden" id="i_order_id"
+                                                            value="{{ $order->id }}">
+                                                        <button id="editItem" class="btn waves-effect btn-success btn-sm">Edit</button>
+                                                    </div>
+                                                @endif --}}
                                             </td>
                                             <input type="hidden" id="formula_id" class="formula_id" value="{{ $orderItemSelected[$k]->formula_id }}">
                                             <input type="hidden" id="formula_value" class="formula_value" value="{{ $orderItemSelected[$k]->value }}">
                                         </tr>
                                         @if ($order->resubmission==1)
-                                            @if ($k+1==$total)
+                                            {{-- @if ($k+1==$total)
                                             <tr>
                                                 <td colspan="11" style="vertical-align: top;">
                                                     <input type="hidden" name="addAction" value="0">
@@ -229,7 +248,7 @@
                                                     <button style="display:none;" id="rbUpdateButton" class="btn waves-effect btn-info btn-sm" type="submit">Update</button>
                                                 </td>
                                             </tr>
-                                            @endif
+                                            @endif --}}
                                         @else
                                             @if ($k+1==$total)
                                             <tr>
@@ -782,13 +801,31 @@
                             <div class="col-4">
                                 <div class="form-group">
                                     <label>Dispensing Method</label>
-                                    @if ($order->status_id <= 2)
-                                        <select {{ $disabledm }} id="dispensing_method" name="dispensing_method" class="form-control">
-                                            <option value="Walkin" {{ $selected_walk }} @if ($order->dispensing_method == 'Walkin') selected @endif>Walk In</option>
-                                            <option value="Delivery" {{ $selected_del }} @if ($order->dispensing_method == 'Delivery') selected @endif>Delivery</option>
-                                        </select>
+                                    @if ($resubmission == 1)
+                                        @if (\Request::query('sdm') !== null)
+                                            @if ($order->status_id == 1)
+                                                <input type="text" class="form-control" id="dispensing_method" name="dispensing_method" value="{{ $order->dispensing_method }}" readonly>
+                                            @else
+                                                <select {{ $disabledm }} id="dispensing_method" name="dispensing_method" class="form-control">
+                                                    <option value="Walkin" {{ $selected_walk }} @if (\Request::query('sdm') == 'Walkin') selected @endif>Walk In</option>
+                                                    <option value="Delivery" {{ $selected_del }} @if (\Request::query('sdm') == 'Delivery') selected @endif>Delivery</option>
+                                                </select>
+                                            @endif
+                                        @else
+                                            <select {{ $disabledm }} id="dispensing_method" name="dispensing_method" class="form-control">
+                                                <option value="Walkin" {{ $selected_walk }} @if ($order->dispensing_method == 'Walkin') selected @endif>Walk In</option>
+                                                <option value="Delivery" {{ $selected_del }} @if ($order->dispensing_method == 'Delivery') selected @endif>Delivery</option>
+                                            </select>
+                                        @endif
                                     @else
-                                        <input type="text" class="form-control" id="dispensing_method" name="dispensing_method" value="{{ $order->dispensing_method }}" readonly>
+                                        @if ($order->status_id <= 2)
+                                            <select {{ $disabledm }} id="dispensing_method" name="dispensing_method" class="form-control">
+                                                <option value="Walkin" {{ $selected_walk }} @if ($order->dispensing_method == 'Walkin') selected @endif>Walk In</option>
+                                                <option value="Delivery" {{ $selected_del }} @if ($order->dispensing_method == 'Delivery') selected @endif>Delivery</option>
+                                            </select>
+                                        @else
+                                            <input type="text" class="form-control" id="dispensing_method" name="dispensing_method" value="{{ $order->dispensing_method }}" readonly>
+                                        @endif
                                     @endif
                                 </div>
                             </div>
@@ -1234,7 +1271,7 @@
             } else if($(this).val() == 'Delivery'){
                 $('.Delivery').show();
             }
-            if({{ $order->resubmission }}) {
+            if({{ $resubmission }}) {
                 valDis = $(this).val();
                 d = "{{ \Request::segment(2) }}"
                 p = "{{ \Request::query('parent') }}"
