@@ -675,6 +675,7 @@ class OrderController extends Controller
             $od->status_id = 1;
             $od->dispensing_by = $order->dispensing_by;
             $od->resubmission = 1;
+            $od->parent = $order->id;
             $od->save();
 
             if ($order->prescription) {

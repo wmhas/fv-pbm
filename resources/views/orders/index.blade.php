@@ -124,7 +124,7 @@
                                     <td style="text-align: center;">
                                         @if ($o->total_amount != "0")
                                             @if ($o->resubmission == 1 && $o->status_id == 1)
-                                                <a href="{{ url('/order/'.$o->id.'/new_resubmission?sdm=' . $o->dispensing_method . '&parent=1') }}" data-toggle="tooltip" data-placement="left" title="View Order" style="color:green" class = "mdi mdi-checkbox-marked-circle-outline mdi-24px"></a>
+                                                <a href="{{ url('/order/'.$o->id.'/new_resubmission?sdm=' . $o->dispensing_method . '&parent=' . $o->parent) }}" data-toggle="tooltip" data-placement="left" title="View Order" style="color:green" class = "mdi mdi-checkbox-marked-circle-outline mdi-24px"></a>
                                             @else
                                                 <a href="{{ url('/order/'.$o->id.'/view') }}" data-toggle="tooltip" data-placement="left" title="View Order" style="color:green" class = "mdi mdi-checkbox-marked-circle-outline mdi-24px"></a>
                                             @endif
