@@ -17,6 +17,7 @@ use App\Models\Frequency;
 use App\Models\SalesPerson;
 use App\Models\Stock;
 use App\Models\BatchOrder;
+use App\Models\Log\InventoryLog;
 use PDF;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
@@ -572,8 +573,23 @@ class OrderController extends Controller
 
     public function store_item(Request $request)
     {
-        $order = Order::select("id","dispensing_method","patient_id", "total_amount")->where('id',  $request->input('order_id'))->first();
+        $order = Order::select("id", "do_number", "dispensing_method","patient_id", "total_amount")->where('id',  $request->input('order_id'))->first();
         $location = Location::where('item_id', $request->input('item_id'))->first();
+        $item = Item::where('id', $request->input('item_id'))->first();
+        
+        // log inventory
+        $log = new InventoryLog();
+        $log->process = "Store item for order " .$order->id . " " . $order->do_number;
+
+        $log->item_id = $item->id;
+        $log->item_name = $item->brand_name;
+
+        $log->stock_before = $item->stocks->sum('Quantity');
+        $log->store_before = $location->store;
+        $log->counter_before = $location->counter;
+        $log->courier_before = $location->courier;
+        $log->loan_before = $location->staff;
+        
         if ($order->dispensing_method == 'Walkin' && $location->counter >= $request->input('quantity')) {
             $location->counter = $location->counter - $request->input('quantity');
             $location->save();
@@ -602,6 +618,22 @@ class OrderController extends Controller
         $stock->source_id = $record->id;
         $stock->source_date = Carbon::now()->format('Y-m-d');
         $stock->save();
+
+        // log inventory
+        $item = Item::where('id', $request->input('item_id'))->first();
+        $location = Location::where('item_id', $request->input('item_id'))->first();
+        $log->stock_after = $item->stocks->sum('Quantity');
+        $log->store_after = $location->store;
+        $log->counter_after = $location->counter;
+        $log->courier_after = $location->courier;
+        $log->loan_after = $location->staff;
+
+        $log->stock_changes = $stock->quantity;
+        $log->store_changes = $log->store_after - $log->store_before;
+        $log->counter_changes = $log->counter_after - $log->counter_before;
+        $log->courier_changes = $log->courier_after - $log->courier_before;
+        $log->loan_changes = $log->loan_after - $log->loan_before;
+        LogController::writeInventoryLog($log);
 
         if ($order->total_amount == 0) {
             return redirect()->route('order.entry', [
@@ -788,6 +820,21 @@ class OrderController extends Controller
         $order_item = OrderItem::where('id', $request->input('order_item_id'))->first();
         $order = Order::where('id', $order_item->order_id)->first();
         $location = Location::where('item_id', $order_item->myob_product_id)->first();
+        $item = Item::find($order_item->myob_product_id);
+
+        // log inventory
+        $log = new InventoryLog();
+        $log->process = "Edit item for order " .$order->id . " " . $order->do_number;
+
+        $log->item_id = $item->id;
+        $log->item_name = $item->brand_name;
+
+        $log->stock_before = $item->stocks->sum('Quantity');
+        $log->store_before = $location->store;
+        $log->counter_before = $location->counter;
+        $log->courier_before = $location->courier;
+        $log->loan_before = $location->staff;
+
         if ($order->dispensing_method == 'Walkin' && ($location->counter + $order_item->quantity) >= $request->input('quantity')) {
             $location->counter = $location->counter - $request->input('quantity') + $order_item->quantity;
             $location->save();
@@ -833,6 +880,22 @@ class OrderController extends Controller
         $stock->source_date = Carbon::now()->format('Y-m-d');
         $stock->save();
 
+        // log inventory
+        $item = Item::where('id', $item->id)->first();
+        $location = Location::where('item_id', $item->id)->first();
+        $log->stock_after = $item->stocks->sum('Quantity');
+        $log->store_after = $location->store;
+        $log->counter_after = $location->counter;
+        $log->courier_after = $location->courier;
+        $log->loan_after = $location->staff;
+
+        $log->stock_changes = $order_item->quantity - $request->input('quantity');
+        $log->store_changes = $log->store_after - $log->store_before;
+        $log->counter_changes = $log->counter_after - $log->counter_before;
+        $log->courier_changes = $log->courier_after - $log->courier_before;
+        $log->loan_changes = $log->loan_after - $log->loan_before;
+        LogController::writeInventoryLog($log);
+
         if ($order->total_amount == 0) {
             return redirect()->route('order.entry', [
                 'id' => $request->input('patient_id'),
@@ -850,6 +913,21 @@ class OrderController extends Controller
         $order_item = OrderItem::where('id', $id)->first();
         $order = Order::where('id', $order_item->order_id)->first();
         $location = Location::where('item_id', $order_item->myob_product_id)->first();
+        $item = Item::where('id', $order_item->myob_product_id)->first();
+
+        // log inventory
+        $log = new InventoryLog();
+        $log->process = "Delete item for order " .$order->id . " " . $order->do_number;
+
+        $log->item_id = $item->id;
+        $log->item_name = $item->brand_name;
+
+        $log->stock_before = $item->stocks->sum('Quantity');
+        $log->store_before = $location->store;
+        $log->counter_before = $location->counter;
+        $log->courier_before = $location->courier;
+        $log->loan_before = $location->staff;
+
         try {
             if ($order->dispensing_method == 'Walkin') {
                 $location->counter = $location->counter + $order_item->quantity;
@@ -871,6 +949,23 @@ class OrderController extends Controller
             $stock->save();
 
             $order_item->delete();
+
+            // log inventory
+            $item = Item::where('id', $item->id)->first();
+            $location = Location::where('item_id', $item->id)->first();
+            $log->stock_after = $item->stocks->sum('Quantity');
+            $log->store_after = $location->store;
+            $log->counter_after = $location->counter;
+            $log->courier_after = $location->courier;
+            $log->loan_after = $location->staff;
+
+            $log->stock_changes = $stock->quantity;
+            $log->store_changes = $log->store_after - $log->store_before;
+            $log->counter_changes = $log->counter_after - $log->counter_before;
+            $log->courier_changes = $log->courier_after - $log->courier_before;
+            $log->loan_changes = $log->loan_after - $log->loan_before;
+            LogController::writeInventoryLog($log);
+
             if ($order->total_amount == "0") {
                 return redirect()->route('order.entry', [
                     'id' => $patient,
