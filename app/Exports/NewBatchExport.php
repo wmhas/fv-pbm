@@ -72,6 +72,7 @@ class NewBatchExport implements WithColumnFormatting, WithHeadings, FromCollecti
             ->join('cards', 'cards.id', '=', 'patients.card_id')
             ->join('tariffs', 'tariffs.id', '=', 'patients.tariff_id')
             ->where('orders.batch_id', '=', $this->batch_id)
+            ->whereNull('order_items.deleted_at')
             ->orderBy('orders.id', 'ASC');
         
         $orders = $orders->select(
