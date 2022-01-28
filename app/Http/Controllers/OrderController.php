@@ -754,6 +754,21 @@ class OrderController extends Controller
                 $order_id = $od->id;
 
                 $location = Location::where('item_id', $request->input('item_id')[$i])->first();
+                $item = Item::where('id', $request->input('item_id')[$i])->first();
+
+                // log inventory
+                $log = new InventoryLog();
+                $log->process = "Add Item Resubmission - parent ID: " . $od->parent . " Order ID : " . $od->id;
+                $log->item_id = $item->id;
+                $log->item_name = $item->brand_name;
+
+                $log->stock_before = $item->stocks->sum('Quantity');
+                $log->store_before = $location->store;
+                $log->counter_before = $location->counter;
+                $log->courier_before = $location->courier;
+                $log->loan_before = $location->staff;
+
+
                 if ($request->dispensing_method == 'Walkin' && $location->counter >= $request->input('quantity')[$i]) {
                     $location->counter = $location->counter - $request->input('quantity')[$i];
                     $location->save();
@@ -793,8 +808,25 @@ class OrderController extends Controller
                 $stock->source_date = Carbon::now()->format('Y-m-d');
                 $stock->save();
 
-            }
+                $location = Location::where('item_id', $request->input('item_id')[$i])->first();
+                $item = Item::where('id', $request->input('item_id')[$i])->first();
 
+                // log inventory
+                $log->stock_after = $item->stocks->sum("Quantity");
+                $log->store_after = $location->store;
+                $log->counter_after = $location->counter;
+                $log->courier_after = $location->courier;
+                $log->loan_after = $location->staff;
+
+                $log->stock_changes = $stock->quantity;
+                $log->store_changes = $log->store_after - $log->store_before;
+                $log->counter_changes = $log->counter_after - $log->counter_before;
+                $log->courier_changes = $log->courier_after - $log->courier_before;
+                $log->loan_changes = $log->loan_after - $log->loan_before;
+                LogController::writeInventoryLog($log);
+
+
+            }
             DB::commit();
 
             if ($request->parent){
@@ -1191,6 +1223,19 @@ class OrderController extends Controller
 
         foreach ($order_items as $oi) {
             $location = Location::where('item_id', $oi->myob_product_id)->first();
+
+            // log inventory
+            $log = new InventoryLog();
+            $log -> process = "Return order " . $order->id;
+            $log -> item_id = $oi -> myob_product_id;
+            $log -> item_name = $oi -> items -> brand_name;
+
+            $log -> stock_before = $oi -> items -> stocks -> sum('Quantity');
+            $log -> store_before = $location -> store;
+            $log -> counter_before = $location -> counter;
+            $log -> courier_before = $location -> courier;
+            $log -> loan_before = $location -> staff;
+
             if ($order->dispensing_method == 'Walkin') {
                 $location->counter = $location->counter + $oi->quantity;
                 $location->save();
@@ -1210,6 +1255,22 @@ class OrderController extends Controller
             $stock->source_id = $oi->id;
             $stock->source_date = Carbon::now()->format('Y-m-d');
             $stock->save();
+
+            // log inventory
+            $item = Item::where('id', $oi->myob_product_id)->first();
+            $location = Location::where('item_id', $oi->myob_product_id)->first();
+            $log->stock_after = $item->stocks->sum('Quantity');
+            $log->store_after = $location->store;
+            $log->counter_after = $location->counter;
+            $log->courier_after = $location->courier;
+            $log->loan_after = $location->staff;
+
+            $log->stock_changes = $oi->quantity;
+            $log->store_changes = $log->store_after - $log->store_before;
+            $log->counter_changes = $log->counter_after - $log->counter_before;
+            $log->courier_changes = $log->courier_after - $log->courier_before;
+            $log->loan_changes = $log->loan_after - $log->loan_before;
+            LogController::writeInventoryLog($log);
         }
         return redirect()->action('OrderController@show', ['order' => $order->id])
             ->with(['status' => true, 'message' => 'Status = Return Order']);
@@ -1220,6 +1281,18 @@ class OrderController extends Controller
         $order_item = OrderItem::where('id', $order_id)->first();
         $order = Order::where('id', $order_item->order_id)->first();
         $location = Location::where('item_id', $order_item->myob_product_id)->first();
+
+        // log inventory
+        $log = new InventoryLog();
+        $log -> process = "Return item ";
+        $log -> item_id = $order_item -> myob_product_id;
+        $log -> item_name = $order_item -> items -> brand_name;
+
+        $log -> stock_before = $order_item -> items -> stocks -> sum('Quantity');
+        $log -> store_before = $location -> store;
+        $log -> counter_before = $location -> counter;
+        $log -> courier_before = $location -> courier;
+        $log -> loan_before = $location -> staff;
 
         if ($order->dispensing_method == 'Walkin') {
             $location->counter = $location->counter + $order_item->quantity;
@@ -1240,6 +1313,22 @@ class OrderController extends Controller
         $stock->source_id = $order_item->id;
         $stock->source_date = Carbon::now()->format('Y-m-d');
         $stock->save();
+
+        // log inventory
+        $order_item = OrderItem::where('id', $order_id)->first();
+        $location = Location::where('item_id', $order_item->myob_product_id)->first();
+        $log->stock_after = $order_item->items->stocks->sum('Quantity');
+        $log->store_after = $location->store;
+        $log->counter_after = $location->counter;
+        $log->courier_after = $location->courier;
+        $log->loan_after = $location->staff;
+
+        $log->stock_changes = $order_item->quantity;
+        $log->store_changes = $log->store_after - $log->store_before;
+        $log->counter_changes = $log->counter_after - $log->counter_before;
+        $log->courier_changes = $log->courier_after - $log->courier_before;
+        $log->loan_changes = $log->loan_after - $log->loan_before;
+        LogController::writeInventoryLog($log);
 
         $order_item->delete();
         return redirect()->action('OrderController@show', ['order' => $order->id])
@@ -1272,9 +1361,35 @@ class OrderController extends Controller
 
                 foreach ($order->orderItem as $order_item) {
                     $location = Location::where('item_id', $order_item->myob_product_id)->first();
+
+                    // log inventory
+                    $log = new InventoryLog();
+                    $log->process = "Save Order Walkin - Order ID : " . $order->id ;
+                    $log->item_id = $order_item->items->id;
+                    $log->item_name = $order_item->items->brand_name;
+
+                    $log->store_before = $location->store;
+                    $log->counter_before = $location->counter;
+                    $log->courier_before = $location->courier;
+                    $log->loan_before = $location->staff;
+
                     $location->counter = $location->counter - $order_item->quantity;
                     $location->courier = $location->courier + $order_item->quantity;
                     $location->save();
+
+                    $location = Location::where('item_id', $order_item->myob_product_id)->first();
+
+                    // log inventory
+                    $log->store_after = $location->store;
+                    $log->counter_after = $location->counter;
+                    $log->courier_after = $location->courier;
+                    $log->loan_after = $location->staff;
+
+                    $log->store_changes = $log->store_after - $log->store_before;
+                    $log->counter_changes = $log->counter_after - $log->counter_before;
+                    $log->courier_changes = $log->courier_after - $log->courier_before;
+                    $log->loan_changes = $log->loan_after - $log->loan_before;
+                    LogController::writeInventoryLog($log);
                 }
 
                 $delivery = Delivery::where('order_id', $order->id)->first();
@@ -1291,9 +1406,35 @@ class OrderController extends Controller
 
                 foreach ($order->orderItem as $order_item) {
                     $location = Location::where('item_id', $order_item->myob_product_id)->first();
+
+                    // log inventory
+                    $log = new InventoryLog();
+                    $log->process = "Save Order Delivery - Order ID : " . $order->id ;
+                    $log->item_id = $order_item->items->id;
+                    $log->item_name = $order_item->items->brand_name;
+
+                    $log->store_before = $location->store;
+                    $log->counter_before = $location->counter;
+                    $log->courier_before = $location->courier;
+                    $log->loan_before = $location->staff;
+
                     $location->counter = $location->counter + $order_item->quantity;
                     $location->courier = $location->courier - $order_item->quantity;
                     $location->save();
+
+                    $location = Location::where('item_id', $order_item->myob_product_id)->first();
+
+                    // log inventory
+                    $log->store_after = $location->store;
+                    $log->counter_after = $location->counter;
+                    $log->courier_after = $location->courier;
+                    $log->loan_after = $location->staff;
+
+                    $log->store_changes = $log->store_after - $log->store_before;
+                    $log->counter_changes = $log->counter_after - $log->counter_before;
+                    $log->courier_changes = $log->courier_after - $log->courier_before;
+                    $log->loan_changes = $log->loan_after - $log->loan_before;
+                    LogController::writeInventoryLog($log);
                 }
             }
         }
