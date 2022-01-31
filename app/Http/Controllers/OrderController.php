@@ -18,6 +18,7 @@ use App\Models\SalesPerson;
 use App\Models\Stock;
 use App\Models\BatchOrder;
 use App\Models\Log\InventoryLog;
+use App\Models\Log\OrderDateLog;
 use PDF;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
@@ -1747,5 +1748,35 @@ class OrderController extends Controller
         $order->delete();
 
         return redirect()->action('OrderController@index')->with(['status' => true, 'message' => 'Successfully delete order']);
+    }
+
+    public function date_change($do_number) {
+        $order = Order::where('do_number', $do_number)->whereNull('deleted_at')->first();
+        return view('orders.date', compact('order'));
+    }
+
+    public function date_update($do_number, Request $request) {
+        $order = Order::where('do_number', $do_number)->whereNull('deleted_at')->first();
+        
+        // log order date
+        $log = new OrderDateLog();
+        $log->order_id = $order->id;
+        $log->do_number = $order->do_number;
+        $log->issue_before = $order->created_at;
+        $log->update_before = $order->updated_at;
+        $log->dispense_before = $order->dispense_date;
+
+        $order->created_at = $request->date_issue;
+        $order->updated_at = $request->date_issue;
+        $order->dispense_date = $request->date_dispense;
+        $order->save();
+
+        $order = Order::where('do_number', $do_number)->whereNull('deleted_at')->first();
+        $log->issue_after = $order->created_at;
+        $log->update_after = $order->updated_at;
+        $log->dispense_after = $order->dispense_date;
+        LogController::writeOrderDateLog($log);
+
+        return view('orders.date', compact('order'));
     }
 }

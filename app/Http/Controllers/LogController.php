@@ -52,4 +52,25 @@ class LogController extends Controller
         fwrite($f, $text);
         fclose($f); 
     }
+
+    public static function writeOrderDateLog($data) {
+        $message = "";
+
+        $message .= " Order ID: " . $data->order_id . ";";
+        $message .= " DO Number: " . $data->do_number . ";";
+        $message .= " Date Issue Before: " . $data->issue_before . ";";
+        $message .= " Date Issue After: " . $data->issue_after . ";";
+        $message .= " Date Update Before: " . $data->update_before . ";";
+        $message .= " Date Update After: " . $data->update_after . ";";
+        $message .= " Date Dispense Before: " . $data->dispense_before . ";";
+        $message .= " Date Dispense After: " . $data->dispense_after . ";";
+
+        $f = fopen (storage_path('logs/orderdate.log'), "a");    
+    
+        $action = Route::getCurrentRoute()->getActionName();
+        $text = date("F j, Y, g:i a")." || " . $action . " || " . auth()->user()->name . " || " . $message . "\n";
+
+        fwrite($f, $text);
+        fclose($f); 
+    }
 }
