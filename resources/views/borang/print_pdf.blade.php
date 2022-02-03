@@ -191,7 +191,7 @@
                                 <td>Berpencen</td>
                                 <td style="vertical-align: center;">
                                     <div style="border: 1px solid black; height: 16px; width: 18px; text-align: center">
-                                        {{ $order->patient->card->type === 'Veteran Berpencen' ? '/' : '' }}
+                                        {{ $order->patient->card->type === 'Veteran Berpencen' || $order->patient->card->type === 'JPA Berpencen' ? '/' : '' }}
                                     </div>
                                 </td>
                             </tr>
@@ -203,7 +203,7 @@
                                 </td>
                                 <td style="vertical-align: center;">
                                     <div style="border: 1px solid black; height: 16px; width: 18px; text-align: center">
-                                        {{ $order->patient->card->type === 'Veteran Berpencen' ? '' : '/' }}
+                                        {{ $order->patient->card->type === 'Veteran Berpencen' || $order->patient->card->type === 'JPA Berpencen'? '' : '/' }}
                                     </div>
                                 </td>
                             </tr>
@@ -265,7 +265,9 @@
                             <tr>
                                 <td></td>
                                 <td style="vertical-align: center;">
-                                    <div style="border: 1px solid black; height: 16px; width: 20px; text-align: center"></div>
+                                    <div style="border: 1px solid black; height: 16px; width: 20px; text-align: center">
+                                        {{ $order->patient->card->army_type === 'JPA' ? '/' : '' }}
+                                    </div>
                                 </td>
                                 <td>JPA</td>
                             </tr>
