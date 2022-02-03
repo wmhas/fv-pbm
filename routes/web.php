@@ -113,6 +113,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/downloadPDF3/{id}', 'OrderController@download_do');
         Route::get('/downloadPDF4/{id}', 'OrderController@download_justify');
         Route::post('/{order}/delivery', 'OrderController@delivery_status');
+        Route::get('/date/{do_number}', 'OrderController@date_change')->name('date.change');
+        Route::patch('/date/{order}', 'OrderController@date_update')->name('date.update');
     });
     //report
     Route::group(['prefix' => 'report'], function () {

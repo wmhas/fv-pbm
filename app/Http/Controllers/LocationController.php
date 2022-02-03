@@ -4,14 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Location;
 use App\Models\Item;
-use App\Models\Stock;
-use Illuminate\Database\Eloquent\Collection;
+use App\Models\Log\InventoryLog;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Pagination\Paginator;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Translation\MessageSelector;
 
 class LocationController extends Controller
 {
@@ -45,13 +40,41 @@ class LocationController extends Controller
     public function edit(Request $request, $item_id, $on_hand)
     {
         $location = Location::where('item_id', $item_id)->first();
+        $item = Item::where('id', $item_id)->first();
         $store = $on_hand - $request['counter'] - $request['courier']  - $request['staff'];
         if ($request['counter'] + $request['courier']  + $request['staff'] <= $on_hand) {
+
+            // log inventory
+            $log = new InventoryLog();
+            $log->process = "Move item";
+            $log->item_id = $item->id;
+            $log->item_name = $item->brand_name;
+
+            $log->store_before = $location->store;
+            $log->counter_before = $location->counter;
+            $log->courier_before = $location->courier;
+            $log->loan_before = $location->staff;
+
             $location->store = $store;
             $location->counter = $request['counter'];
             $location->courier = $request['courier'];
             $location->staff = $request['staff'];
             $location->save();
+
+            $location = Location::where('item_id', $item_id)->first();
+
+            // log inventory
+            $log->store_after = $location->store;
+            $log->counter_after = $location->counter;
+            $log->courier_after = $location->courier;
+            $log->loan_after = $location->staff;
+
+            $log->store_changes = $log->store_after - $log->store_before;
+            $log->counter_changes = $log->counter_after - $log->counter_before;
+            $log->courier_changes = $log->courier_after - $log->courier_before;
+            $log->loan_changes = $log->loan_after - $log->loan_before;
+            LogController::writeInventoryLog($log);
+
             return back()->with(['status' => true, 'message' => 'Move item successfully']);
         }
         return back()->with(['status' => false, 'message' => 'Please make sure the quantity is matched!']);

@@ -9,6 +9,7 @@ use App\Models\SalesPerson;
 use App\Models\Purchase;
 use App\Models\Item;
 use App\Models\Location;
+use App\Models\Log\InventoryLog;
 use App\Models\Stock;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
@@ -93,6 +94,13 @@ class PurchaseController extends Controller
         $purchase->salesperson = $request->input('salesperson');
         $purchase->save();
 
+        // log inventory
+        $log = new InventoryLog();
+        $log->process = "Create new purchase";
+        $log->item_id = $item_buy->id;
+        $log->item_name = $item_buy->brand_name;
+        $log->stock_before = $item_buy->stocks->sum('Quantity');
+
         $stock = new Stock();
         $stock->item_id = $request->input('ItemID');
         $stock->quantity = $total_quantity;
@@ -101,6 +109,12 @@ class PurchaseController extends Controller
         $stock->source_id = $purchase->id;
         $stock->source_date = Carbon::now()->format('Y-m-d');
         $stock->save();
+
+        // log inventory
+        $item_buy = Item::where('id', $request->input('ItemID'))->first();
+        $log->stock_after = $item_buy->stocks->sum('Quantity');
+        $log->stock_changes = $total_quantity;
+        LogController::writeInventoryLog($log);
 
         $location = Location::where('item_id', $request->input('ItemID'))->first();
         $current_store = $location->store;
