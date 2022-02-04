@@ -114,7 +114,35 @@
 									</div>
 								</div>
 							</div>
-						@endif	
+						@endif
+						@if ($order->patient->tariff_id == 3)
+							<div class="row">
+								<div class="col-md-6">
+									<div class="form-group">
+										<label>Payor</label>
+										<input type="text" class="form-control" value="MINDEF" readonly>
+									</div>
+								</div>
+							</div>
+						@elseif ($order->patient->tariff_id == 1 || $order->patient->tariff_id == 2)
+							<div class="row">
+								<div class="col-md-6">
+									<div class="form-group">
+										<label>Payor</label>
+										<input type="text" class="form-control" value="JPA/JHEV" readonly>
+									</div>
+								</div>
+							</div>
+						@else
+							<div class="row">
+								<div class="col-md-6">
+									<div class="form-group">
+										<label>Payor</label>
+										<input type="text" class="form-control" value="" readonly>
+									</div>
+								</div>
+							</div>
+						@endif
 					</div>
 				</div>
 			</div>
