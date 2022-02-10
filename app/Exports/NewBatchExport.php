@@ -269,12 +269,14 @@ class NewBatchExport implements WithColumnFormatting, WithHeadings, FromCollecti
 
         $sheet->getStyle('A8:L8')->getFont()->setBold(true);
 
+        $sheet->setCellValue('B1', 'COMPANY NAME :');
         $sheet->setCellValue('B2', 'BATCH NUMBER :');
         $sheet->setCellValue('B3', 'BATCH PERSON :');
         $sheet->setCellValue('B4', 'SUBMISSION DATE :');
         $sheet->setCellValue('B5', 'PAYOR :');
         $sheet->setCellValue('B6', 'PATIENT STATUS :');
 
+        $sheet->setCellValue('E1', 'RASUMI MEDIPHARMA SDN BHD (727958-A)');
         $sheet->setCellValue('E2', $this->batch_no);
         $sheet->setCellValue('E3', $this->batch_person);
         $sheet->setCellValue('E4', $this->submission_date);
