@@ -47,6 +47,23 @@ class BatchController extends Controller
         return view('batch.pending', compact('roles'));
     }
 
+    // public function getBatchNo() {
+    //     $increment = 1;
+     
+    //     do {
+    //         $count_batch = DB::table('new_batches')->where('batch_no', '!=', '')->whereNull('deleted_at')->count();
+    //         $batch_no = 'B' . str_pad($count_batch + $increment, 6, "0", STR_PAD_LEFT);
+
+    //         $exists = NewBatch::where('batch_no', $batch_no)->first();
+
+    //         if ($exists)
+    //             $increment++;
+
+    //     } while ($exists);
+
+    //     return $batch_no;
+    // }
+
     public function batch_order(Order $order, Request $request) {        
         
         if ($order->patient->tariff_id == 1 || $order->patient->tariff_id == 2) {
