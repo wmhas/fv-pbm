@@ -122,6 +122,16 @@ class TransactionsSalesExport implements FromCollection, WithHeadings, WithStyle
                 } else {
                     $orders[$k]['DO NUMBER'] = "";
                 }
+
+                if (!empty($v->batch)) {
+                    if (!empty($v->batch->batch_no)) {
+                        $orders[$k]['BATCH NUMBER'] = $v->batch->batch_no;
+                    } else {
+                        $orders[$k]['BATCH NUMBER'] = "";
+                    }
+                } else {
+                    $orders[$k]['BATCH NUMBER'] = "";
+                }
                 
                 if (!empty($v->patient)) {
                     if (!empty($v->patient->identification)) {
@@ -251,6 +261,7 @@ class TransactionsSalesExport implements FromCollection, WithHeadings, WithStyle
                 'NO',
                 'DISPENSING DATE',
                 'DO NUMBER',
+                'BATCH NUMBER',
                 'IC',
                 'ARMY NO',
                 'FULLNAME',
@@ -269,6 +280,7 @@ class TransactionsSalesExport implements FromCollection, WithHeadings, WithStyle
                 'NO',
                 'DISPENSING DATE',
                 'DO NUMBER',
+                'BATCH NUMBER',
                 'IC',
                 'ARMY NO',
                 'FULLNAME',
@@ -287,6 +299,7 @@ class TransactionsSalesExport implements FromCollection, WithHeadings, WithStyle
                 'NO',
                 'DISPENSING DATE',
                 'DO NUMBER',
+                'BATCH NUMBER',
                 'IC',
                 'ARMY NO',
                 'FULLNAME',
@@ -305,6 +318,7 @@ class TransactionsSalesExport implements FromCollection, WithHeadings, WithStyle
                 'NO',
                 'DISPENSING DATE',
                 'DO NUMBER',
+                'BATCH NUMBER',
                 'IC',
                 'ARMY NO',
                 'FULLNAME',
@@ -323,6 +337,7 @@ class TransactionsSalesExport implements FromCollection, WithHeadings, WithStyle
                 'NO',
                 'DISPENSING DATE',
                 'DO NUMBER',
+                'BATCH NUMBER',
                 'IC',
                 'ARMY NO',
                 'FULLNAME',
@@ -348,11 +363,11 @@ class TransactionsSalesExport implements FromCollection, WithHeadings, WithStyle
             )
         );
 
-        $sheet->getStyle('A5:P5')->getFont()->setBold(true);
+        $sheet->getStyle('A5:Q5')->getFont()->setBold(true);
         $sheet->getColumnDimension('A')->setVisible(false);
 
         for ($i = 1; $i < 5; $i++) {
-            for ($j = 'A'; $j < 'Q'; $j++) {
+            for ($j = 'A'; $j < 'R'; $j++) {
                 $sheet->setCellValue($j.$i, '');
             }
         }
@@ -383,20 +398,21 @@ class TransactionsSalesExport implements FromCollection, WithHeadings, WithStyle
         $sheet->getColumnDimension('N')->setAutoSize(true);
         $sheet->getColumnDimension('O')->setAutoSize(true);
         $sheet->getColumnDimension('P')->setAutoSize(true);
+        $sheet->getColumnDimension('Q')->setAutoSize(true);
 
         $lastRow = $sheet->getHighestRow() + 1;
 
-        $sheet->getStyle('B' . $lastRow . ':M' . $lastRow)->getFont()->setBold(true);
+        $sheet->getStyle('B' . $lastRow . ':N' . $lastRow)->getFont()->setBold(true);
         $sheet->getStyle('B' . $lastRow)->applyFromArray($right);
-        $sheet->mergeCells('B' . $lastRow . ':L' . $lastRow);
+        $sheet->mergeCells('B' . $lastRow . ':M' . $lastRow);
         $sheet->setCellValue('B' . $lastRow, 'GRAND TOTAL :');
-        $sheet->setCellValue('M' . $lastRow, $this->grand_total);
+        $sheet->setCellValue('N' . $lastRow, $this->grand_total);
     }
 
     public function columnFormats(): array
     {
         return [
-            'M' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
+            'N' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
         ];
     }
 }

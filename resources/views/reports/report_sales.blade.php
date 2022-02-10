@@ -53,6 +53,7 @@
                                     <tr>
                                         <th style="width:10px">No</th>
                                         <th>DO Number</th>
+                                        <th>Batch Number</th>
                                         <th>Dispense Date</th>
                                         <th>Patient Detail</th>
                                         <th>Panel</th>
@@ -70,6 +71,15 @@
                                             <a href="{{ url('/order/'.$order->id.'/view') }}" data-toggle="tooltip" title="View Order">
                                                 {{ $order->do_number }}
                                             </a>
+                                        </td>
+                                        <td>
+                                            @if (!empty($order->batch))
+                                                @if (!empty($order->batch->batch_no))
+                                                    <a href="{{ url('batch/' . $order->batch_id . '/batch_list') }}" data-toggle="tooltip" title="View Batch">{{ $order->batch->batch_no }}</a>
+                                                @endif
+                                            @else
+                                                N/A
+                                            @endif    
                                         </td>
                                         <td>{{ date("d/m/Y", strtotime($order->dispense_date))}}</td>
                                         <td>
