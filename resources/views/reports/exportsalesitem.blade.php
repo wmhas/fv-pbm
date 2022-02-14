@@ -2,6 +2,11 @@
 <html>
 
 <style>
+    body {
+        font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-size: 9px;
+    }
+
     .bottom {
         width: 100%;
         border-top: 1px solid black;
@@ -25,6 +30,8 @@
         <tr >
             <th >No</th>
             <th>Dispense Date</th>
+            <th>DO Number</th>
+            <th>Dispensing Method</th>
             <th>Customer Name</th>
             <th>Quantity</th>
             <th>Amount (RM)</th>
@@ -33,6 +40,8 @@
         <tr>
             <td class="nak-tepi">{{$loop->iteration}}</td>
             <td class="nak-tepi">{{$list->dispense_date}}</td>
+            <td class="nak-tepi">{{ $list->do_number }}</td>
+            <td class="nak-tepi">{{ $list->dispensing_method }}</td>
             <td class="nak-tepi">{{$list->full_name}}</td>
             <td class="nak-tepi">{{$list->quantity}}</td>
             <td class="nak-tepi" style="text-align: right;">{{number_format($list->amount,2)}}</td>

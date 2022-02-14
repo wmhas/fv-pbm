@@ -280,7 +280,7 @@ class ReportController extends Controller
             $patient_lists = DB::table('orders as a')
             ->join('order_items as b', 'b.order_id', '=', 'a.id')
             ->join('patients as c', 'c.id', '=', 'a.patient_id')
-            ->selectRaw('a.dispense_date, c.full_name, SUM(b.quantity) as quantity, SUM(b.price) as amount')
+            ->selectRaw('a.dispense_date, a.do_number, a.dispensing_method, c.full_name, SUM(b.quantity) as quantity, SUM(b.price) as amount')
             ->where('b.myob_product_id', $request->item_id)
             ->whereDate('a.dispense_date', '>=', $request->startDate)
             ->whereDate('a.dispense_date', '<=', $request->endDate)
