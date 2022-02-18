@@ -188,7 +188,7 @@
                                                     @if($o->status_id == 4 || $o->status_id == 5) 
                                                         @if ($o->rx_interval == 2)
                                                             <td style="text-align: center;">
-                                                                <a class="btn btn-primary" type="button" href="{{ url('/order/'.$o->id.'/resubmission') }}">
+                                                                <a class="btn btn-primary" type="button" href="{{ url('/order/'.$o->id.'/new_resubmission?parent=' . $o->id) }}">
                                                                 <i class="mdi mdi-refresh"></i>
                                                                 </a>
                                                             </td>
