@@ -355,7 +355,7 @@ class OrderController extends Controller
                 $order->patient_id = $patient;
                 $order->total_amount = 0;
                 $order->status_id = 1;
-                $order->dispensing_method = 0;
+                $order->dispensing_method = 1;
                 $order->rx_interval = 0;
                 $order->save();
             }

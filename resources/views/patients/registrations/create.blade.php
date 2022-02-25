@@ -183,7 +183,7 @@
         $("#ictype").change(function(){
             $( "select option:selected").each(function(){
                 if($(this).attr("value")=="1"){
-                    $("#username").attr({maxlength: '14', minlength: '14', type:'text', placeholder:'981343-93-2323', pattern:'(([0-9]{6}))-([0-9]{2})-([0-9]{4})', disabled:false});
+                    $("#username").attr({maxlength: '14', minlength: '7', type:'text', placeholder:'981343-93-2323', disabled:false});
                 }
                 if($(this).attr("value")=="2"){
                     $("#username").attr({maxlength: '20', minlength: '0', type:'text', placeholder:'A1231233', disabled:false});

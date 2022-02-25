@@ -69,6 +69,8 @@ class PatientController extends Controller
 
     public function store(Request $request)
     {
+
+
         if (!($request->update)) {
 
             $exists = Patient::where("identification", $request->identification)->whereNull('deleted_at')->first();
