@@ -17,6 +17,7 @@ use Excel;
 use App\Exports\TransactionsExport;
 use App\Exports\TransactionsSalesExport;
 use App\Exports\StockReportExport;
+use App\Jobs\ExportTransactionJob;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -417,7 +418,7 @@ class ReportController extends Controller
 
     public function export_sales_item_excel(Request $request)
     {
-        ini_set('max_execution_time', 0);
+        // ini_set('max_execution_time', 0);
         if($request->filter == 1){
             return $this->search_report_sales($request);
         }
@@ -430,12 +431,9 @@ class ReportController extends Controller
             $endDate = $request->endDate;
         }
 
-        $transaction = new TransactionsExport($startDate, $endDate);
-        if ($transaction->collection()->count() > 0) {
-            return Excel::download($transaction, 'Sales Report Details ('. $startDate . " to " . $endDate .').xlsx');
-        }
+        dispatch(new ExportTransactionJob($startDate, $endDate, auth()->user()->id));
 
-        $request->session()->flash('error', 'No Data to Export');
+        // $request->session()->flash('error', 'No Data to Export');
         return redirect(url('/report/sales_report'));
     }
 

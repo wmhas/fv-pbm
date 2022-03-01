@@ -324,19 +324,19 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
     }
 
     public function merge($sheet, $start_row, $end_row, $num) {
-        // $sheet->mergeCells('A' .$start_row. ':A' .$end_row);
-        // $sheet->mergeCells('B' .$start_row. ':B' .$end_row);
-        // $sheet->mergeCells('C' .$start_row. ':C' .$end_row);
-        // $sheet->mergeCells('D' .$start_row. ':D' .$end_row);
-        // $sheet->mergeCells('E' .$start_row. ':E' .$end_row);
-        // $sheet->mergeCells('F' .$start_row. ':F' .$end_row);
-        // $sheet->mergeCells('G' .$start_row. ':G' .$end_row);
-        // $sheet->mergeCells('H' .$start_row. ':H' .$end_row);
-        // $sheet->mergeCells('I' .$start_row. ':I' .$end_row);
-        // $sheet->mergeCells('J' .$start_row. ':J' .$end_row);
-        // $sheet->mergeCells('K' .$start_row. ':K' .$end_row);
-        // $sheet->mergeCells('Q' .$start_row. ':Q' .$end_row);
-        // $sheet->mergeCells('R' .$start_row. ':R' .$end_row);
+        $sheet->mergeCells('A' .$start_row. ':A' .$end_row);
+        $sheet->mergeCells('B' .$start_row. ':B' .$end_row);
+        $sheet->mergeCells('C' .$start_row. ':C' .$end_row);
+        $sheet->mergeCells('D' .$start_row. ':D' .$end_row);
+        $sheet->mergeCells('E' .$start_row. ':E' .$end_row);
+        $sheet->mergeCells('F' .$start_row. ':F' .$end_row);
+        $sheet->mergeCells('G' .$start_row. ':G' .$end_row);
+        $sheet->mergeCells('H' .$start_row. ':H' .$end_row);
+        $sheet->mergeCells('I' .$start_row. ':I' .$end_row);
+        $sheet->mergeCells('J' .$start_row. ':J' .$end_row);
+        $sheet->mergeCells('K' .$start_row. ':K' .$end_row);
+        $sheet->mergeCells('Q' .$start_row. ':Q' .$end_row);
+        $sheet->mergeCells('R' .$start_row. ':R' .$end_row);
 
         $sheet->setCellValue('B'.$start_row, $num); 
     }
