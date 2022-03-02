@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Download;
 use App\Exports\ItemExport;
 use App\Exports\ReportRefillExport;
 use App\Models\OrderItem;
@@ -702,5 +703,14 @@ class ReportController extends Controller
         }
 
     }
+
+    public function sales_report_queue() {
+        $items = Download::all();
+        $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
+
+        return view('reports.sales_report_queue', compact('roles', 'items'));
+    }
+
+    
 
 }

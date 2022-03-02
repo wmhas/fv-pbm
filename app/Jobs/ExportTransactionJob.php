@@ -9,6 +9,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Date;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ExportTransactionJob implements ShouldQueue
@@ -18,6 +19,7 @@ class ExportTransactionJob implements ShouldQueue
     private $startDate;
     private $endDate;
     private $user_id;
+    private $download_id;
 
     /**
      * Create a new job instance.
@@ -46,19 +48,27 @@ class ExportTransactionJob implements ShouldQueue
         $download->status = 'Generating File...';
         $download->user_id = $this->user_id;
         $download->save();
+        $this->download_id = $download->id;
 
         if ($transaction->collection()->count() > 0) {
-            Excel::store($transaction, $filename);
+            Excel::store($transaction, 'public/reports/' . $filename);
 
+            $download->completed_at = Date::now();
             $download->status = 'File Generated.';
             $download->save();
 
         } else {
             
+            $download->completed_at = Date::now();
             $download->status = 'Failed!';
             $download->save();
         }
+    }
 
-        
+    public function failed() {
+        $download = Download::where('id', $this->download_id)->get();
+        $download->completed_at = Date::now();
+        $download->status = 'Failed!';
+        $download->save();
     }
 }
