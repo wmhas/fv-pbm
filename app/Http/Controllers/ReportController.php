@@ -22,6 +22,7 @@ use App\Jobs\ExportTransactionJob;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Storage;
 
 class ReportController extends Controller
 {
@@ -711,6 +712,15 @@ class ReportController extends Controller
         return view('reports.sales_report_queue', compact('roles', 'items'));
     }
 
-    
+    public function download_file_name($filename){
+        
+        // $contents = Storage::get($filename);
+        $contents = storage_path('app/public/reports/' . $filename);
+        // $ext = pathinfo($filename, PATHINFO_EXTENSION);
+        // $ext = storage_path('/app/public/reports' . $filename);
+        $resp = response($contents)->header('Content-Type', $this->getMimeType($filename));
+        // $resp->header('Content-Disposition', 'inline; filename="' . $filename . '"');
+        return $resp;
+    }
 
 }

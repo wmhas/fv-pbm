@@ -46,7 +46,7 @@
                                                 <td>{{ $item->status }}</td>
                                                 <td>
                                                     @if (!empty($item->completed_at))
-                                                        <a href="{{ storage_path() . "/app/public/" . $item->filename  }}" class="btn btn-link"><i class="fa fa-download"></i> Download</a>
+                                                        <a href="{{ route('sales_report.queue.download', ['filename' => $item->filename])  }}" class="btn btn-link" target="_blank">Download</a>
                                                     @endif
                                                 </td>
                                                 <td>
