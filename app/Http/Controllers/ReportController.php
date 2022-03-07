@@ -714,13 +714,8 @@ class ReportController extends Controller
 
     public function download_file_name($filename){
         
-        // $contents = Storage::get($filename);
-        $contents = storage_path('app/public/reports/' . $filename);
-        // $ext = pathinfo($filename, PATHINFO_EXTENSION);
-        // $ext = storage_path('/app/public/reports' . $filename);
-        $resp = response($contents)->header('Content-Type', $this->getMimeType($filename));
-        // $resp->header('Content-Disposition', 'inline; filename="' . $filename . '"');
-        return $resp;
+        $c = storage_path('app\\public\\reports' . '\\' . $filename);
+        return response()->download($c);
     }
 
 }
