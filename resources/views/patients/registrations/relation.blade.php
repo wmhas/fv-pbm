@@ -58,7 +58,7 @@
                                 <div class="form-group">
                                 <label class="text-white">*</label>
                                     <input id="username" type="text" class="form-control"  
-                                    value=""  name="identification"  autocomplete="on" maxlength="14" minlength="14" placeholder="example: 771110-41-1011" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);">
+                                    value=""  name="identification"  autocomplete="on" maxlength="14" minlength="7" placeholder="example: 771110-41-1011" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);">
                                 </div>
                             </div>
                         </div>
@@ -219,19 +219,19 @@
     });
 
     $(document).ready(function(){
-            $("#ictype").change(function(){
-                $("#ictype option:selected").each(function(){
-                    if($(this).attr("value")=="1"){
-                        $("#username").attr({maxlength: '14', minlength: '14', type:'text', placeholder:'981343-93-2323', pattern:'(([0-9]{6}))-([0-9]{2})-([0-9]{4})', disabled:false});
-                    }
-                    if($(this).attr("value")=="2"){
-                        $("#username").attr({maxlength: '20', minlength: '0', type:'text', placeholder:'A1231233', disabled:false});
-                    }
-                    if($(this).attr("value")==""){
-                        $("#username").attr('disabled', true);
-                    }
-                });
-            }).change();
-        });
+        $("#ictype").change(function(){
+            $( "select option:selected").each(function(){
+                if($(this).attr("value")=="1"){
+                    $("#username").attr({maxlength: '14', minlength: '7', type:'text', placeholder:'981343-93-2323', disabled:false});
+                }
+                if($(this).attr("value")=="2"){
+                    $("#username").attr({maxlength: '20', minlength: '0', type:'text', placeholder:'A1231233', disabled:false});
+                }
+                if($(this).attr("value")==" "){
+                    $("#username").attr('disabled', true);
+                }
+            });
+        }).change();
+    });
 </script>
 @endsection
