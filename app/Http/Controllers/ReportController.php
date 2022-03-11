@@ -76,6 +76,7 @@ class ReportController extends Controller
             ->whereDate('orders.dispense_date', '>=', $startDate)
             ->whereDate('orders.dispense_date', '<=', $endDate)
             ->orderBy('orders.dispense_date', 'DESC')
+            ->orderBy('orders.id', 'DESC')
             ->paginate(10, ['*'], 'page', $page);
 
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
@@ -110,6 +111,7 @@ class ReportController extends Controller
                 ->whereDate('orders.dispense_date', '>=', $request->startDate)
                 ->whereDate('orders.dispense_date', '<=', $request->endDate)
                 ->orderBy('orders.dispense_date', 'DESC')
+                ->orderBy('orders.id', 'DESC')
                 ->paginate(10, ['*'], 'page', $page);
         }
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
