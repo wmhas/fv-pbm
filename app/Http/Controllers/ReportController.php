@@ -436,7 +436,7 @@ class ReportController extends Controller
         dispatch(new ExportTransactionJob($startDate, $endDate, auth()->user()->id));
 
         // $request->session()->flash('error', 'No Data to Export');
-        return redirect(url('/report/sales_report'));
+        return redirect()->route('sales_report.queue');
     }
 
     public function report_stocks(Request $request)
@@ -716,6 +716,16 @@ class ReportController extends Controller
         
         $c = storage_path('app\\public\\reports' . '\\' . $filename);
         return response()->download($c);
+    }
+
+    public function delete_file(Request $request) {
+        $download = Download::where('id', $request->id)->first();
+        $download->delete();
+
+        $path = storage_path('app\\public\\reports' . '\\' . $request->filename);
+        unlink($path);
+
+        return redirect()->route('sales_report.queue');
     }
 
 }

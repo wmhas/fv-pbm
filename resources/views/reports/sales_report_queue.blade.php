@@ -51,7 +51,14 @@
                                                 </td>
                                                 <td>
                                                     @if (!empty($item->completed_at))
-                                                        <a href="#" class="btn btn-link"> Delete</a>
+                                                        <form action="{{ route('sales_report.queue.delete') }}" method="post">
+                                                            @csrf
+                                                            @method('delete')
+
+                                                            <input type="hidden" name="filename" value="{{ $item->filename }}">
+                                                            <input type="hidden" name="id" value="{{ $item->id }}">
+                                                            <button type="submit" class="btn btn-link">Delete</button>
+                                                        </form>
                                                     @endif
                                                 </td>
                                             </tr>
