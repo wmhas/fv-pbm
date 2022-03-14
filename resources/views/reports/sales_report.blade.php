@@ -42,9 +42,12 @@
                                             <button type="submit" class="btn btn-success" style=" width:100%;" name="filter" value="1">Search</button>
                                         </div>
                                     </div>
-                                    <!-- <div class="col-md-2">
-                                        <button type="button" class="btn btn-secondary" style="margin-top:32px; width:100%;">Export</button>
-                                    </div> -->
+                                    <div class="col-md-2 ml-auto">
+                                        <label></label>
+                                        <div class="form-group">
+                                            <a href="{{ route('sales_report.queue') }}" class="btn btn-primary" style=" width:100%;" name="filter" value="1">Download Queue</a>
+                                        </div>
+                                    </div>
                                 </div>
                             </form>
                         </div>

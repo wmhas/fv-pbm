@@ -129,6 +129,9 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/sales_report', 'ReportController@sales_report');
         Route::get('/exportsalesitemexcel', 'ReportController@export_sales_item_excel')->name('export.sales-item.excel');
         Route::get('/exportstockitem', 'ReportController@export_stock_item')->name('export.stock-item');
+        Route::get('/sales_report/queue', 'ReportController@sales_report_queue')->name('sales_report.queue');
+        Route::get('/sales_report/queue/{filename}', 'ReportController@download_file_name')->name('sales_report.queue.download');
+        Route::delete('/sales_report/queue/delete', 'ReportController@delete_file')->name('sales_report.queue.delete');
     });
 
     //batch
