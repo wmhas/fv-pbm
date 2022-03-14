@@ -716,7 +716,7 @@ class ReportController extends Controller
 
     public function download_file_name($filename){
         
-        $c = storage_path('app\\public\\reports' . '\\' . $filename);
+        $c = storage_path('app/public/reports/' . $filename);
         return response()->download($c);
     }
 
@@ -724,7 +724,7 @@ class ReportController extends Controller
         $download = Download::where('id', $request->id)->first();
         $download->delete();
 
-        $path = storage_path('app\\public\\reports' . '\\' . $request->filename);
+        $path = storage_path('app/public/reports/' . $request->filename);
         unlink($path);
 
         return redirect()->route('sales_report.queue');
