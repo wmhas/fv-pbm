@@ -30,7 +30,7 @@ class StickerController extends Controller
                 ->with(['patient', 'orderitem.items'])
                 ->paginate(15);
         } else {
-            $labels = Label::groupBy('order_id')->get();
+            $labels = Label::where('user_id', '=', auth()->user()->id)->groupBy('order_id')->get();
         }
 
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();

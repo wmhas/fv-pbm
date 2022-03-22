@@ -168,7 +168,8 @@
                     indication: $('#indication-' + index).text().trim(),
                     quantity_uom_duration: $('#quantity-uom-duration-' + index).text().trim(),
                     do_date: $('#do-date').text().trim(),
-                    order_id: "{{ $order_id }}"
+                    order_id: "{{ $order_id }}",
+                    user_id: "{{ auth()->user()->id }}"
                 }
                 items.push(item);
             }
