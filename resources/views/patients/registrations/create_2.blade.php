@@ -100,8 +100,7 @@
                         <div class="col-md-4" id="box">
                             <div class="form-group">
                             <label class="text-white">*</label>
-                                <input id="identification" type="text" name="identification" class="form-control" 
-                                @if (!empty($cardchecking)) value="{{ $cardchecking->identification }}" disabled @endif required  oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);">
+                            <input id="identification" type="text" class="form-control" value=""  name="identification" maxlength="14" minlength="7" placeholder="example: 771110-41-1011">
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -318,21 +317,21 @@
             
         });
 
-        $(document).ready(function(){
-            $("#ictype").change(function(){
-                $( "select option:selected").each(function(){
-                    if($(this).attr("value")=="1"){
-                        console.log("test");
-                        $("#identification").attr({maxlength: '14', minlength: '14', type:'text', placeholder:'981343-93-2323', pattern:'(([0-9]{6}))-([0-9]{2})-([0-9]{4})', disabled:false});
-                    }
-                    if($(this).attr("value")=="2"){
-                        $("#identification").attr({maxlength: '20', minlength: '0', type:'text', placeholder:'A1231233', disabled:false});
-                    }
-                    if($(this).attr("value")==" "){
-                        $("#identification").attr('disabled', false);
-                    }
-                });
-            }).change();
-        });
+        // $(document).ready(function(){
+        //     $("#ictype").change(function(){
+        //         $( "select option:selected").each(function(){
+        //             if($(this).attr("value")=="1"){
+        //                 console.log("test");
+        //                 $("#identification").attr({maxlength: '14', minlength: '7', type:'text', placeholder:'981343-93-2323', pattern:'(([0-9]{6}))-([0-9]{2})-([0-9]{4})', disabled:false});
+        //             }
+        //             if($(this).attr("value")=="2"){
+        //                 $("#identification").attr({maxlength: '20', minlength: '0', type:'text', placeholder:'A1231233', disabled:false});
+        //             }
+        //             if($(this).attr("value")==" "){
+        //                 $("#identification").attr('disabled', false);
+        //             }
+        //         });
+        //     }).change();
+        // });
 </script>
 @endsection

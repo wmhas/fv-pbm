@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Download;
 use App\Exports\ItemExport;
+use App\Exports\ItemSummaryExport;
 use App\Exports\ReportRefillExport;
 use App\Models\OrderItem;
 use App\Models\Status;
@@ -17,9 +19,11 @@ use Excel;
 use App\Exports\TransactionsExport;
 use App\Exports\TransactionsSalesExport;
 use App\Exports\StockReportExport;
+use App\Jobs\ExportTransactionJob;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Storage;
 
 class ReportController extends Controller
 {
@@ -76,6 +80,7 @@ class ReportController extends Controller
             ->whereDate('orders.dispense_date', '>=', $startDate)
             ->whereDate('orders.dispense_date', '<=', $endDate)
             ->orderBy('orders.dispense_date', 'DESC')
+            ->orderBy('orders.id', 'DESC')
             ->paginate(10, ['*'], 'page', $page);
 
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
@@ -110,6 +115,7 @@ class ReportController extends Controller
                 ->whereDate('orders.dispense_date', '>=', $request->startDate)
                 ->whereDate('orders.dispense_date', '<=', $request->endDate)
                 ->orderBy('orders.dispense_date', 'DESC')
+                ->orderBy('orders.id', 'DESC')
                 ->paginate(10, ['*'], 'page', $page);
         }
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
@@ -275,27 +281,33 @@ class ReportController extends Controller
 
     public function export_sales_item(Request $request)
     {
-        // ini_set('max_execution_time', 1000);
-        if ($request->post('startDate') != null && $request->post('endDate') != null) {
-            $patient_lists = DB::table('orders as a')
-            ->join('order_items as b', 'b.order_id', '=', 'a.id')
-            ->join('patients as c', 'c.id', '=', 'a.patient_id')
-            ->selectRaw('a.dispense_date, a.do_number, a.dispensing_method, c.full_name, SUM(b.quantity) as quantity, SUM(b.price) as amount')
-            ->where('b.myob_product_id', $request->item_id)
-            ->whereDate('a.dispense_date', '>=', $request->startDate)
-            ->whereDate('a.dispense_date', '<=', $request->endDate)
-            ->whereIn('a.status_id', [3,4,5])
-            ->whereNull('a.deleted_at')
-            ->whereNull('a.return_timestamp')
-            ->whereNull('b.deleted_at')
-            ->orderBy('a.dispense_date', 'DESC')
-            ->groupby('a.id')
-            ->get();
-        }
-        // dd($patient_lists);
-        $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
-        $pdf = PDF::loadView('reports.exportsalesitem', compact('patient_lists', 'roles'));
-        return $pdf->stream('Item Summary ( ' . $request->startDate . ' to ' . $request->endDate . ' ).pdf');
+        // if ($request->post('startDate') != null && $request->post('endDate') != null) {
+        //     $patient_lists = DB::table('orders as a')
+        //     ->join('order_items as b', 'b.order_id', '=', 'a.id')
+        //     ->join('patients as c', 'c.id', '=', 'a.patient_id')
+        //     ->selectRaw('a.dispense_date, a.do_number, a.dispensing_method, c.full_name, SUM(b.quantity) as quantity, SUM(b.price) as amount')
+        //     ->where('b.myob_product_id', $request->item_id)
+        //     ->whereDate('a.dispense_date', '>=', $request->startDate)
+        //     ->whereDate('a.dispense_date', '<=', $request->endDate)
+        //     ->whereIn('a.status_id', [3,4,5])
+        //     ->whereNull('a.deleted_at')
+        //     ->whereNull('a.return_timestamp')
+        //     ->whereNull('b.deleted_at')
+        //     ->orderBy('a.dispense_date', 'DESC')
+        //     ->groupby('a.id')
+        //     ->get();
+        // }
+
+        // $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
+        // $pdf = PDF::loadView('reports.exportsalesitem', compact('patient_lists', 'roles'));
+        // return $pdf->stream('Item Summary ( ' . $request->startDate . ' to ' . $request->endDate . ' ).pdf');
+
+        $dateStart = $request->startDate;
+        $dateEnd = $request->endDate;
+        $itemId = $request->item_id;
+        $itemName = Item::where('id', $itemId)->first()->brand_name;
+
+        return Excel::download(new ItemSummaryExport($dateStart, $dateEnd, $itemId, $itemName), 'Item Summary for ' . $itemName . ' ( ' . $dateStart . ' to ' . $dateEnd . ' ).xlsx');
     }
 
     public function report_stock_pdf()
@@ -417,7 +429,7 @@ class ReportController extends Controller
 
     public function export_sales_item_excel(Request $request)
     {
-        ini_set('max_execution_time', 0);
+        // ini_set('max_execution_time', 0);
         if($request->filter == 1){
             return $this->search_report_sales($request);
         }
@@ -430,13 +442,10 @@ class ReportController extends Controller
             $endDate = $request->endDate;
         }
 
-        $transaction = new TransactionsExport($startDate, $endDate);
-        if ($transaction->collection()->count() > 0) {
-            return Excel::download($transaction, 'Sales Report Details ('. $startDate . " to " . $endDate .').xlsx');
-        }
+        dispatch(new ExportTransactionJob($startDate, $endDate, auth()->user()->id));
 
-        $request->session()->flash('error', 'No Data to Export');
-        return redirect(url('/report/sales_report'));
+        // $request->session()->flash('error', 'No Data to Export');
+        return redirect()->route('sales_report.queue');
     }
 
     public function report_stocks(Request $request)
@@ -703,6 +712,29 @@ class ReportController extends Controller
 
         }
 
+    }
+
+    public function sales_report_queue() {
+        $items = Download::all();
+        $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
+
+        return view('reports.sales_report_queue', compact('roles', 'items'));
+    }
+
+    public function download_file_name($filename){
+        
+        $c = storage_path('app/public/reports/' . $filename);
+        return response()->download($c);
+    }
+
+    public function delete_file(Request $request) {
+        $download = Download::where('id', $request->id)->first();
+        $download->delete();
+
+        $path = storage_path('app/public/reports/' . $request->filename);
+        unlink($path);
+
+        return redirect()->route('sales_report.queue');
     }
 
 }
