@@ -170,7 +170,7 @@ class StickerController extends Controller
         
         if ((int) $request->doClearLabel == 1) {
 
-            $deleted = Label::truncate();
+            $deleted = Label::where('user_id', auth()->user()->id)->delete();
             if ($deleted) {
                 return response()->json([
                     'status' => true,
