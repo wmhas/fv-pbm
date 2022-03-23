@@ -657,7 +657,7 @@ class ReportController extends Controller
             $data["committed_courier"] = $committed_courier;
             $data["items"] = $items;
 
-            $transaction = new StockReportExport($data);
+            $transaction = new StockReportExport($data, $startDate, $endDate);
             if ($transaction->collection()->count() > 0) {
                 return Excel::download($transaction, 'Report Stock ('. $startDate . " to " . $endDate .').xlsx');
             }

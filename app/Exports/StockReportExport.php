@@ -15,6 +15,7 @@ use Maatwebsite\Excel\Concerns\WithStyles;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Maatwebsite\Excel\Concerns\WithStrictNullComparison;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use Carbon\Carbon;
 
 class StockReportExport implements FromCollection, WithHeadings, WithStyles, WithStrictNullComparison
@@ -22,9 +23,14 @@ class StockReportExport implements FromCollection, WithHeadings, WithStyles, Wit
 
     use Exportable;
 
-    public function __construct($data)
+    private $dateStart;
+    private $dateEnd;
+
+    public function __construct($data, $dateStart, $dateEnd)
     {
         $this->data = $data;
+        $this->dateStart = $dateStart;
+        $this->dateEnd = $dateEnd;
     }
 
     /**
@@ -59,6 +65,54 @@ class StockReportExport implements FromCollection, WithHeadings, WithStyles, Wit
     {
         return [
             [
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+            ],
+            [
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+            ],
+            [
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+            ],
+            [
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+            ],
+            [
                 'Item Code',
                 'Item Name',
                 'Counter',
@@ -87,17 +141,58 @@ class StockReportExport implements FromCollection, WithHeadings, WithStyles, Wit
 
     public function styles(Worksheet $sheet)
     {
-        $sheet->getStyle('A1:J1')->getFont()->setBold(true);
+        $right = array(
+            'alignment' => array(
+                'horizontal' => Alignment::HORIZONTAL_RIGHT,
+                'vertical' => Alignment::VERTICAL_CENTER,
+            )
+        );
+
+        $center = array(
+            'alignment' => array(
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER,
+            )
+        );
+
+        $sheet->getColumnDimension('A')->setAutoSize(true);
+        $sheet->getColumnDimension('B')->setAutoSize(true);
+        $sheet->getColumnDimension('C')->setAutoSize(true);
+        $sheet->getColumnDimension('D')->setAutoSize(true);
+        $sheet->getColumnDimension('E')->setAutoSize(true);
+        $sheet->getColumnDimension('F')->setAutoSize(true);
+        $sheet->getColumnDimension('G')->setAutoSize(true);
+        $sheet->getColumnDimension('H')->setAutoSize(true);
+        $sheet->getColumnDimension('I')->setAutoSize(true);
+        $sheet->getColumnDimension('J')->setAutoSize(true);
+
+        $sheet->getStyle('A5:J5')->getFont()->setBold(true);
+        $sheet->getStyle('A6:J6')->getFont()->setBold(true);
+
+        $sheet->mergeCells('A5:A6');
+        $sheet->mergeCells('B5:B6');
+        $sheet->mergeCells('G5:G6');
+        $sheet->mergeCells('H5:H6');
+        $sheet->mergeCells('I5:I6');
+        $sheet->mergeCells('J5:J6');
+
+        $sheet->getStyle('A5:J5')->applyFromArray($center);
+        $sheet->getStyle('A6:J6')->applyFromArray($center);
+
+        $sheet->mergeCells('C5:D5');
+        $sheet->mergeCells('E5:F5');
+
+        $sheet->mergeCells('A2:B2');
+        $sheet->mergeCells('C2:J2');
+        $sheet->mergeCells('A3:B3');
+        $sheet->mergeCells('C3:J3');
+        $sheet->getStyle('A2:A3')->applyFromArray($right);
         $sheet->getStyle('A2:J2')->getFont()->setBold(true);
+        $sheet->getStyle('A3:J3')->getFont()->setBold(true);
 
-        $sheet->mergeCells('A1:A2');
-        $sheet->mergeCells('B1:B2');
-        $sheet->mergeCells('G1:G2');
-        $sheet->mergeCells('H1:H2');
-        $sheet->mergeCells('I1:I2');
-        $sheet->mergeCells('J1:J2');
-
-        $sheet->mergeCells('C1:D1');
-        $sheet->mergeCells('E1:F1');
+        $sheet->setCellValue('A2', 'Date Start:');
+        $sheet->setCellValue('A3', 'Date End:');
+        $sheet->setCellValue('C2', $this->dateStart);
+        $sheet->setCellValue('C3', $this->dateEnd);
     }
 }
