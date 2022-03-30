@@ -17,7 +17,7 @@ use App\Models\Frequency;
 use App\Models\SalesPerson;
 use App\Models\Stock;
 use App\Models\BatchOrder;
-use App\Models\Formula;
+// use App\Models\Formula;
 use App\Models\Log\InventoryLog;
 use App\Models\Log\OrderDateLog;
 use PDF;
@@ -579,32 +579,32 @@ class OrderController extends Controller
         $location = Location::where('item_id', $request->input('item_id'))->first();
         $item = Item::where('id', $request->input('item_id'))->first();
 
-        $formula = Formula::where('id', $item->formula_id)->first();
-        $frequency = Frequency::where('id', $request->input('frequency'))->first();
-        $duration = $request->input('duration');
-        $dose_quantity = $request->input('dose_quantity');
-        $price = $item->selling_price;
+        // $formula = Formula::where('id', $item->formula_id)->first();
+        // $frequency = Frequency::where('id', $request->input('frequency'))->first();
+        // $duration = $request->input('duration');
+        // $dose_quantity = $request->input('dose_quantity');
+        // $price = $item->selling_price;
 
-        $quantity = $frequency->value * $duration * $dose_quantity;
+        // $quantity = $frequency->value * $duration * $dose_quantity;
         
-        if ($formula->id == '1') {
-            $quantity = $quantity / 1;
-        } else if ($formula->id == 6) {
-            $quantity = 1;
-        } else {
-            $quantity /= $formula->value;
-        }
+        // if ($formula->id == '1') {
+        //     $quantity = $quantity / 1;
+        // } else if ($formula->id == 6) {
+        //     $quantity = 1;
+        // } else {
+        //     $quantity /= $formula->value;
+        // }
 
-        $quantity = ceil($quantity);
-        $total_price = $price * $quantity;
+        // $quantity = ceil($quantity);
+        // $total_price = $price * $quantity;
 
-        if ($quantity != $request->input('quantity')) {
-            return redirect()->action('OrderController@create_orderEntry', ['patient' => $order->patient_id, 'order_id', $order->id])->with(['status' => false, 'message' => 'Incorrect duration']);
-        }
+        // if ($quantity != $request->input('quantity')) {
+        //     return redirect()->action('OrderController@create_orderEntry', ['patient' => $order->patient_id, 'order_id', $order->id])->with(['status' => false, 'message' => 'Incorrect duration']);
+        // }
 
-        if ($total_price != $request->input('price')) {
-            return redirect()->action('OrderController@create_orderEntry', ['patient' => $order->patient_id, 'order_id', $order->id])->with(['status' => false, 'message' => 'Incorrect total price']);
-        }
+        // if ($total_price != $request->input('price')) {
+        //     return redirect()->action('OrderController@create_orderEntry', ['patient' => $order->patient_id, 'order_id', $order->id])->with(['status' => false, 'message' => 'Incorrect total price']);
+        // }
         
         // log inventory
         $log = new InventoryLog();
@@ -883,32 +883,32 @@ class OrderController extends Controller
         $location = Location::where('item_id', $order_item->myob_product_id)->first();
         $item = Item::find($order_item->myob_product_id);
 
-        $formula = Formula::where('id', $item->formula_id)->first();
-        $frequency = Frequency::where('id', $request->input('frequency'))->first();
-        $duration = $request->input('duration');
-        $dose_quantity = $request->input('dose_quantity');
-        $price = $item->selling_price;
+        // $formula = Formula::where('id', $item->formula_id)->first();
+        // $frequency = Frequency::where('id', $request->input('frequency'))->first();
+        // $duration = $request->input('duration');
+        // $dose_quantity = $request->input('dose_quantity');
+        // $price = $item->selling_price;
 
-        $quantity = $frequency->value * $duration * $dose_quantity;
+        // $quantity = $frequency->value * $duration * $dose_quantity;
         
-        if ($formula->id == '1') {
-            $quantity = $quantity / 1;
-        } else if ($formula->id == 6) {
-            $quantity = 1;
-        } else {
-            $quantity /= $formula->value;
-        }
+        // if ($formula->id == '1') {
+        //     $quantity = $quantity / 1;
+        // } else if ($formula->id == 6) {
+        //     $quantity = 1;
+        // } else {
+        //     $quantity /= $formula->value;
+        // }
 
-        $quantity = ceil($quantity);
-        $total_price = $price * $quantity;
+        // $quantity = ceil($quantity);
+        // $total_price = $price * $quantity;
 
-        if ($quantity != $request->input('quantity')) {
-            return redirect()->action('OrderController@create_orderEntry', ['patient' => $order->patient_id, 'order_id', $order->id])->with(['status' => false, 'message' => 'Incorrect duration']);
-        }
+        // if ($quantity != $request->input('quantity')) {
+        //     return redirect()->action('OrderController@create_orderEntry', ['patient' => $order->patient_id, 'order_id', $order->id])->with(['status' => false, 'message' => 'Incorrect duration']);
+        // }
 
-        if ($total_price != $request->input('price')) {
-            return redirect()->action('OrderController@create_orderEntry', ['patient' => $order->patient_id, 'order_id', $order->id])->with(['status' => false, 'message' => 'Incorrect total price']);
-        }
+        // if ($total_price != $request->input('price')) {
+        //     return redirect()->action('OrderController@create_orderEntry', ['patient' => $order->patient_id, 'order_id', $order->id])->with(['status' => false, 'message' => 'Incorrect total price']);
+        // }
 
         // log inventory
         $log = new InventoryLog();
