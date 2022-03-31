@@ -637,6 +637,7 @@ class OrderController extends Controller
         $record->frequency = $request->input('frequency');
         $record->quantity = $request->input('quantity');
         $record->price = $request->input('price');
+        $record->selling_price = $request->selling_price;
         $record->save();
 
         $stock = new Stock();
@@ -825,6 +826,7 @@ class OrderController extends Controller
                 $record->frequency = $request->input('frequency')[$i];
                 $record->quantity = $request->input('quantity')[$i];
                 $record->price = $request->input('price')[$i];
+                $record->selling_price = $request->selling_price[$i];
                 $record->save();
 
                 $stock = new Stock();
@@ -943,6 +945,7 @@ class OrderController extends Controller
         $record->frequency = $request->input('frequency');
         $record->quantity = $request->input('quantity');
         $record->price = $request->input('price');
+        $record->selling_price = $request->selling_price;
         $record->save();
 
         $item = Item::find($order_item->myob_product_id);
