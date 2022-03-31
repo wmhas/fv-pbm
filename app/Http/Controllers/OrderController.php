@@ -729,7 +729,6 @@ class OrderController extends Controller
             $od->dispensing_method = $request->dispensing_method;
             $od->rx_interval = 1;
             $od->salesperson_id = $order->sales_person_id;
-            $od->batch_id = $order->batch_id;
             $od->order_document_path = $order->order_document_path;
             $od->order_original_filename = $order->order_original_filename;
             $od->total_amount = $order->total_amount;
