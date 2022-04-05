@@ -1044,7 +1044,7 @@
         </div>
         <br>
 
-        {{-- @if ($order->rx_interval !== 2 && $order->resubmission == 1) --}}
+        @if (Route::getCurrentRoute()->getActionName() !== 'App\Http\Controllers\OrderController@new_resubmission')
             <div class="row">
                 <div class="col-12">
                     <div class="card">
@@ -1057,7 +1057,22 @@
                     </div>
                 </div>
             </div>
-        {{-- @endif --}}
+        @else
+            @if ($order->status_id == 1)
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-footer">
+                                <div class="form-group">
+                                    <input type="hidden" name="total_amount" value="{{ $order->orderitem->sum('price') }}">
+                                    <button type="submit" class="btn btn-primary float-right">Save Order</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
+        @endif
     </form>
 
     <!-- Modal Update Consignment Note -->
