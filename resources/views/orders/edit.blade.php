@@ -1044,7 +1044,7 @@
         </div>
         <br>
 
-        @if (\Request::get('parent') != 1)
+        @if (\Request::get('parent') != NULL)
             <div class="row">
                 <div class="col-12">
                     <div class="card">
