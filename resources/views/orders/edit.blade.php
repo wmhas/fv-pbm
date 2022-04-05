@@ -1044,7 +1044,7 @@
         </div>
         <br>
 
-        @if ($order->rx_interval !== 2 && $order->resubmission == 1)
+        {{-- @if ($order->rx_interval !== 2 && $order->resubmission == 1) --}}
             <div class="row">
                 <div class="col-12">
                     <div class="card">
@@ -1057,7 +1057,7 @@
                     </div>
                 </div>
             </div>
-        @endif
+        {{-- @endif --}}
     </form>
 
     <!-- Modal Update Consignment Note -->
