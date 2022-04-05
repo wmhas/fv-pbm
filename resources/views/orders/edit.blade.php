@@ -1044,18 +1044,20 @@
         </div>
         <br>
 
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-footer">
-                        <div class="form-group">
-                            <input type="hidden" name="total_amount" value="{{ $order->orderitem->sum('price') }}">
-                            <button type="submit" class="btn btn-primary float-right">Save Order</button>
+        @if (\Request::get('parent') != 1)
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-footer">
+                            <div class="form-group">
+                                <input type="hidden" name="total_amount" value="{{ $order->orderitem->sum('price') }}">
+                                <button type="submit" class="btn btn-primary float-right">Save Order</button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        @endif
     </form>
 
     <!-- Modal Update Consignment Note -->
