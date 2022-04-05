@@ -580,11 +580,11 @@ class OrderController extends Controller
         $location = Location::where('item_id', $request->input('item_id'))->first();
         $item = Item::where('id', $request->input('item_id'))->first();
         
-        $total_price = $item->selling_price * $request->quantity;
+        // $total_price = $item->selling_price * $request->quantity;
 
-        if ($total_price != $request->input('price')) {
-            return redirect()->back()->with(['status' => false, 'message' => 'Incorrect total price']);
-        } 
+        // if ($total_price != $request->input('price')) {
+        //     return redirect()->back()->with(['status' => false, 'message' => 'Incorrect total price']);
+        // } 
         
         // log inventory
         $log = new InventoryLog();
@@ -697,14 +697,14 @@ class OrderController extends Controller
         $count = count($request->input('item_id'));
         $parentOrder = "";
 
-        for ($i=0; $i < $count; $i++) {
-            $item = Item::where('id', $request->item_id[$i])->first();
-            $total_price = $item->selling_price * $request->quantity[$i];
+        // for ($i=0; $i < $count; $i++) {
+        //     $item = Item::where('id', $request->item_id[$i])->first();
+        //     $total_price = $item->selling_price * $request->quantity[$i];
 
-            if ($total_price != $request->price[$i]) {
-                return redirect()->back()->with(['status' => false, 'message' => 'Incorrect total price']);
-            } 
-        }        
+        //     if ($total_price != $request->price[$i]) {
+        //         return redirect()->back()->with(['status' => false, 'message' => 'Incorrect total price']);
+        //     } 
+        // }        
 
         DB::beginTransaction();
 
@@ -873,11 +873,11 @@ class OrderController extends Controller
         $location = Location::where('item_id', $order_item->myob_product_id)->first();
         $item = Item::find($order_item->myob_product_id);
 
-        $total_price = $item->selling_price * $request->quantity;
+        // $total_price = $item->selling_price * $request->quantity;
 
-        if ($total_price != $request->input('price')) {
-            return redirect()->back()->with(['status' => false, 'message' => 'Incorrect total price']);
-        } 
+        // if ($total_price != $request->input('price')) {
+        //     return redirect()->back()->with(['status' => false, 'message' => 'Incorrect total price']);
+        // } 
 
         // log inventory
         $log = new InventoryLog();
