@@ -42,12 +42,6 @@
                                             <button type="submit" class="btn btn-success" style=" width:100%;" name="filter" value="1">Search</button>
                                         </div>
                                     </div>
-                                    <div class="col-md-2 ml-auto">
-                                        <label></label>
-                                        <div class="form-group">
-                                            {{-- <a href="{{ route('sales_report.queue') }}" class="btn btn-primary" style=" width:100%;" name="filter" value="1">Download Queue</a> --}}
-                                        </div>
-                                    </div>
                                 </div>
                             </form>
                         </div>
@@ -170,7 +164,7 @@
                                         <input name="endDate" value="{{ $endDate }}" type="hidden" class="form-control">
                                         <input name="page" value="{{ $page }}" type="hidden" class="form-control">
                                         <div class="form-group">
-                                            {{-- <button type="submit" class="btn btn-primary" style=" width:100%;" name="filter" value="2">Export</button> --}}
+                                            <button type="submit" class="btn btn-primary" style=" width:100%;" name="filter" value="2">Export</button>
                                         </div>
                                     </div>
                                     <!-- <div class="col-md-2">

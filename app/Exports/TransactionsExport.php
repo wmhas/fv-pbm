@@ -269,15 +269,15 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
             if ($sheet->getCell('A'.$current_row)->getValue() == $current_id) {
                 $end_row = $current_row;
             } else {
-                $this->merge($sheet, $start_row, $end_row, $num);
+                $this->clearCell($sheet, $start_row, $end_row);
                 $num++;
                 $start_row = $end_row = $current_row;
                 $current_id = $sheet->getCell('A' .$current_row)->getValue();
             }
-
+            $sheet->setCellValue('B'.$start_row, $num);
             $sheet->getColumnDimension('A')->setVisible(false);
         }
-        $this->merge($sheet, $start_row, $end_row, $num);
+        $this->clearCell($sheet, $start_row, $end_row, $num);
 
         for ($i = 1; $i < 5; $i++) {
             for ($j = 'A'; $j < 'S'; $j++) {
@@ -323,22 +323,22 @@ class TransactionsExport implements FromCollection, WithHeadings, WithStyles, Wi
         $sheet->setCellValue('P' . $lastRow, $this->grand_total);
     }
 
-    public function merge($sheet, $start_row, $end_row, $num) {
-        $sheet->mergeCells('A' .$start_row. ':A' .$end_row);
-        $sheet->mergeCells('B' .$start_row. ':B' .$end_row);
-        $sheet->mergeCells('C' .$start_row. ':C' .$end_row);
-        $sheet->mergeCells('D' .$start_row. ':D' .$end_row);
-        $sheet->mergeCells('E' .$start_row. ':E' .$end_row);
-        $sheet->mergeCells('F' .$start_row. ':F' .$end_row);
-        $sheet->mergeCells('G' .$start_row. ':G' .$end_row);
-        $sheet->mergeCells('H' .$start_row. ':H' .$end_row);
-        $sheet->mergeCells('I' .$start_row. ':I' .$end_row);
-        $sheet->mergeCells('J' .$start_row. ':J' .$end_row);
-        $sheet->mergeCells('K' .$start_row. ':K' .$end_row);
-        $sheet->mergeCells('Q' .$start_row. ':Q' .$end_row);
-        $sheet->mergeCells('R' .$start_row. ':R' .$end_row);
-
-        $sheet->setCellValue('B'.$start_row, $num); 
+    public function clearCell($sheet, $start_row, $end_row) {
+        for ($i = $start_row + 1; $i <= $end_row; $i++) {
+            $sheet->setCellValue('A'.$i, '');
+            $sheet->setCellValue('B'.$i, '');
+            $sheet->setCellValue('C'.$i, '');
+            $sheet->setCellValue('D'.$i, '');
+            $sheet->setCellValue('E'.$i, '');
+            $sheet->setCellValue('F'.$i, '');
+            $sheet->setCellValue('G'.$i, '');
+            $sheet->setCellValue('H'.$i, '');
+            $sheet->setCellValue('I'.$i, '');
+            $sheet->setCellValue('J'.$i, '');
+            $sheet->setCellValue('K'.$i, '');
+            $sheet->setCellValue('Q'.$i, '');
+            $sheet->setCellValue('R'.$i, ''); 
+        }
     }
 
     public function columnFormats(): array

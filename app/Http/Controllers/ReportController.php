@@ -429,23 +429,25 @@ class ReportController extends Controller
 
     public function export_sales_item_excel(Request $request)
     {
-        // ini_set('max_execution_time', 0);
+        ini_set('max_execution_time', 0);
         if($request->filter == 1){
             return $this->search_report_sales($request);
         }
         
         $startDate = false;
         $endDate = false;
-
         if ($request->startDate != null && $request->endDate != null) {
             $startDate = $request->startDate;
             $endDate = $request->endDate;
         }
 
-        dispatch(new ExportTransactionJob($startDate, $endDate, auth()->user()->id));
+        $transaction = new TransactionsExport($startDate, $endDate);
+        if ($transaction->collection()->count() > 0) {
+            return Excel::download($transaction, 'Sales Report Details ('. $startDate . " to " . $endDate .').xlsx');
+        }
 
-        // $request->session()->flash('error', 'No Data to Export');
-        return redirect()->route('sales_report.queue');
+        $request->session()->flash('error', 'No Data to Export');
+        return redirect(url('/report/sales_report'));
     }
 
     public function report_stocks(Request $request)
@@ -713,28 +715,4 @@ class ReportController extends Controller
         }
 
     }
-
-    public function sales_report_queue() {
-        $items = Download::all();
-        $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
-
-        return view('reports.sales_report_queue', compact('roles', 'items'));
-    }
-
-    public function download_file_name($filename){
-        
-        $c = storage_path('app/public/reports/' . $filename);
-        return response()->download($c);
-    }
-
-    public function delete_file(Request $request) {
-        $download = Download::where('id', $request->id)->first();
-        $download->delete();
-
-        $path = storage_path('app/public/reports/' . $request->filename);
-        unlink($path);
-
-        return redirect()->route('sales_report.queue');
-    }
-
 }
