@@ -204,12 +204,13 @@ class OrderController extends Controller
 
     public function store_edit($id, Request $request)
     {
-        $exists = Order::where('do_number', $request->input('do_number'))->whereNull('deleted_at')->count();
+        $do_number = $request->input('do_number');
+        $exists = Order::where('do_number', $do_number)->whereNull('deleted_at')->count();
         $order = Order::where('id', $id)->first();
 
         if ($exists > 0) {
-            if ($order->do_number != $request->input('do_number'))
-                return back()->with(['status' => false, 'message' => 'DO number ' . $request->input('do_number') . ' already exist.']);
+            if ($order->do_number != $do_number)
+                return back()->with(['status' => false, 'message' => 'DO number ' . $do_number . ' already exist.']);
         }
 
         if ($request->dispensing_method != $order->dispensing_method) {
@@ -252,7 +253,7 @@ class OrderController extends Controller
         $order->salesperson_id = $request->input('salesperson');
         if ($order->status_id == 1)
             $order->status_id = $order->status_id + 1;
-        $order->do_number = $request->input('do_number');
+        $order->do_number = $do_number;
         $order->dispensing_by = $request->input('dispensing_by');
         $order->dispensing_method = $request->input('dispensing_method');
         $order->rx_interval = $request->input('rx_interval');
@@ -372,14 +373,17 @@ class OrderController extends Controller
 
     public function store_dispense($patient, $order_id, Request $request)
     {
-        $exists = Order::where('do_number', $request->input('do_number'))->whereNull('deleted_at')->count();
+        $do_number = $request->input('do_number');
+        $exists = Order::where('do_number', $do_number)->whereNull('deleted_at')->count();
 
-        if ($exists > 0)
-            return back()->with(['status' => false, 'message' => 'DO number ' . $request->input('do_number') . ' already exist.']);
+        while ($exists > 0) {
+            $do_number = $this->getDONumber();
+            $exists = Order::where('do_number', $do_number)->whereNull('deleted_at')->count();
+        }
 
         $order = Order::where('id', $order_id)->first();
         $order->salesperson_id = $request->input('salesperson');
-        $order->do_number = $request->input('do_number');
+        $order->do_number = $do_number;
         $order->dispensing_by = $request->input('dispensing_by');
         $order->dispensing_method = $request['dispensing_method'];
         $order->save();
@@ -673,7 +677,7 @@ class OrderController extends Controller
         return $do_number;
     }
 
-    private function getDONumber($dispensing_by)
+    private function getDONumber($dispensing_by = null)
     {
         $increment = 1;
      
@@ -1363,13 +1367,14 @@ class OrderController extends Controller
 
     public function resubmission(Request $request, $id)
     {
-        $exists = Order::where('do_number', $request->input('do_number'))->whereNull('deleted_at')->count();
+        $do_number = $request->input('do_number');
+        $exists = Order::where('do_number', $do_number)->whereNull('deleted_at')->count();
         $prev_order = Order::where('id', $id)->first();
         $order = Order::find($prev_order->id);
 
-        if ($exists > 0) {
-            if ($order->do_number != $request->input('do_number'))
-                return back()->with(['status' => false, 'message' => 'DO number ' . $request->input('do_number') . ' already exist.']);
+        while ($exists > 0) {
+            $do_number = $this->getDONumber();
+            $exists = Order::where('do_number', $do_number)->whereNull('deleted_at')->count();
         }
 
         if ($request->parent){
@@ -1474,7 +1479,7 @@ class OrderController extends Controller
             $order->dispensing_by = $request->input('dispensing_by');
             $order->dispensing_method = $request->input('dispensing_method');
             $order->rx_interval = $request->input('rx_interval');
-            $order->do_number = $request->input('do_number');
+            $order->do_number = $do_number;
             $order->salesperson_id = $request->input('salesperson');
             $order->total_amount = $request->input('total_amount');
             $order->save();
