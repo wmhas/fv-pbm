@@ -56,13 +56,23 @@ class HomeController extends Controller
             }
         }
 
+        $price_diff = DB::table('items as A')
+            ->select(DB::raw('COUNT(*) as total'))
+            ->whereNull('C.deleted_at')
+            ->whereNull('B.deleted_at')
+            ->whereRaw('Date(B.updated_at) = CURDATE()')
+            ->where(Db::raw('b.price - (b.selling_price * b.quantity)') , '!=' , 0)
+            ->join('order_items as B', 'B.myob_product_id', 'A.id')
+            ->join('orders as C', 'C.id', 'B.order_id')
+            ->first();
+
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
         if ($roles->role_id == 1) {
-            return view('hq.home', compact('orders', 'refills', 'rx_expireds', 'roles'));
+            return view('hq.home', compact('orders', 'refills', 'rx_expireds', 'roles', 'price_diff'));
         } elseif ($roles->role_id == 2) {
-            return view('pharmacist.home', compact('orders', 'refills', 'rx_expireds', 'roles'));
+            return view('pharmacist.home', compact('orders', 'refills', 'rx_expireds', 'roles', 'price_diff'));
         } else {
-            return view('home', compact('orders', 'refills', 'rx_expireds', 'roles'));
+            return view('home', compact('orders', 'refills', 'rx_expireds', 'roles', 'price_diff'));
         }
     }
 
