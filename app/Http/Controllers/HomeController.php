@@ -61,7 +61,7 @@ class HomeController extends Controller
             ->whereNull('C.deleted_at')
             ->whereNull('B.deleted_at')
             ->whereRaw('Date(B.updated_at) = CURDATE()')
-            ->where(Db::raw('b.price - (b.selling_price * b.quantity)') , '!=' , 0)
+            ->where(Db::raw('ROUND(b.price - (b.selling_price * b.quantity))') , '!=' , 0)
             ->join('order_items as B', 'B.myob_product_id', 'A.id')
             ->join('orders as C', 'C.id', 'B.order_id')
             ->first();
