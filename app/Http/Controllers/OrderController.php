@@ -633,6 +633,10 @@ class OrderController extends Controller
         $stock->source_date = Carbon::now()->format('Y-m-d');
         $stock->save();
 
+        if ($order->total_amount != 0) {
+            $this->calculateTotalAmount($order->id);
+        }
+
         // log inventory
         $item = Item::where('id', $request->input('item_id'))->first();
         $location = Location::where('item_id', $request->input('item_id'))->first();
@@ -942,6 +946,8 @@ class OrderController extends Controller
         $stock->source_date = Carbon::now()->format('Y-m-d');
         $stock->save();
 
+        $this->calculateTotalAmount($order->id);
+
         // log inventory
         $item = Item::where('id', $item->id)->first();
         $location = Location::where('item_id', $item->id)->first();
@@ -1027,6 +1033,8 @@ class OrderController extends Controller
             $log->courier_changes = $log->courier_after - $log->courier_before;
             $log->loan_changes = $log->loan_after - $log->loan_before;
             LogController::writeInventoryLog($log);
+
+            $this->calculateTotalAmount($order->id);
 
             if ($order->total_amount == "0") {
                 return redirect()->route('order.entry', [
@@ -1808,5 +1816,19 @@ class OrderController extends Controller
         LogController::writeOrderDateLog($log);
 
         return view('orders.date', compact('order'));
+    }
+
+    public function calculateTotalAmount($order_id) {
+        $order = Order::where('id', $order_id)->first();
+        $total_amount = 0;
+
+        foreach ($order->orderitem as $orderitem) {
+            if ($orderitem->deleted_at == NULL) {
+                $total_amount += $orderitem->price;
+            }
+        }
+
+        $order->total_amount = $total_amount;
+        $order->save();
     }
 }
