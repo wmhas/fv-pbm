@@ -27,13 +27,13 @@
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Date From</label>
-                                            <input value="{{ $startDate }}" id="startDate" name="startDate" type="date" class="form-control">
+                                            <input value="{{ $startDate }}" id="startDate" name="startDate" type="date" class="form-control" required>
                                         </div>
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Date To</label>
-                                            <input value="{{ $endDate }}" id="endDate" name="endDate" type="date" class="form-control">
+                                            <input value="{{ $endDate }}" id="endDate" name="endDate" type="date" class="form-control" required>
                                         </div>
                                     </div>
                                     <div class="col-md-2">
