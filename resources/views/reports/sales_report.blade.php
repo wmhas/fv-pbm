@@ -27,13 +27,13 @@
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Date From</label>
-                                            <input value="{{ $startDate }}" name="startDate" type="date" class="form-control">
+                                            <input value="{{ $startDate }}" id="startDate" name="startDate" type="date" class="form-control">
                                         </div>
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Date To</label>
-                                            <input value="{{ $endDate }}" name="endDate" type="date" class="form-control">
+                                            <input value="{{ $endDate }}" id="endDate" name="endDate" type="date" class="form-control">
                                         </div>
                                     </div>
                                     <div class="col-md-2">
@@ -207,7 +207,35 @@
         $(document).on("click",".page-link",function(){
             href = $(this).attr("href");
             $(this).attr("href", href+"&startDate={{ $startDate }}&endDate={{$endDate}}&filter=1");
-         });
+        });
+
+        var startDate = $('#startDate')
+        var endDate = $('#endDate')
+        var date1, date2, days;
+
+        startDate.change(()=>{
+            date1 = new Date(startDate.val())
+            date2 = new Date(endDate.val())
+            days = (date2.getTime() - date1.getTime()) / (1000 * 3600 * 24) + 1
+
+            if (days > 31) {
+                alert('Date range duration cannot more than 31 days');
+                startDate.val('')
+                startDate.focus()
+            } 
+        })
+
+        endDate.change(()=>{
+            date1 = new Date(startDate.val())
+            date2 = new Date(endDate.val())
+            days = (date2.getTime() - date1.getTime()) / (1000 * 3600 * 24) + 1
+
+            if (days > 31) {
+                alert('Date range duration cannot more than 31 days');
+                endDate.val('')
+                endDate.focus()
+            } 
+        })
     </script>
 @endsection
 
