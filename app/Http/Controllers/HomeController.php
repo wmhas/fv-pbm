@@ -55,15 +55,14 @@ class HomeController extends Controller
                 array_push($rx_expireds, $rx);
             }
         }
-
-        $price_diff = DB::table('items as A')
-            ->select(DB::raw('COUNT(*) as total'))
-            ->whereNull('C.deleted_at')
-            ->whereNull('B.deleted_at')
-            ->whereRaw('Date(B.updated_at) = CURDATE()')
-            ->where(Db::raw('ROUND(b.price - (b.selling_price * b.quantity))') , '!=' , 0)
-            ->join('order_items as B', 'B.myob_product_id', 'A.id')
-            ->join('orders as C', 'C.id', 'B.order_id')
+        $price_diff = DB::table('items as a')
+            ->join('order_items as b', 'b.myob_product_id', 'a.id')
+            ->join('orders as c', 'c.id', 'b.order_id')
+            ->whereNull('c.deleted_at')
+            ->whereNull('b.deleted_at')
+            ->whereRaw('date_format(b.updated_at, "%Y-%m-%d") = "' . date('Y-m-d') . '"')
+            ->whereRaw('ROUND(b.price - (b.selling_price * b.quantity), 2) != 0')
+            ->select(DB::raw('count(*) as total'))
             ->first();
 
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
