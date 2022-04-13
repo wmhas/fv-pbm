@@ -115,6 +115,7 @@
                                     <option value="1" @if (!empty($patient)  && $patient->tariff_id == '1') selected @endif>JHEV</option>
                                     <option value="2" @if (!empty($patient)  && $patient->tariff_id == '2') selected @endif>JPA</option>
                                     <option value="3" @if (!empty($patient)  && $patient->tariff_id == '3') selected @endif>MINDEF</option>
+                                    <option value="4" @if (!empty($patient)  && $patient->tariff_id == '4') selected @endif>Yayasan Veteran</option>
                                 </select>
                             </div>
                         </div>
