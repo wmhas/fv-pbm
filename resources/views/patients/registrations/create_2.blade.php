@@ -113,8 +113,8 @@
                                         <option  value="">--Please Select--</option>
                                         <option  value="Veteran Berpencen">Veteran Berpencen</option>
                                         <option value="Veteran Tidak Berpencen">Veteran Tidak Berpencen</option>
-                                        {{-- <option value="Tidak Berpencen">Non-Pensionable</option> --}}
                                         <option value="JPA Berpencen">JPA Berpencen</option>
+                                        <option value="Berpencen Tidak Layak">Berpencen Tidak Layak</option>
                                     </select>
                                 @endif
                             </div>
