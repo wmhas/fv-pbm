@@ -114,7 +114,7 @@
                                         <option  value="Veteran Berpencen">Veteran Berpencen</option>
                                         <option value="Veteran Tidak Berpencen">Veteran Tidak Berpencen</option>
                                         <option value="JPA Berpencen">JPA Berpencen</option>
-                                        <option value="Berpencen Tidak Layak">Berpencen Tidak Layak</option>
+                                        <option value="Veteran Tidak Layak">Veteran Tidak Layak</option>
                                     </select>
                                 @endif
                             </div>
