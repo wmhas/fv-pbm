@@ -133,6 +133,15 @@
 									</div>
 								</div>
 							</div>
+						@elseif ($order->patient->tariff_id == 4)
+							<div class="row">
+								<div class="col-md-6">
+									<div class="form-group">
+										<label>Payor</label>
+										<input type="text" class="form-control" value="YAYASAN VETERAN" readonly>
+									</div>
+								</div>
+							</div>
 						@else
 							<div class="row">
 								<div class="col-md-6">

@@ -99,6 +99,7 @@
                                         @if ($patient->tariff_id == '1') <option value="1"  selected>JHEV</option>@endif
                                         @if ($patient->tariff_id == '2') <option value="2" selected>JPA</option>@endif
                                         @if ($patient->tariff_id == '3') <option value="3" selected>MINDEF</option>@endif
+                                        @if ($patient->tariff_id == '4') <option value="4" selected>Yayasan Veteran</option>@endif
                                     </select>
                                 </div>
                             </div>
