@@ -552,8 +552,10 @@
 								<button class="btn btn-warning" data-toggle='modal' data-target='#returnModalOrder' style="float:left; margin-left:3px; margin-right:3px;">Return Order</button>
 								<a class="btn btn-primary" type="button" href="{{ url('/order/'.$order->id.'/update') }}" style="float:left; margin-left:3px; margin-right:3px;">Edit Order</a>
 							@elseif ($order->status_id == 4)
+								<a href="{{action('OrderController@download_justify',[$order->id])}}" style="float:right; margin-left:3px; margin-right:3px;" target="_blank" 
+									class="btn btn-secondary"><i class="mdi mdi-printer"></i>Print Justify</a>
 								<a href="{{action('OrderController@download_do',[$order->id])}}" style="float:right; margin-left:3px; margin-right:3px;" target="_blank"
-										class="btn btn-secondary"><i class="mdi mdi-printer"></i>Print DO</a>
+									class="btn btn-secondary"><i class="mdi mdi-printer"></i>Print DO</a>
 								<a class="btn btn-primary" type="button" href="{{ url('/order/'.$order->id.'/update') }}" style="float:left; margin-left:3px; margin-right:3px;">Edit Order</a>
 							@elseif ($order->status_id == 5)
 								<a href="{{action('OrderController@download_do',[$order->id])}}" style="float:right; margin-left:3px; margin-right:3px;" target="_blank"
