@@ -1659,11 +1659,12 @@ class OrderController extends Controller
         $orderItemSelected = [];
         foreach ($order->orderItem as $key => $value) {
             $orderItemSelected[] = DB::table('items as a')
-            ->join('frequencies as b', 'b.id', 'a.frequency_id')
             ->join('formulas as c', 'c.id', 'a.formula_id')
-            ->select('a.id', 'a.selling_price as selling_price', 'a.selling_uom as selling_uom', 'a.instruction', 'a.indikasi as indication', 'a.formula_id', 'b.name', 'b.id as freq_id', 'c.value')
+            ->select('a.id', 'a.selling_price as selling_price', 'a.selling_uom as selling_uom', 'a.instruction', 'a.indikasi as indication', 'a.formula_id', 'c.value')
             ->where('a.id', $value->items->id)
             ->first();
+            $orderItemSelected[$key]->freq_id = $value->frequencies->id;
+            $orderItemSelected[$key]->name = $value->frequencies->name;
         }
 
         $resubmission = 1;
