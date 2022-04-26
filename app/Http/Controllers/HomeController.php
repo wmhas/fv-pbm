@@ -56,12 +56,11 @@ class HomeController extends Controller
             }
         }
         $price_diff = DB::table('items as a')
-            ->join('order_items as b', 'b.myob_product_id', 'a.id')
-            ->join('orders as c', 'c.id', 'b.order_id')
-            ->whereNull('c.deleted_at')
+            ->join('order_items as b', 'a.id', 'b.myob_product_id')
+            ->join('orders as c', 'b.order_id', 'c.id')
             ->whereNull('b.deleted_at')
-            ->whereRaw('date_format(b.updated_at, "%Y-%m-%d") = "' . date('Y-m-d') . '"')
-            ->whereRaw('ROUND(b.price - (b.selling_price * b.quantity), 2) != 0')
+            ->whereNull('c.deleted_at')
+            ->whereRaw('(ROUND((b.price/b.quantity), 2) - b.selling_price) != 0')
             ->select(DB::raw('count(*) as total'))
             ->first();
 
