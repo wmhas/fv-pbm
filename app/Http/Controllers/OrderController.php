@@ -21,6 +21,7 @@ use App\Models\Formula;
 // use App\Models\Formula;
 use App\Models\Log\InventoryLog;
 use App\Models\Log\OrderDateLog;
+use App\Models\Log\OrderItemLog;
 use PDF;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
@@ -196,6 +197,7 @@ class OrderController extends Controller
         // $duration = floor(abs(strtotime($prescription->rx_end) - strtotime($prescription->rx_start)) / (60 * 60 * 24));
         $duration = $this->getDuration($order, $prescription);
 
+        
         $frequencies = Frequency::all();
         $resubmission = 0;
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
@@ -624,6 +626,47 @@ class OrderController extends Controller
         $record->selling_price = $request->selling_price;
         $record->save();
 
+        $log = new OrderItemLog;
+        $log->process = "Add Item";
+        $log->order_id = $order->id;
+        $log->order_item_id = $record->id;
+        $log->item_id = $record->myob_product_id;
+        $log->item_name = $record->items->brand_name;
+        $log->stored_selling_price = $record->items->selling_price;
+        $log->dose_quantity = $request->input('dose_quantity');
+        $log->duration = $request->input('duration');
+        $log->frequency = $request->input('frequency');
+        $log->frequency_name = $record->frequencies->name;
+        $log->input_quantity = $request->input('quantity');
+        $log->input_price = $request->input('price');
+        $log->input_selling_price = $request->selling_price;
+        
+
+        $formula_id = $record->items->formula_id;
+
+            if($formula_id == 1){
+                $log->calculated_quantity = $log->dose_quantity * $log->frequency * $log->duration;
+            }
+
+            elseif($formula_id == 2){
+                $log->calculated_quantity = ($log->dose_quantity * $log->frequency * $log->duration) / 120;
+            }
+
+            elseif($formula_id == 3){
+                $log->calculated_quantity = ($log->dose_quantity * $log->frequency * $log->duration) / 30;
+            }
+            elseif($formula_id == 4){
+                $log->calculated_quantity = ($log->dose_quantity * $log->frequency * $log->duration) / 60;
+            }
+            elseif($formula_id == 5){
+                $log->calculated_quantity = ($log->dose_quantity * $log->frequency * $log->duration) / 300;
+            }
+            else{
+                $log->calculated_quantity = 1;
+            }
+        $log->calculated_price = $log->calculated_quantity*$log->stored_selling_price;
+        LogController::writeOrderItemLog($log);
+
         $stock = new Stock();
         $stock->item_id = $request->input('item_id');
         $stock->quantity = -$request->input('quantity');
@@ -712,7 +755,8 @@ class OrderController extends Controller
         //     if ($total_price != $request->price[$i]) {
         //         return redirect()->back()->with(['status' => false, 'message' => 'Incorrect total price']);
         //     } 
-        // }        
+        // }    
+        
 
         DB::beginTransaction();
 
@@ -826,6 +870,49 @@ class OrderController extends Controller
                 $record->selling_price = $request->selling_price[$i];
                 $record->save();
 
+                $log = new OrderItemLog;
+                $log->process = "Add Item";
+                $log->order_id = $order->id;
+                $log->order_item_id = $record->id;
+                $log->item_id = $record->myob_product_id;
+                $log->item_name = $record->items->brand_name;
+                $log->stored_selling_price = $record->items->selling_price;
+                $log->dose_quantity = $request->input('dose_quantity')[$i];
+                $log->duration = $request->input('duration')[$i];
+                $log->frequency = $request->input('frequency')[$i];
+                $log->frequency_name = $record->frequencies->name;
+                $log->input_quantity = $request->input('quantity')[$i];
+                $log->input_price = $request->input('price')[$i];
+                $log->input_selling_price = $request->selling_price[$i];
+                
+        
+                $formula_id = $record->items->formula_id;
+        
+                    if($formula_id == 1){
+                        $log->calculated_quantity = $log->dose_quantity * $log->frequency * $log->duration;
+                    }
+        
+                    elseif($formula_id == 2){
+                        $log->calculated_quantity = ($log->dose_quantity * $log->frequency * $log->duration) / 120;
+                    }
+        
+                    elseif($formula_id == 3){
+                        $log->calculated_quantity = ($log->dose_quantity * $log->frequency * $log->duration) / 30;
+                    }
+                    elseif($formula_id == 4){
+                        $log->calculated_quantity = ($log->dose_quantity * $log->frequency * $log->duration) / 60;
+                    }
+                    elseif($formula_id == 5){
+                        $log->calculated_quantity = ($log->dose_quantity * $log->frequency * $log->duration) / 300;
+                    }
+                    else{
+                        $log->calculated_quantity = 1;
+                    }
+                $log->calculated_price = $log->calculated_quantity*$log->stored_selling_price;
+                LogController::writeOrderItemLog($log);
+        
+                //dd("checkpint 3");
+
                 $stock = new Stock();
                 $stock->item_id = $request->input('item_id')[$i];
                 $stock->quantity = -$request->input('quantity')[$i];
@@ -852,6 +939,7 @@ class OrderController extends Controller
                 $log->loan_changes = $log->loan_after - $log->loan_before;
                 LogController::writeInventoryLog($log);
 
+                
 
             }
             DB::commit();
@@ -888,6 +976,7 @@ class OrderController extends Controller
         // } 
 
         // log inventory
+
         $log = new InventoryLog();
         $log->process = "Edit item for order " .$order->id . " " . $order->do_number;
 
@@ -964,6 +1053,47 @@ class OrderController extends Controller
         $log->loan_changes = $log->loan_after - $log->loan_before;
         LogController::writeInventoryLog($log);
 
+        $log = new OrderItemLog;
+        $log->process = "Update Item";
+        $log->order_id = $order->id;
+        $log->order_item_id = $record->id;
+        $log->item_id = $record->myob_product_id;
+        $log->item_name = $record->items->brand_name;
+        $log->stored_selling_price = $record->items->selling_price;
+        $log->dose_quantity = $request->input('dose_quantity');
+        $log->duration = $request->input('duration');
+        $log->frequency = $request->input('frequency');
+        $log->frequency_name = $record->frequencies->name;
+        $log->input_quantity = $request->input('quantity');
+        $log->input_price = $request->input('price');
+        $log->input_selling_price = $request->selling_price;                
+
+        $formula_id = $record->items->formula_id;
+
+            if($formula_id == 1){
+                $log->calculated_quantity = $log->dose_quantity * $log->frequency * $log->duration;
+            }
+
+            elseif($formula_id == 2){
+                $log->calculated_quantity = ($log->dose_quantity * $log->frequency * $log->duration) / 120;
+            }
+
+            elseif($formula_id == 3){
+                $log->calculated_quantity = ($log->dose_quantity * $log->frequency * $log->duration) / 30;
+            }
+            elseif($formula_id == 4){
+                $log->calculated_quantity = ($log->dose_quantity * $log->frequency * $log->duration) / 60;
+            }
+            elseif($formula_id == 5){
+                $log->calculated_quantity = ($log->dose_quantity * $log->frequency * $log->duration) / 300;
+            }
+            else{
+                $log->calculated_quantity = 1;
+            }
+        $log->calculated_price = $log->calculated_quantity*$log->stored_selling_price;
+        LogController::writeOrderItemLog($log);
+
+
         if ($order->total_amount == 0) {
             return redirect()->route('order.entry', [
                 'id' => $request->input('patient_id'),
@@ -974,6 +1104,8 @@ class OrderController extends Controller
                 'order' => $request->input('order_id')
             ])->with(['status' => true, 'message' => 'Successfully update item']);
         }
+
+       
     }
 
     public function delete_item($patient, $id)

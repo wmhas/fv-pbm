@@ -73,4 +73,33 @@ class LogController extends Controller
         fwrite($f, $text);
         fclose($f); 
     }
+
+    public static function writeOrderItemLog($data) {
+        $message = "";
+
+        $message .= " Process: " . $data->process . " ||";
+
+        $message .= " Order ID: " . $data->order_id . ";";
+        $message .= " Order Item ID: " . $data->order_item_id . ";";
+        $message .= " Item Name: " . $data->item_name . ";";
+        $message .= " Item ID: " . $data->item_id . ";";
+        $message .= " Stored Selling Price: " . $data->stored_selling_price . ";";
+        $message .= " Dose Quantity: " . $data->dose_quantity . ";";
+        $message .= " Duration: " . $data->duration . ";";
+        $message .= " Frequency : " . $data->frequency . ";";
+        $message .= " Frequency Name: " . $data->frequency_name . ";";
+        $message .= " Input Quantity: " . $data->input_quantity . ";";
+        $message .= " Input Price: " . $data->input_price . ";";
+        $message .= " Input Selling Price: " . $data->input_selling_price . ";";
+        $message .= " Calculated Price: " . $data->calculated_price . ";";
+        $message .= " Calculated Quantity: " . $data->calculated_quantity . ";";
+        
+        $f = fopen (storage_path('logs/orderitem.log'), "a");    
+    
+        $action = Route::getCurrentRoute()->getActionName();
+        $text = date("F j, Y, g:i a")." || " . $action . " || " . auth()->user()->name . " || " . $message . "\n";
+
+        fwrite($f, $text);
+        fclose($f); 
+    }
 }
