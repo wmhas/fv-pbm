@@ -871,7 +871,7 @@ class OrderController extends Controller
                 $record->save();
 
                 $log = new OrderItemLog;
-                $log->process = "Add Item";
+                $log->process = "Add Item Resubmission";
                 $log->order_id = $order->id;
                 $log->order_item_id = $record->id;
                 $log->item_id = $record->myob_product_id;
@@ -1622,6 +1622,7 @@ class OrderController extends Controller
             $order->do_number = $do_number;
             $order->salesperson_id = $request->input('salesperson');
             $order->total_amount = $request->input('total_amount');
+            // $order->resubmission = ($request->input('rx_supply_date')) ? 0 : 1;
             $order->save();
 
             if (!empty($prev_order->delivery)) {
@@ -1644,6 +1645,7 @@ class OrderController extends Controller
                 $prescription->rx_number = ($request->input('rx_number')) ? $request->input('rx_number') : $prev_order->prescription->rx_number;
                 $prescription->rx_start = ($request->input('rx_start_date')) ? $request->input('rx_start_date') : $prev_order->prescription->rx_start;
                 $prescription->rx_end = ($request->input('rx_end_date')) ? $request->input('rx_end_date') : $prev_order->prescription->rx_end;
+                // $prescription->next_supply_date = ($request->input('rx_supply_date')) ? $request->input('rx_supply_date') : $prev_order->prescription->next_supply_date;
 
                 if ($request->hasFile('rx_attach')) {
                     $fileNameWithExt = $request->file('rx_attach')->getClientOriginalName();
