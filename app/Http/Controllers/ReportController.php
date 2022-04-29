@@ -307,7 +307,7 @@ class ReportController extends Controller
         $itemId = $request->item_id;
         $itemName = Item::where('id', $itemId)->first()->brand_name;
 
-        return Excel::download(new ItemSummaryExport($dateStart, $dateEnd, $itemId, $itemName), 'Item Summary for ' . $itemName . ' ( ' . $dateStart . ' to ' . $dateEnd . ' ).xlsx');
+        return Excel::download(new ItemSummaryExport($dateStart, $dateEnd, $itemId, $itemName), 'Item Summary ( ' . $dateStart . ' to ' . $dateEnd . ' ).xlsx');
     }
 
     public function report_stock_pdf()
