@@ -59,7 +59,7 @@ class PurchaseController extends Controller
     public function create_purchase($item)
     {
         $items = Item::where('id', $item)->first();
-        //$salesperson = SalesPerson::with('salespersons')->all();
+        
         $salesperson = SalesPerson::all();
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
         return view('purchase.create_purchase', compact('roles', 'salesperson', 'items'));

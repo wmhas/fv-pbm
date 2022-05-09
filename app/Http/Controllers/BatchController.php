@@ -4,11 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
-use PDF;
 use App\Models\Order;
-use App\Models\Batch;
 use App\Models\NewBatch;
-use App\Models\BatchOrder;
 use App\Exports\NewBatchExport;
 use Excel;
 use Carbon\Carbon;
@@ -46,23 +43,6 @@ class BatchController extends Controller
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
         return view('batch.pending', compact('roles'));
     }
-
-    // public function getBatchNo() {
-    //     $increment = 1;
-     
-    //     do {
-    //         $count_batch = DB::table('new_batches')->where('batch_no', '!=', '')->whereNull('deleted_at')->count();
-    //         $batch_no = 'B' . str_pad($count_batch + $increment, 6, "0", STR_PAD_LEFT);
-
-    //         $exists = NewBatch::where('batch_no', $batch_no)->first();
-
-    //         if ($exists)
-    //             $increment++;
-
-    //     } while ($exists);
-
-    //     return $batch_no;
-    // }
 
     public function batch_order(Order $order, Request $request) {        
         

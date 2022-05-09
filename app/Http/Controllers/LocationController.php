@@ -18,7 +18,7 @@ class LocationController extends Controller
     public function index(Request $request)
     {
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
-        $item_name = $request->get('item_name'); // get request item
+        $item_name = $request->get('item_name');
 
         $locations = Location::query();
         $locations = $locations
@@ -79,14 +79,4 @@ class LocationController extends Controller
         }
         return back()->with(['status' => false, 'message' => 'Please make sure the quantity is matched!']);
     }
-
-    // public function add_location()
-    // {
-    //     $items = Item::all();
-    //     foreach ($items as $item) {
-    //         $location = new Location();
-    //         $location->item_id = $item->ItemID;
-    //         $location->save();
-    //     }
-    // }
 }

@@ -17,8 +17,6 @@ use App\Models\Frequency;
 use App\Models\SalesPerson;
 use App\Models\Stock;
 use App\Models\BatchOrder;
-use App\Models\Formula;
-// use App\Models\Formula;
 use App\Models\Log\InventoryLog;
 use App\Models\Log\OrderDateLog;
 use App\Models\Log\OrderItemLog;
@@ -28,8 +26,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Exception;
-
-use Illuminate\Support\Facades\Log;
 
 class OrderController extends Controller
 {
@@ -157,8 +153,7 @@ class OrderController extends Controller
         $hospitals = Hospital::all();
         $clinics = Clinic::all();
         $salesPersons = SalesPerson::all();
-        $order = Order::where('id', $id)->first();
-        // $items = DB::table('myob_products as a')->join('myob_product_details as b', 'b.myob_product_id', 'a.ItemNumber')->where('IsInactive', 'N')->get();
+        $order = Order::where('id', $id)->first(); 
         $items = Item::all();
         $item_lists = [];
         foreach ($items as $item) {
@@ -190,11 +185,8 @@ class OrderController extends Controller
         }
 
 
-        // Get rx_start and rx_end from table prescription
         $prescription = Prescription::select('rx_start', 'rx_end', 'next_supply_date')->where('order_id', $order->id)->first();
 
-        // Get duration in days
-        // $duration = floor(abs(strtotime($prescription->rx_end) - strtotime($prescription->rx_start)) / (60 * 60 * 24));
         $duration = $this->getDuration($order, $prescription);
 
         
@@ -507,16 +499,14 @@ class OrderController extends Controller
     public function create_orderEntry($patient, $order_id)
     {
         ini_set('max_execution_time', 300);
-        // $items = DB::table('myob_products as a')->join('myob_product_details as b', 'b.myob_product_id', 'a.ItemNumber')->where('IsInactive', 'N')->get();
+        
         $items = Item::select('id','brand_name','item_code', 'frequency_id')->get();
         $order = Order::where('id', $order_id)->first();
 
         $orderItems = $order->orderitem;
 
-        // Get rx_start and rx_end from table prescription
         $prescription = Prescription::select('rx_start', 'rx_end', 'next_supply_date')->where('order_id', $order_id)->first();
 
-        // Get duration in days
         $duration = $this->getDuration($order, $prescription);
 
         $item_lists = [];
@@ -551,8 +541,6 @@ class OrderController extends Controller
     {
         $order = Order::where('id', $order_id)->first();
         
-        // dd($request->all());
-  
         if ( $request->input('total_amount') == 0) {
             return redirect()->action('OrderController@create_orderEntry', [
                 'id' => $patient,
@@ -568,29 +556,11 @@ class OrderController extends Controller
         }
     }
 
-    //Move to ajax controller getItemDetails
-    // public function getDetails($item_id = 0)
-    // {
-    //     $empData['data'] = DB::table('myob_products as a')->join('myob_product_details as b', 'b.myob_product_id', 'a.ItemNumber')->join('frequencies as c', 'c.id', 'b.frequency_id')
-    //         ->join('formulas as d', 'd.id', 'b.formula_id')
-    //         ->select('a.ItemID', 'a.BaseSellingPrice as selling_price', 'a.SellUnitMeasure as selling_uom', 'b.instruction', 'b.indikasi as indication', 'b.formula_id', 'c.name', 'c.id as freq_id', 'd.value')
-    //         ->where('a.ItemID', $item_id)
-    //         ->get()->toArray();
-
-    //     return response()->json($empData);
-    // }
-
     public function store_item(Request $request)
     {
         $order = Order::select("id", "do_number", "dispensing_method","patient_id", "total_amount")->where('id',  $request->input('order_id'))->first();
         $location = Location::where('item_id', $request->input('item_id'))->first();
         $item = Item::where('id', $request->input('item_id'))->first();
-        
-        // $total_price = $item->selling_price * $request->quantity;
-
-        // if ($total_price != $request->input('price')) {
-        //     return redirect()->back()->with(['status' => false, 'message' => 'Incorrect total price']);
-        // } 
         
         // log inventory
         $log = new InventoryLog();
@@ -644,26 +614,27 @@ class OrderController extends Controller
 
         $formula_id = $record->items->formula_id;
 
-            if($formula_id == 1){
-                $log->calculated_quantity = $log->dose_quantity * $log->frequency * $log->duration;
-            }
+        if($formula_id == 1){
+            $log->calculated_quantity = $log->dose_quantity * $log->frequency * $log->duration;
+        }
 
-            elseif($formula_id == 2){
-                $log->calculated_quantity = ($log->dose_quantity * $log->frequency * $log->duration) / 120;
-            }
+        elseif($formula_id == 2){
+            $log->calculated_quantity = ($log->dose_quantity * $log->frequency * $log->duration) / 120;
+        }
 
-            elseif($formula_id == 3){
-                $log->calculated_quantity = ($log->dose_quantity * $log->frequency * $log->duration) / 30;
-            }
-            elseif($formula_id == 4){
-                $log->calculated_quantity = ($log->dose_quantity * $log->frequency * $log->duration) / 60;
-            }
-            elseif($formula_id == 5){
-                $log->calculated_quantity = ($log->dose_quantity * $log->frequency * $log->duration) / 300;
-            }
-            else{
-                $log->calculated_quantity = 1;
-            }
+        elseif($formula_id == 3){
+            $log->calculated_quantity = ($log->dose_quantity * $log->frequency * $log->duration) / 30;
+        }
+        elseif($formula_id == 4){
+            $log->calculated_quantity = ($log->dose_quantity * $log->frequency * $log->duration) / 60;
+        }
+        elseif($formula_id == 5){
+            $log->calculated_quantity = ($log->dose_quantity * $log->frequency * $log->duration) / 300;
+        }
+        else{
+            $log->calculated_quantity = 1;
+        }
+
         $log->calculated_price = $log->calculated_quantity*$log->stored_selling_price;
         LogController::writeOrderItemLog($log);
 
@@ -708,22 +679,6 @@ class OrderController extends Controller
         }
     }
 
-    private function getDONumberOld($dispensing_by){
-        if($dispensing_by == 'FVKL'){
-            $count_order = DB::table('orders')->where('dispensing_by', 'FVKL')->where('do_number', '!=', '')->count();
-            $code = '50';
-        } elseif ($dispensing_by == 'FVT')  {
-            $count_order = DB::table('orders')->where('dispensing_by', 'FVT')->where('do_number', '!=', '')->count();
-            $code = '14';
-        } else {
-            $count_order = DB::table('orders')->where('dispensing_by', 'FVL')->where('do_number', '!=', '')->count();
-            $code = '99';
-        }
-        $number = str_pad($count_order + 1, 6, "0", STR_PAD_LEFT);
-        $do_number = $code.$number;
-        return $do_number;
-    }
-
     private function getDONumber($dispensing_by = null)
     {
         $increment = 1;
@@ -747,16 +702,6 @@ class OrderController extends Controller
 
         $count = count($request->input('item_id'));
         $parentOrder = "";
-
-        // for ($i=0; $i < $count; $i++) {
-        //     $item = Item::where('id', $request->item_id[$i])->first();
-        //     $total_price = $item->selling_price * $request->quantity[$i];
-
-        //     if ($total_price != $request->price[$i]) {
-        //         return redirect()->back()->with(['status' => false, 'message' => 'Incorrect total price']);
-        //     } 
-        // }    
-        
 
         DB::beginTransaction();
 
@@ -888,31 +833,30 @@ class OrderController extends Controller
         
                 $formula_id = $record->items->formula_id;
         
-                    if($formula_id == 1){
-                        $log->calculated_quantity = $log->dose_quantity * $log->frequency * $log->duration;
-                    }
-        
-                    elseif($formula_id == 2){
-                        $log->calculated_quantity = ($log->dose_quantity * $log->frequency * $log->duration) / 120;
-                    }
-        
-                    elseif($formula_id == 3){
-                        $log->calculated_quantity = ($log->dose_quantity * $log->frequency * $log->duration) / 30;
-                    }
-                    elseif($formula_id == 4){
-                        $log->calculated_quantity = ($log->dose_quantity * $log->frequency * $log->duration) / 60;
-                    }
-                    elseif($formula_id == 5){
-                        $log->calculated_quantity = ($log->dose_quantity * $log->frequency * $log->duration) / 300;
-                    }
-                    else{
-                        $log->calculated_quantity = 1;
-                    }
+                if($formula_id == 1){
+                    $log->calculated_quantity = $log->dose_quantity * $log->frequency * $log->duration;
+                }
+    
+                elseif($formula_id == 2){
+                    $log->calculated_quantity = ($log->dose_quantity * $log->frequency * $log->duration) / 120;
+                }
+    
+                elseif($formula_id == 3){
+                    $log->calculated_quantity = ($log->dose_quantity * $log->frequency * $log->duration) / 30;
+                }
+                elseif($formula_id == 4){
+                    $log->calculated_quantity = ($log->dose_quantity * $log->frequency * $log->duration) / 60;
+                }
+                elseif($formula_id == 5){
+                    $log->calculated_quantity = ($log->dose_quantity * $log->frequency * $log->duration) / 300;
+                }
+                else{
+                    $log->calculated_quantity = 1;
+                }
+
                 $log->calculated_price = $log->calculated_quantity*$log->stored_selling_price;
                 LogController::writeOrderItemLog($log);
         
-                //dd("checkpint 3");
-
                 $stock = new Stock();
                 $stock->item_id = $request->input('item_id')[$i];
                 $stock->quantity = -$request->input('quantity')[$i];
@@ -938,8 +882,6 @@ class OrderController extends Controller
                 $log->courier_changes = $log->courier_after - $log->courier_before;
                 $log->loan_changes = $log->loan_after - $log->loan_before;
                 LogController::writeInventoryLog($log);
-
-                
 
             }
             DB::commit();
@@ -968,12 +910,6 @@ class OrderController extends Controller
         $order = Order::where('id', $order_item->order_id)->first();
         $location = Location::where('item_id', $order_item->myob_product_id)->first();
         $item = Item::find($order_item->myob_product_id);
-
-        // $total_price = $item->selling_price * $request->quantity;
-
-        // if ($total_price != $request->input('price')) {
-        //     return redirect()->back()->with(['status' => false, 'message' => 'Incorrect total price']);
-        // } 
 
         // log inventory
 
@@ -1070,26 +1006,27 @@ class OrderController extends Controller
 
         $formula_id = $record->items->formula_id;
 
-            if($formula_id == 1){
-                $log->calculated_quantity = $log->dose_quantity * $log->frequency * $log->duration;
-            }
+        if($formula_id == 1){
+            $log->calculated_quantity = $log->dose_quantity * $log->frequency * $log->duration;
+        }
 
-            elseif($formula_id == 2){
-                $log->calculated_quantity = ($log->dose_quantity * $log->frequency * $log->duration) / 120;
-            }
+        elseif($formula_id == 2){
+            $log->calculated_quantity = ($log->dose_quantity * $log->frequency * $log->duration) / 120;
+        }
 
-            elseif($formula_id == 3){
-                $log->calculated_quantity = ($log->dose_quantity * $log->frequency * $log->duration) / 30;
-            }
-            elseif($formula_id == 4){
-                $log->calculated_quantity = ($log->dose_quantity * $log->frequency * $log->duration) / 60;
-            }
-            elseif($formula_id == 5){
-                $log->calculated_quantity = ($log->dose_quantity * $log->frequency * $log->duration) / 300;
-            }
-            else{
-                $log->calculated_quantity = 1;
-            }
+        elseif($formula_id == 3){
+            $log->calculated_quantity = ($log->dose_quantity * $log->frequency * $log->duration) / 30;
+        }
+        elseif($formula_id == 4){
+            $log->calculated_quantity = ($log->dose_quantity * $log->frequency * $log->duration) / 60;
+        }
+        elseif($formula_id == 5){
+            $log->calculated_quantity = ($log->dose_quantity * $log->frequency * $log->duration) / 300;
+        }
+        else{
+            $log->calculated_quantity = 1;
+        }
+        
         $log->calculated_price = $log->calculated_quantity*$log->stored_selling_price;
         LogController::writeOrderItemLog($log);
 
@@ -1249,7 +1186,7 @@ class OrderController extends Controller
             $fileName = pathinfo($fileNameWithExt, PATHINFO_FILENAME);
             $extension = $request->file('cn_attach')->getClientOriginalExtension();
             $fileNameToStore = $fileName . '.' . $extension;
-            //delete previous file attachment
+            
             unlink(storage_path('app/public/order/' . $order->id . '/consignment-note/' . $delivery->file_name));
             $path = $request->file('cn_attach')->storeAs('public/order/' . $order->id . '/consignment-note/', $fileNameToStore);
             $document_path = 'public/order/' . $order->id . '/consignment-note/' . $fileNameToStore;
@@ -1288,7 +1225,7 @@ class OrderController extends Controller
             $fileName = pathinfo($fileNameWithExt, PATHINFO_FILENAME);
             $extension = $request->file('rx_attach')->getClientOriginalExtension();
             $fileNameToStore = $fileName . '.' . $extension;
-            //delete previous file attachment
+            
             unlink(storage_path('app/public/order/' . $order->id . '/rx-attachment/' . $prescription->rx_original_filename));
             $path = $request->file('rx_attach')->storeAs('public/order/' . $order->id . '/rx-attachment/', $fileNameToStore);
             $document_path = 'public/order/' . $order->id . '/rx-attachment/' . $fileNameToStore;
@@ -1344,7 +1281,7 @@ class OrderController extends Controller
             $fileName = pathinfo($fileNameWithExt, PATHINFO_FILENAME);
             $extension = $request->file('order_attach')->getClientOriginalExtension();
             $fileNameToStore = $fileName . '.' . $extension;
-            //delete previous file attachment
+            
             unlink(storage_path('app/public/order/' . $order->id . '/order-attachment/' . $order->order_original_filename));
             $path = $request->file('order_attach')->storeAs('public/order/' . $order->id . '/order-attachment/', $fileNameToStore);
             $document_path = 'public/order/' . $order->id . '/order-attachment/' . $fileNameToStore;
@@ -1622,7 +1559,6 @@ class OrderController extends Controller
             $order->do_number = $do_number;
             $order->salesperson_id = $request->input('salesperson');
             $order->total_amount = $request->input('total_amount');
-            // $order->resubmission = ($request->input('rx_supply_date')) ? 0 : 1;
             $order->save();
 
             if (!empty($prev_order->delivery)) {
@@ -1645,8 +1581,7 @@ class OrderController extends Controller
                 $prescription->rx_number = ($request->input('rx_number')) ? $request->input('rx_number') : $prev_order->prescription->rx_number;
                 $prescription->rx_start = ($request->input('rx_start_date')) ? $request->input('rx_start_date') : $prev_order->prescription->rx_start;
                 $prescription->rx_end = ($request->input('rx_end_date')) ? $request->input('rx_end_date') : $prev_order->prescription->rx_end;
-                // $prescription->next_supply_date = ($request->input('rx_supply_date')) ? $request->input('rx_supply_date') : $prev_order->prescription->next_supply_date;
-
+                
                 if ($request->hasFile('rx_attach')) {
                     $fileNameWithExt = $request->file('rx_attach')->getClientOriginalName();
                     $fileName = pathinfo($fileNameWithExt, PATHINFO_FILENAME);
@@ -1682,59 +1617,8 @@ class OrderController extends Controller
             }
         }
 
-        // $prev_order_item = OrderItem::where('order_id', $order->id)->orderBy("id","desc")->get();
-        // foreach ($prev_order_item as $item) {
-        //     $location = Location::where('item_id', $item->myob_product_id)->first();
-        //     if ($order->dispensing_method == 'Walkin' && $location->counter >= $item->quantity) {
-        //         $location->counter = $location->counter - $item->quantity;
-        //         $location->save();
-
-        //         // $record = new OrderItem();
-        //         // $record->order_id = $order->id;
-        //         // $record->myob_product_id = $item->myob_product_id;
-        //         // $record->dose_quantity = $item->dose_quantity;
-        //         // $record->duration = $item->duration;
-        //         // $record->frequency = $item->frequency;
-        //         // $record->quantity = $item->quantity;
-        //         // $record->price = $item->price;
-        //         // $record->save();
-
-        //         // $stock = new Stock();
-        //         // $stock->item_id = $item->myob_product_id;
-        //         // $stock->quantity = -$item->quantity;
-        //         // $stock->balance = 0;
-        //         // $stock->source = 'sale';
-        //         // $stock->source_id = $record->id;
-        //         // $stock->source_date = Carbon::now()->format('Y-m-d');
-        //         // $stock->save();
-        //     } elseif ($order->dispensing_method == 'Delivery' && $location->courier >= $item->quantity) {
-        //         $location->courier = $location->courier - $item->quantity;
-        //         $location->save();
-
-        //         // $record = new OrderItem();
-        //         // $record->order_id = $order->id;
-        //         // $record->myob_product_id = $item->myob_product_id;
-        //         // $record->dose_quantity = $item->dose_quantity;
-        //         // $record->duration = $item->duration;
-        //         // $record->frequency = $item->frequency;
-        //         // $record->quantity = $item->quantity;
-        //         // $record->price = $item->price;
-        //         // $record->save();
-
-        //         // $stock = new Stock();
-        //         // $stock->item_id = $item->myob_product_id;
-        //         // $stock->quantity = -$item->quantity;
-        //         // $stock->balance = 0;
-        //         // $stock->source = 'sale';
-        //         // $stock->source_id = $record->id;
-        //         // $stock->source_date = Carbon::now()->format('Y-m-d');
-        //         // $stock->save();
-        //     } else {
-        //     }
-        // }
         return redirect()->action('OrderController@show', ['order' => $order->id])
                 ->with(['status' => true, 'message' => 'Resubmission Success!']);
-        // return redirect()->action('OrderController@new_resubmission', ['order' => $order->id]);
     }
 
     public function new_resubmission(Request $request, $id)
@@ -1746,7 +1630,7 @@ class OrderController extends Controller
         $frequencies = Frequency::all();
         $order = Order::where('id', $id)->first();
         $items = Item::all();
-        // $items = DB::table('myob_products as a')->join('myob_product_details as b', 'b.myob_product_id', 'a.ItemNumber')->where('IsInactive', 'N')->get();
+        
         $item_lists = [];
         foreach ($items as $item) {
             $location = DB::table('locations')->select('counter','courier')->where('item_id', $item->id)->first();
@@ -1802,13 +1686,13 @@ class OrderController extends Controller
         }
 
         $resubmission = 1;
-        // Get rx_start and rx_end from table prescription
+        
         $prescription = Prescription::select('rx_start', 'rx_end', 'next_supply_date')->where('order_id', $order->id)->first();
-        // Get duration in days
+        
         $duration = floor(abs(strtotime($order->prescription->rx_end) - strtotime($order->prescription->next_supply_date)) / (60 * 60 * 24));
 
         $do = Order::select('do_number')->orderBy('do_number','DESC')->first();
-        // $do_number = (int)$do->do_number+1;
+        
         $do_number = $this->getDONumber($order->dispensing_by);
 
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
@@ -1836,7 +1720,6 @@ class OrderController extends Controller
 
     public function download_invoice1($id)
     {
-        // $order = Order::where('id', $id)->first();
         $date = Carbon::now()->format('d/m/Y');
         $batch = BatchOrder::where('order_id', $id)->first();
         $order_item = OrderItem::where('order_id', $id)->get();

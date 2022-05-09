@@ -28,7 +28,7 @@ class PatientController extends Controller
     {
         $method = $request->get('method');
         $keyword = $request->get('keyword');
-        // $keyword = preg_replace("/[^a-zA-Z0-9 ]/", "", $keyword);
+        
         $cards = null;
         switch ($method) {
             case ('identification'):
@@ -114,7 +114,7 @@ class PatientController extends Controller
         $states = State::all();
         $patient = Patient::find($id);
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
-        // dd($patient);
+        
         return view('patients.registrations.create_1', ['states' => $states, 'patient' => $patient, 'roles' => $roles]);
     }
 
@@ -158,22 +158,21 @@ class PatientController extends Controller
 
     public function store_card(Request $request, $id)
     {
-        // dd($request->all());
+        
         $patient = Patient::find($id);
         if ($request->hasFile('ic_attach')) {
-            //Get filename with extension
+            
             $fileNameWithExt = $request->file('ic_attach')->getClientOriginalName();
-            //Get just filename
+            
             $fileName = pathinfo($fileNameWithExt, PATHINFO_FILENAME);
-            //Get just extensions
+            
             $extension = $request->file('ic_attach')->getClientOriginalExtension();
-            // Filename to store
+            
             $fileNameToStore = $fileName . '.' . $extension;
-            //Upload file
+            
             $path = $request->file('ic_attach')->storeAs('public/ic-attachment/' . $patient->identification . '/', $fileNameToStore);
             $document_path = 'public/ic-attachment/' . $patient->identification . '/' . $fileNameToStore;
 
-            // store IC in database
             $patient->ic_original_filename = $fileNameToStore;
             $patient->ic_document_path = $document_path;
         }
@@ -183,19 +182,19 @@ class PatientController extends Controller
             foreach ($request->file('sl_attach') as $file) {
                 $patient_attachment = new PatientAttachment();
                 $patient_attachment->patient_id = $id;
-                //Get filename with extension
+                
                 $fileNameWithExt = $file->getClientOriginalName();
-                //Get just filename
+                
                 $fileName = pathinfo($fileNameWithExt, PATHINFO_FILENAME);
-                //Get just extensions
+                
                 $extension = $file->getClientOriginalExtension();
-                // Filename to store
+                
                 $fileNameToStore = $fileName . '.' . $extension;
-                //Upload file
+                
                 $path = $file->storeAs('public/support-letter/' . $patient->identification . '/', $fileNameToStore);
                 $document_path = 'public/support-letter/' . $patient->identification . '/' . $fileNameToStore;
 
-                // store sl in database
+                
                 $patient_attachment->sl_original_filename = $fileNameToStore;
                 $patient_attachment->sl_document_path = $document_path;
                 $patient_attachment->save();
@@ -329,19 +328,19 @@ class PatientController extends Controller
 
         if (!empty($patient->ic_original_filename)) {
             if ($request->hasFile('ic_attach')) {
-                //Get filename with extension
+                
                 $fileNameWithExt = $request->file('ic_attach')->getClientOriginalName();
-                //Get just filename
+                
                 $fileName = pathinfo($fileNameWithExt, PATHINFO_FILENAME);
-                //Get just extensions
+                
                 $extension = $request->file('ic_attach')->getClientOriginalExtension();
-                // Filename to store
+                
                 $fileNameToStore = $fileName . '.' . $extension;
-                //Upload file
+                
                 $path = $request->file('ic_attach')->storeAs('public/ic-attachment/' . $patient->identification . '/', $fileNameToStore);
                 $document_path = 'public/ic-attachment/' . $patient->identification . '/' . $fileNameToStore;
 
-                // store IC in database
+                
                 $patient->id = $patient->id;
                 $patient->ic_original_filename = $fileNameToStore;
                 $patient->ic_document_path = $document_path;
@@ -349,19 +348,19 @@ class PatientController extends Controller
             }
         } else {
             if ($request->hasFile('ic_attach')) {
-                //Get filename with extension
+                
                 $fileNameWithExt = $request->file('ic_attach')->getClientOriginalName();
-                //Get just filename
+                
                 $fileName = pathinfo($fileNameWithExt, PATHINFO_FILENAME);
-                //Get just extensions
+                
                 $extension = $request->file('ic_attach')->getClientOriginalExtension();
-                // Filename to store
+                
                 $fileNameToStore = $fileName . '.' . $extension;
-                //Upload file
+                
                 $path = $request->file('ic_attach')->storeAs('public/ic-attachment/' . $patient->identification . '/', $fileNameToStore);
                 $document_path = 'public/ic-attachment/' . $patient->identification . '/' . $fileNameToStore;
 
-                // store IC in database
+                
                 $patient->ic_original_filename = $fileNameToStore;
                 $patient->ic_document_path = $document_path;
                 $patient->save();
@@ -405,21 +404,20 @@ class PatientController extends Controller
     {
         if ($request->get('type') == 'ic') {
             if ($request->hasFile('ic_attach')) {
-                //Get filename with extension
+                
                 $fileNameWithExt = $request->file('ic_attach')->getClientOriginalName();
-                //Get just filename
+                
                 $fileName = pathinfo($fileNameWithExt, PATHINFO_FILENAME);
-                //Get just extensions
+                
                 $extension = $request->file('ic_attach')->getClientOriginalExtension();
-                // Filename to store
+                
                 $fileNameToStore = $fileName . '.' . $extension;
-                // File to delete
+                
                 unlink(storage_path('app/public/ic-attachment/' . $patient->identification . '/' . $patient->ic_original_filename));
-                // Storage::delete($attachment->ic_original_filename);
-                //Upload file
+                
                 $path = $request->file('ic_attach')->storeAs('public/ic-attachment/' . $patient->identification . '/', $fileNameToStore);
                 $document_path = 'public/ic-attachment/' . $patient->identification . '/' . $fileNameToStore;
-                // store IC in database
+                
                 $patient->ic_original_filename = $fileNameToStore;
                 $patient->ic_document_path = $document_path;
                 $patient->save();
@@ -428,18 +426,18 @@ class PatientController extends Controller
             }
         } elseif ($request->get('type') == 'icnew') {
             if ($request->hasFile('ic_new')) {
-                //Get filename with extension
+                
                 $fileNameWithExt = $request->file('ic_new')->getClientOriginalName();
-                //Get just filename
+                
                 $fileName = pathinfo($fileNameWithExt, PATHINFO_FILENAME);
-                //Get just extensions
+                
                 $extension = $request->file('ic_new')->getClientOriginalExtension();
-                // Filename to store
+                
                 $fileNameToStore = $fileName . '.' . $extension;
-                //Upload file
+                
                 $path = $request->file('ic_new')->storeAs('public/ic-attachment/' . $patient->identification . '/', $fileNameToStore);
                 $document_path = 'public/ic-attachment/' . $patient->identification . '/' . $fileNameToStore;
-                // store IC in database
+                
                 $patient->ic_original_filename = $fileNameToStore;
                 $patient->ic_document_path = $document_path;
                 $patient->save();
@@ -452,18 +450,18 @@ class PatientController extends Controller
 
         if ($request->get('type') == 'sl') {
             if ($request->hasFile('sl_attach')) {
-                //Get filename with extension
+                
                 $fileNameWithExt = $request->file('sl_attach')->getClientOriginalName();
-                //Get just filename
+                
                 $fileName = pathinfo($fileNameWithExt, PATHINFO_FILENAME);
-                //Get just extensions
+                
                 $extension = $request->file('sl_attach')->getClientOriginalExtension();
-                // Filename to store
+                
                 $fileNameToStore = $fileName . '.' . $extension;
-                //Upload file
+                
                 $path = $request->file('sl_attach')->storeAs('public/support-letter/' . $patient->identification . '/', $fileNameToStore);
                 $document_path = 'public/support-letter/' . $patient->identification . '/' . $fileNameToStore;
-                // store IC in database
+                
                 $patientAttachment->patient_id = $patient->id;
                 $patientAttachment->sl_original_filename = $fileNameToStore;
                 $patientAttachment->sl_document_path = $document_path;
@@ -476,7 +474,6 @@ class PatientController extends Controller
 
     public function deleteAttachment(PatientAttachment $attachment)
     {
-        // dd($attachment->patient_id);
         $patient = Patient::where('id', $attachment->patient_id)->first();
         unlink(storage_path('app/public/support-letter/' . $patient->identification . '/' . $attachment->sl_original_filename));
         $attachment->delete();
@@ -495,7 +492,6 @@ class PatientController extends Controller
 
         $pdf = PDF::loadView('print.print1', compact('patient'));
         return $pdf->stream('patient.pdf');
-        // return view('print.print1', compact('patient'));
     }
 
     public function show()
@@ -516,7 +512,7 @@ class PatientController extends Controller
     public function store_card_owner(Request $request, Patient $patient)
     {
         $card = Card::where('id', $patient->card_id)->first();
-        // dd($request->all());
+        
         $card->salutation = $request->salutation;
         $card->name = $request->full_name;
         $card->ic_no  = $request->identification;
@@ -560,8 +556,6 @@ class PatientController extends Controller
 
     public function store_relation(Request $request, Patient $patient)
     {
-        // dd($request->relation);
-
         $exists = Patient::where("identification", $request->identification)->whereNull('deleted_at')->first();
 
         if ($exists) {
@@ -592,42 +586,42 @@ class PatientController extends Controller
         ]);
 
         if ($request->hasFile('ic_attach')) {
-            //Get filename with extension
+            
             $fileNameWithExt = $request->file('ic_attach')->getClientOriginalName();
-            //Get just filename
+            
             $fileName = pathinfo($fileNameWithExt, PATHINFO_FILENAME);
-            //Get just extensions
+            
             $extension = $request->file('ic_attach')->getClientOriginalExtension();
-            // Filename to store
+            
             $fileNameToStore = $fileName . '.' . $extension;
-            //Upload file
+            
             $path = $request->file('ic_attach')->storeAs('public/ic-attachment/' . $new->identification . '/', $fileNameToStore);
             $document_path = 'public/ic-attachment/' . $new->identification . '/' . $fileNameToStore;
 
-            // store IC in database
+            
             $new->ic_original_filename = $fileNameToStore;
             $new->ic_document_path = $document_path;
             $new->save();
         }
 
-        //SLAttachment
+        
         if ($request->hasFile('sl_attach')) {
             foreach ($request->file('sl_attach') as $file) {
                 $patient_attachment = new PatientAttachment();
                 $patient_attachment->patient_id = $new->id;
-                //Get filename with extension
+                
                 $fileNameWithExt = $file->getClientOriginalName();
-                //Get just filename
+                
                 $fileName = pathinfo($fileNameWithExt, PATHINFO_FILENAME);
-                //Get just extensions
+                
                 $extension = $file->getClientOriginalExtension();
-                // Filename to store
+                
                 $fileNameToStore = $fileName . '.' . $extension;
-                //Upload file
+                
                 $path = $file->storeAs('public/support-letter/' . $new->identification . '/', $fileNameToStore);
                 $document_path = 'public/support-letter/' . $new->identification . '/' . $fileNameToStore;
 
-                // store sl in database
+                
                 $patient_attachment->sl_original_filename = $fileNameToStore;
                 $patient_attachment->sl_document_path = $document_path;
                 $patient_attachment->save();

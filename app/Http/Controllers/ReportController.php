@@ -2,28 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Download;
 use App\Exports\ItemExport;
 use App\Exports\ItemSummaryExport;
 use App\Exports\ReportRefillExport;
-use App\Models\OrderItem;
-use App\Models\Status;
 use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\Item;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Session;
 use PDF;
 use Excel;
 use App\Exports\TransactionsExport;
 use App\Exports\TransactionsSalesExport;
 use App\Exports\StockReportExport;
-use App\Jobs\ExportTransactionJob;
-use Illuminate\Pagination\Paginator;
-use Illuminate\Support\Collection;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\Storage;
 
 class ReportController extends Controller
 {
@@ -37,18 +28,6 @@ class ReportController extends Controller
 
     public function report_sales(Request $request)
     {
-        // $months = ['Jan', 'Feb', 'Mar', 'April', 'May', 'Jun', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        // $totalAll = Order::whereIn('status_id', [4, 5])->sum('total_amount');
-        // $monthsNo = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-        // $no_orders = [];
-        // foreach ($monthsNo as $no) {
-        //     $itemSale = Order::whereMonth('created_at', '=', $no)
-        //         ->whereIn('status_id', [4, 5])
-        //         ->sum('total_amount');
-
-        //     array_push($no_orders, (int)$itemSale);
-        // }
-
         if ($request->startDate != null && $request->endDate != null) {
             $startDate = $request->startDate;
             $endDate = $request->endDate;
@@ -63,19 +42,6 @@ class ReportController extends Controller
             $page = 1;
         }
 
-        // $orders = Order::join("patients","patients.id","=","orders.patient_id")
-            // ->leftjoin("tariffs","tariffs.id","=","patients.tariff_id")
-            // ->join("cards","cards.id","=","patients.card_id")
-            // ->join("prescriptions","prescriptions.order_id","=","orders.id")
-            // ->join("order_items","order_items.order_id","=","orders.id")
-            // ->join("items","items.id","=","order_items.myob_product_id")
-            // ->join("states","states.id","=","patients.state_id")
-            // ->whereIn('orders.status_id', [4, 5])
-            // ->whereDate('orders.created_at', '>=', $startDate)
-            // ->whereDate('orders.created_at', '<=', $endDate)
-            // ->orderBy('orders.created_at', 'DESC')
-            // ->paginate(10, ['*'], 'page', $page);
-
         $orders = Order::whereIn('orders.status_id', [3, 4, 5])
             ->whereDate('orders.dispense_date', '>=', $startDate)
             ->whereDate('orders.dispense_date', '<=', $endDate)
@@ -84,7 +50,7 @@ class ReportController extends Controller
             ->paginate(10, ['*'], 'page', $page);
 
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
-        // return view('reports.report_sales', ['months' => $months, 'no_orders' => $no_orders, 'totalAll' => $totalAll, 'orders' => $orders, 'roles' => $roles]);
+        
         return view('reports.report_sales', ['orders' => $orders, 'roles' => $roles,'startDate'=>$startDate,'endDate'=>$endDate,'page'=>$page]);
     }
 
@@ -96,21 +62,7 @@ class ReportController extends Controller
 
         $page = $request->page;
 
-        // ini_set('max_execution_time', 1000);
         if ($request->startDate != null && $request->endDate != null) {
-            // $orders= Order::join("patients","patients.id","=","orders.patient_id")
-            // ->leftjoin("tariffs","tariffs.id","=","patients.tariff_id")
-            // ->join("cards","cards.id","=","patients.card_id")
-            // ->join("prescriptions","prescriptions.order_id","=","orders.id")
-            // ->join("order_items","order_items.order_id","=","orders.id")
-            // ->join("items","items.id","=","order_items.myob_product_id")
-            // ->join("states","states.id","=","patients.state_id")
-            // ->whereIn('orders.status_id', [4, 5])
-            // ->whereDate('orders.created_at', '>=', $request->startDate)
-            // ->whereDate('orders.created_at', '<=', $request->endDate)
-            // ->orderBy('orders.created_at', 'DESC')
-            // ->paginate(10, ['*'], 'page', $page);
-
             $orders = Order::whereIn('orders.status_id', [3, 4, 5])
                 ->whereDate('orders.dispense_date', '>=', $request->startDate)
                 ->whereDate('orders.dispense_date', '<=', $request->endDate)
@@ -119,7 +71,7 @@ class ReportController extends Controller
                 ->paginate(10, ['*'], 'page', $page);
         }
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
-        // return view('reports.report_sales', ['orders' => $orders, 'roles' => $roles,'startDate'=>$request->startDate,'endDate'=>$request->endDate,'page'=>$page]);
+        
         return view('reports.report_sales', ['orders' => $orders, 'roles' => $roles,'startDate'=>$request->startDate,'endDate'=>$request->endDate,'page'=>$page]);
     }
 
@@ -144,7 +96,6 @@ class ReportController extends Controller
 
     public function report_refill(Request $request)
     {
-        // dd($request->all());
         $startDate = $request->get('startDate', date('Y-m-d'));
         $endDate = $request->get('endDate', date('Y-m-d'));
         $searchType = $request->get('search_type');
@@ -249,17 +200,6 @@ class ReportController extends Controller
         $start_date = $request->get('startDate', null);
         $end_date = $request->get('endDate', null);
         if ($request->get('startDate') != null && $request->get('endDate') != null) {
-            // $patient_lists = DB::table('orders as a')
-            // ->join('patients as b', 'b.id', '=', 'a.patient_id')
-            // ->join('order_items as c', 'c.order_id', '=', 'a.id')
-            // ->join('items as d', 'd.id', '=', 'c.myob_product_id')
-            // ->selectRaw('b.full_name, SUM(c.quantity) as quantity, SUM(c.price) as amount')
-            // ->where('a.status_id', 4)
-            // ->whereDate('a.created_at', '>=', $request->get('startDate'))
-            // ->whereDate('a.created_at', '<=', $request->get('endDate'))
-            // // ->orderby('b.full_name', 'asc')
-            // ->groupby('b.full_name')
-            // ->paginate(15);
             $patient_lists = DB::table('orders as a')
             ->join('order_items as b', 'b.order_id', '=', 'a.id')
             ->join('patients as c', 'c.id', '=', 'a.patient_id')
@@ -281,27 +221,6 @@ class ReportController extends Controller
 
     public function export_sales_item(Request $request)
     {
-        // if ($request->post('startDate') != null && $request->post('endDate') != null) {
-        //     $patient_lists = DB::table('orders as a')
-        //     ->join('order_items as b', 'b.order_id', '=', 'a.id')
-        //     ->join('patients as c', 'c.id', '=', 'a.patient_id')
-        //     ->selectRaw('a.dispense_date, a.do_number, a.dispensing_method, c.full_name, SUM(b.quantity) as quantity, SUM(b.price) as amount')
-        //     ->where('b.myob_product_id', $request->item_id)
-        //     ->whereDate('a.dispense_date', '>=', $request->startDate)
-        //     ->whereDate('a.dispense_date', '<=', $request->endDate)
-        //     ->whereIn('a.status_id', [3,4,5])
-        //     ->whereNull('a.deleted_at')
-        //     ->whereNull('a.return_timestamp')
-        //     ->whereNull('b.deleted_at')
-        //     ->orderBy('a.dispense_date', 'DESC')
-        //     ->groupby('a.id')
-        //     ->get();
-        // }
-
-        // $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
-        // $pdf = PDF::loadView('reports.exportsalesitem', compact('patient_lists', 'roles'));
-        // return $pdf->stream('Item Summary ( ' . $request->startDate . ' to ' . $request->endDate . ' ).pdf');
-
         $dateStart = $request->startDate;
         $dateEnd = $request->endDate;
         $itemId = $request->item_id;
@@ -312,32 +231,23 @@ class ReportController extends Controller
 
     public function report_stock_pdf()
     {
-        // $items = DB::table('v_sum_order_items as a')
-        // ->join('locations as b', 'b.item_id', 'a.myob_product_id')
-        // ->join('myob_products as c', 'c.ItemID', 'b.item_id')
-        // ->join('myob_product_details as d', 'd.myob_product_id', 'c.ItemNumber')
-        // ->select('c.ItemNumber','c.ItemName', 'b.courier as on_hand' , 'a.sales_quantity as committed',
-        // 'b.courier AS available')->get();
         $items = DB::table('items as a')
             ->join('locations as b', 'b.item_id', 'a.id')
-            // ->join('myob_product_details as c', 'c.myob_product_id', 'a.ItemNumber')
-            // ->join('v_sum_order_items as d', 'd.myob_product_id', 'b.item_id')
             ->select('a.id', 'a.brand_name', 'a.item_code', 'b.courier as on_hand')
             ->get();
 
         $sales = DB::table('v_sum_order_items')
             ->select('myob_product_id', 'sales_quantity as committed')
             ->get()->toArray();
-        // dd($sales);
+            
         foreach ($sales as $sale) {
             foreach ($items as $item) {
                 if ($sale->myob_product_id == $item->id) {
                     $item->committed = $sale->committed;
-                    // $item->available = $item->on_hand - $sale->committed;
                 }
             }
         }
-        // dd($items);
+        
         $date = Carbon::now()->format('d/m/Y');
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
         $pdf = PDF::loadView('reports.report_stocks', compact('items', 'roles', 'date'));
@@ -346,26 +256,6 @@ class ReportController extends Controller
 
     public function sales_report()
     {
-        // $months = ['Jan', 'Feb', 'Mar', 'April', 'May', 'Jun', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        // $totalAll = Order::whereIn('status_id', [4, 5])->sum('total_amount');
-        // $monthsNo = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-        // $no_orders = [];
-        // foreach ($monthsNo as $no) {
-        //     $itemSale = Order::whereMonth('updated_at', '=', $no)
-        //         ->whereIn('status_id', [4, 5])
-        //         ->sum('total_amount');
-
-        //     array_push($no_orders, (int)$itemSale);
-        // }
-
-        // $startDate = date('Y-m-d');
-        // $endDate = date('Y-m-d');
-        // $orders = Order::getorder(null,null,1);
-        // $order = $orders["collectOrder"];
-        // $links = $orders["links"];
-        // $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
-        // return view('reports.sales_report', ['months' => $months, 'no_orders' => $no_orders, 'totalAll' => $totalAll, 'order' => $order, 'roles' => $roles, 'order'=>$order,'startDate'=>$startDate,'endDate'=>$endDate,'page'=>1,'links'=>$links]);
-            
         $page = 1;
 
         $startDate = $endDate = date('Y-m-d');
@@ -388,28 +278,6 @@ class ReportController extends Controller
 
     public function search_report_sales($request)
     {
-        // $months = ['Jan', 'Feb', 'Mar', 'April', 'May', 'Jun', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        // $totalAll = Order::whereIn('status_id', [4, 5])->sum('total_amount');
-        // $monthsNo = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-        // $no_orders = [];
-        // foreach ($monthsNo as $no) {
-        //     $itemSale = Order::whereMonth('created_at', '=', $no)
-        //         ->whereIn('status_id', [4, 5])
-        //         ->sum('total_amount');
-
-        //     array_push($no_orders, (int)$itemSale);
-        // }
-
-        // $startDate = $request->startDate;
-        // $endDate = $request->endDate;
-        // $page = $request->page;
-
-        // $orders = Order::getorder($startDate, $endDate, $page);
-        // $order = $orders["collectOrder"];
-        // $links = $orders["links"];
-        // $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
-        // return view('reports.sales_report', ['months' => $months, 'no_orders' => $no_orders, 'totalAll' => $totalAll, 'roles' => $roles, 'order'=>$order,'startDate'=>$startDate,'endDate'=>$endDate,'page'=>$page,'links'=>$links]);
-
         $page = $request->page;
 
         if ($request->startDate != null && $request->endDate != null) {
@@ -466,11 +334,6 @@ class ReportController extends Controller
 
         $items = DB::table('items as a')
             ->join('locations as b', 'b.item_id', 'a.id');
-            
-        // if ($startDate != null && $endDate != null) {
-        //     $items = $items->whereDate('oi.created_at', '>=', $startDate)
-        //         ->whereDate('oi.created_at', '<=', $endDate);
-        // }
 
         $items = $items->select(
             'a.id', 
@@ -508,19 +371,6 @@ class ReportController extends Controller
 
         }  
 
-        // $sales = DB::table('v_sum_order_items')
-        //     ->select('myob_product_id', 'sales_quantity as committed')
-        //     ->get()->toArray();
-        
-        // foreach ($sales as $sale) {
-        //     foreach ($items as $item) {
-        //         if ($sale->myob_product_id == $item->id) {
-        //             $item->committed = $sale->committed;
-        //             // $item->available = $item->on_hand - $sale->committed;
-        //         }
-        //     }
-        // }
-
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
         return view('reports.report_stocks', ['items' => $items, 'roles'=> $roles,'startDate'=>$startDate, 'endDate'=>$endDate, 'links'=>$links, 'page'=>$page, 'committed_courier'=> $committed_courier, 'committed_counter'=> $committed_counter]);
     }
@@ -537,11 +387,6 @@ class ReportController extends Controller
 
         $items = DB::table('items as a')
             ->join('locations as b', 'b.item_id', 'a.id');
-            
-        // if ($startDate != null && $endDate != null) {
-        //     $items = $items->whereDate('oi.created_at', '>=', $startDate)
-        //         ->whereDate('oi.created_at', '<=', $endDate);
-        // }
 
         $items = $items->select(
             'a.id', 
@@ -579,19 +424,6 @@ class ReportController extends Controller
 
         }
 
-        // $sales = DB::table('v_sum_order_items')
-        //     ->select('myob_product_id', 'sales_quantity as committed')
-        //     ->get()->toArray();
-        
-        // foreach ($sales as $sale) {
-        //     foreach ($items as $item) {
-        //         if ($sale->myob_product_id == $item->id) {
-        //             $item->committed = $sale->committed;
-        //             // $item->available = $item->on_hand - $sale->committed;
-        //         }
-        //     }
-        // }
-
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
         return view('reports.report_stocks', ['items' => $items, 'roles'=> $roles,'startDate'=>$startDate, 'endDate'=>$endDate, 'links'=>$links, 'page'=>$page, 'committed_courier'=> $committed_courier, 'committed_counter'=> $committed_counter]);
     }
@@ -619,11 +451,6 @@ class ReportController extends Controller
 
             $items = DB::table('items as a')
             ->join('locations as b', 'b.item_id', 'a.id');
-            
-            // if ($startDate != null && $endDate != null) {
-            //     $items = $items->whereDate('oi.created_at', '>=', $startDate)
-            //         ->whereDate('oi.created_at', '<=', $endDate);
-            // }
 
             $items = $items->select(
                 'a.id', 
@@ -671,11 +498,6 @@ class ReportController extends Controller
 
             $items = DB::table('items as a')
             ->join('locations as b', 'b.item_id', 'a.id');
-                
-            // if ($startDate != null && $endDate != null) {
-            //     $items = $items->whereDate('oi.created_at', '>=', $startDate)
-            //         ->whereDate('oi.created_at', '<=', $endDate);
-            // }
 
             $items = $items->select(
                 'a.id', 

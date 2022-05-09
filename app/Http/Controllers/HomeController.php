@@ -11,8 +11,6 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
-
-//test
 class HomeController extends Controller
 {
     /**
@@ -78,7 +76,7 @@ class HomeController extends Controller
     {
         $keyword = $request->get('keyword');
         $method = $request->get('method');
-        // $keyword = preg_replace("/[^a-zA-Z0-9 ]/", "", $keyword);
+        
         $cards = null;
         $patients = Patient::query();
         switch ($method) {
