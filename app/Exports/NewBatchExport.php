@@ -6,14 +6,12 @@ use App\Models\NewBatch;
 use App\Models\Order;
 use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 use Maatwebsite\Excel\Concerns\WithHeadings;
-use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
-use Illuminate\Support\Facades\DB;
 
 class NewBatchExport implements WithColumnFormatting, WithHeadings, FromCollection, WithStyles 
 {
@@ -37,7 +35,6 @@ class NewBatchExport implements WithColumnFormatting, WithHeadings, FromCollecti
     */
     public function collection() {
 
-        // get batch info
         $batch = NewBatch::join('sales_persons', 'new_batches.batch_person', '=', 'sales_persons.id')
             ->where('new_batches.id', '=', $this->batch_id)
             ->select(
@@ -58,14 +55,11 @@ class NewBatchExport implements WithColumnFormatting, WithHeadings, FromCollecti
         else 
             $this->patient_status = "Tidak Berpencen";
 
-        // $this->patient_status = strtoupper($batch->patient_status);
-
         if ($batch->tariff == 3)
             $this->payor = "MINDEF";
         else
             $this->payor = "JPA/JHEV";
 
-        // get order for each item
         $orders = Order::join('order_items', 'orders.id', '=', 'order_items.order_id')
             ->join('items', 'items.id', '=', 'order_items.myob_product_id')
             ->join('patients', 'patients.id', '=', 'orders.patient_id')
@@ -90,7 +84,6 @@ class NewBatchExport implements WithColumnFormatting, WithHeadings, FromCollecti
             'order_items.price',
         )->get();
 
-        // add order into collection
         $collection = [];
         $num = 1;
 

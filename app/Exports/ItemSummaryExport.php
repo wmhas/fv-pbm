@@ -2,7 +2,6 @@
 
 namespace App\Exports;
 
-use App\Models\Item;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 use Maatwebsite\Excel\Concerns\WithHeadings;

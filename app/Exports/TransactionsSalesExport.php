@@ -3,15 +3,10 @@
 namespace App\Exports;
 
 use App\Models\Order;
-use App\Models\Item;
-use App\Models\OrderItem;
-use App\Models\Card;
 use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 use Maatwebsite\Excel\Concerns\WithHeadings;
-use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\Exportable;
-use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
@@ -39,7 +34,6 @@ class TransactionsSalesExport implements FromCollection, WithHeadings, WithStyle
     public function collection()
     {
         $order = Order::join("patients","patients.id","=","orders.patient_id")
-            // ->leftjoin("tariffs","tariffs.id","=","patients.tariff_id")
             ->join("cards","cards.id","=","patients.card_id")
             ->join("prescriptions","prescriptions.order_id","=","orders.id")
             ->join("order_items","order_items.order_id","=","orders.id")
@@ -54,19 +48,6 @@ class TransactionsSalesExport implements FromCollection, WithHeadings, WithStyle
             $order = $order->whereDate('orders.dispense_date', '>=', $this->startDate)
                     ->whereDate('orders.dispense_date', '<=', $this->endDate);
         }
-
-        // $order = $order->select("orders.id",
-        //     "orders.created_at as dates",
-        //     "orders.do_number", 
-        //     "patients.identification as ic",
-        //     "patients.full_name",
-        //     DB::raw('CONCAT(patients.address_1,", ",patients.address_2,", ",patients.postCode,", ",states.name) as address'),
-        //     "prescriptions.rx_number", 
-        //     "orders.dispensing_by",
-        //     DB::raw("(CASE WHEN patients.tariff_id IS NOT NULL THEN tariffs.name ELSE 'no panel' END) as panel"),
-        //     "orders.total_amount",
-        //     DB::raw("(CASE WHEN orders.status_id = 4 THEN 'Complete Order' ELSE 'Batch Order' END) as status"),
-        // )->orderBy('orders.created_at', 'DESC');
 
         $order->orderBy('orders.dispense_date', 'DESC');
 
