@@ -622,8 +622,8 @@ class OrderController extends Controller
         $record->duration = $request->input('duration');
         $record->frequency = $request->input('frequency');
         $record->quantity = $request->input('quantity');
-        $record->price = $request->input('price');
-        $record->selling_price = $request->selling_price;
+        $record->selling_price = $item->selling_price;
+        $record->price = $record->quantity * $record->selling_price;
         $record->save();
 
         $log = new OrderItemLog;
@@ -866,8 +866,8 @@ class OrderController extends Controller
                 $record->duration = $request->input('duration')[$i];
                 $record->frequency = $request->input('frequency')[$i];
                 $record->quantity = $request->input('quantity')[$i];
-                $record->price = $request->input('price')[$i];
-                $record->selling_price = $request->selling_price[$i];
+                $record->selling_price = $item->selling_price;
+                $record->price = $record->quantity * $record->selling_price;
                 $record->save();
 
                 $log = new OrderItemLog;
@@ -1009,8 +1009,8 @@ class OrderController extends Controller
         $record->duration = $request->input('duration');
         $record->frequency = $request->input('frequency');
         $record->quantity = $request->input('quantity');
-        $record->price = $request->input('price');
-        $record->selling_price = $request->selling_price;
+        $record->selling_price = $item->selling_price;
+        $record->price = $record->selling_price * $record->quantity;
         $record->save();
 
         $item = Item::find($order_item->myob_product_id);
