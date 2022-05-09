@@ -3,17 +3,6 @@
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
-
 Route::get('/', function () {
     return view('welcome');
 })->name('welcome');
@@ -149,7 +138,6 @@ Route::group(['middleware' => ['auth']], function () {
     });
 
     // AJAX
-    // Route::get('/getDetails/{id}', 'OrderController@getDetails');
     Route::get('/getItemDetails/{id}', 'AjaxController@getItemDetails');
     Route::get('/getPatients/{id}', 'PatientController@getPatients');
     Route::get('/getPurchase/{id}', 'PurchaseController@getDetails');
@@ -170,15 +158,12 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/{orderId}/print', 'StickerController@print')->name('sticker.print');
         Route::post('/download', 'StickerController@download')->name('sticker.download');
         Route::post('/clear-queue', 'StickerController@clearQueue')->name('sticker.clear-queue');
-        // Route::get('/{order_id?}', 'StickerController@index')->name('sticker.index');
-        // Route::post('/delete', 'StickerController@delete')->name('sticker.delete');
     });
 
     // Move Items
     Route::group(['prefix' => 'location'], function () {
         Route::get('/', 'LocationController@index')->name('location.index');
         Route::post('/edit/{item_id}/{on_hand}', 'LocationController@edit')->name('location.edit');
-        // Route::get('/add', 'LocationController@add_location');
     });
 
     // Ajax
@@ -200,6 +185,5 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/', 'BorangJevController@index')->name('borang.index');
         Route::get('/print', 'BorangJevController@print')->name('borang.print');
         Route::get('/{do_number}/print', 'BorangJevController@print')->name('borangjhev.print');
-
     });
 });
