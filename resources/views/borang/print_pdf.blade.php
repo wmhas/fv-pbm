@@ -681,7 +681,9 @@
                 <td>
                     Sebab-sebab Ubat / Alat / Perkhidmatan Perubatan / Rawatan yang Diperlukan oleh Pesakit Tidak Dapat Dibekal /
                     Disediakan oleh Hospital / Klinik Kerajaan
-                    <div style="border-bottom: 1px solid black; height: 16px"></div>
+                    <div style="border-bottom: 1px solid black; height: 16px; font-weight: bold">
+                        UBAT TIDAK DAPAT DIBEKALKAN OLEH FARMASI HOSPITAL KERANA KEHABISAN STOK
+                    </div>
                     <div style="border-bottom: 1px solid black; height: 16px"></div>
                 </td>
             </tr>
