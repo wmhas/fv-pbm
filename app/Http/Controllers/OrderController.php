@@ -50,7 +50,7 @@ class OrderController extends Controller
     public function index()
     {
         $orders = Order::with('prescription')->with('patient')->with('delivery')->orderBy('status_id', 'asc')
-            ->orderBy('created_at', 'desc')
+            ->orderBy('do_number', 'desc')
             ->paginate(15);
         $method = null;
         $keyword = null;
