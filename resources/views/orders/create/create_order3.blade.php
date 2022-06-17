@@ -458,6 +458,8 @@
             var formula_id = thisParent.find('.formula_id').val();
             var formula_value = thisParent.find('.formula_value').val();
 
+            console.log(frequency);
+
             if (frequency == 1 || frequency == 5 || frequency == 6 || frequency == 7 ||
                 frequency == 8) {
                 var frequency = 1;
@@ -467,7 +469,10 @@
 
             } else if (frequency == 3) {
 
-                var frequecy = 3;
+                var frequency = 3;
+            } else if (frequency == 9) {
+                console.log("hahah");
+                var frequency = 0.5;
 
             } else {
                 var frequency = 4;
@@ -518,7 +523,11 @@
 
             } else if (frequency == 3) {
 
-                var frequecy = 3;
+                var frequency = 3;
+
+            } else if (frequency == 9) {
+
+                var frequency = 0.5;
 
             } else {
                 var frequency = 4;

@@ -1316,7 +1316,10 @@
 
             } else if (frequency == 3) {
 
-                var frequecy = 3;
+                var frequency = 3;
+            } else if (frequency == 9) {
+
+                var frequency = 0.5;
 
             } else {
                 var frequency = 4;
@@ -1365,7 +1368,11 @@
 
             } else if (frequency == 3) {
 
-                var frequecy = 3;
+                var frequency = 3;
+
+            } else if (frequency == 9) {
+
+                var frequency = 0.5;
 
             } else {
                 var frequency = 4;
