@@ -492,14 +492,14 @@ class ReportController extends Controller
         $committed_counter = [];
 
         foreach($items as $key => $val){
-            $db_courier = DB::select(DB::raw("SELECT SUM(order_items.quantity) as com_courier FROM orders JOIN order_items ON orders.id = order_items.order_id WHERE orders.dispensing_method = 'Delivery' AND order_items.myob_product_id = ".$val->id." AND orders.dispense_date >= '".$startDate.$startTime."' AND orders.dispense_date <= '".$endDate.$endTime."' AND orders.status_id IN (3, 4, 5) AND orders.deleted_at IS NULL AND order_items.deleted_at IS NULL;"));
+            $db_courier = DB::select(DB::raw("SELECT SUM(order_items.quantity) as com_courier FROM orders JOIN order_items ON orders.id = order_items.order_id WHERE orders.dispensing_method = 'Delivery' AND order_items.myob_product_id = ".$val->id." AND orders.dispense_date >= '".$startDate.$startTime."' AND orders.dispense_date <= '".$endDate.$endTime."' AND orders.status_id IN (3, 4, 5) AND orders.return_timestamp IS NULL AND orders.deleted_at IS NULL AND order_items.deleted_at IS NULL;"));
             if ($db_courier[0]->com_courier) {
                 $committed_courier[$key] = $db_courier[0]->com_courier;
             } else {
                 $committed_courier[$key] = 0;
             }
 
-            $db_counter = DB::select(DB::raw("SELECT SUM(order_items.quantity) as com_counter FROM orders JOIN order_items ON orders.id = order_items.order_id WHERE orders.dispensing_method = 'Walkin' AND order_items.myob_product_id = ".$val->id." AND orders.dispense_date >= '".$startDate.$startTime."' AND orders.dispense_date <= '".$endDate.$endTime."' AND orders.status_id IN (3, 4, 5) AND orders.deleted_at IS NULL AND order_items.deleted_at IS NULL;"));
+            $db_counter = DB::select(DB::raw("SELECT SUM(order_items.quantity) as com_counter FROM orders JOIN order_items ON orders.id = order_items.order_id WHERE orders.dispensing_method = 'Walkin' AND order_items.myob_product_id = ".$val->id." AND orders.dispense_date >= '".$startDate.$startTime."' AND orders.dispense_date <= '".$endDate.$endTime."' AND orders.status_id IN (3, 4, 5) AND orders.return_timestamp IS NULL AND orders.deleted_at IS NULL AND order_items.deleted_at IS NULL;"));
             if ($db_counter[0]->com_counter) {
                 $committed_counter[$key] = $db_counter[0]->com_counter;
             } else {
@@ -563,14 +563,14 @@ class ReportController extends Controller
         $committed_counter = [];
 
         foreach($items as $key => $val){
-            $db_courier = DB::select(DB::raw("SELECT SUM(order_items.quantity) as com_courier FROM orders JOIN order_items ON orders.id = order_items.order_id WHERE orders.dispensing_method = 'Delivery' AND order_items.myob_product_id = ".$val->id." AND orders.dispense_date >= '".$startDate.$startTime."' AND orders.dispense_date <= '".$endDate.$endTime."' AND orders.status_id IN (3, 4, 5)"));
+            $db_courier = DB::select(DB::raw("SELECT SUM(order_items.quantity) as com_courier FROM orders JOIN order_items ON orders.id = order_items.order_id WHERE orders.dispensing_method = 'Delivery' AND order_items.myob_product_id = ".$val->id." AND orders.dispense_date >= '".$startDate.$startTime."' AND orders.dispense_date <= '".$endDate.$endTime."' AND orders.status_id IN (3, 4, 5) AND orders.return_timestamp IS NULL AND orders.deleted_at IS NULL AND order_items.deleted_at IS NULL;"));
             if ($db_courier[0]->com_courier) {
                 $committed_courier[$key] = $db_courier[0]->com_courier;
             } else {
                 $committed_courier[$key] = 0;
             }
 
-            $db_counter = DB::select(DB::raw("SELECT SUM(order_items.quantity) as com_counter FROM orders JOIN order_items ON orders.id = order_items.order_id WHERE orders.dispensing_method = 'Walkin' AND order_items.myob_product_id = ".$val->id." AND orders.dispense_date >= '".$startDate.$startTime."' AND orders.dispense_date <= '".$endDate.$endTime."' AND orders.status_id IN (3, 4, 5)"));
+            $db_counter = DB::select(DB::raw("SELECT SUM(order_items.quantity) as com_counter FROM orders JOIN order_items ON orders.id = order_items.order_id WHERE orders.dispensing_method = 'Walkin' AND order_items.myob_product_id = ".$val->id." AND orders.dispense_date >= '".$startDate.$startTime."' AND orders.dispense_date <= '".$endDate.$endTime."' AND orders.status_id IN (3, 4, 5) AND orders.return_timestamp IS NULL AND orders.deleted_at IS NULL AND order_items.deleted_at IS NULL;"));
             if ($db_counter[0]->com_counter) {
                 $committed_counter[$key] = $db_counter[0]->com_counter;
             } else {
@@ -639,14 +639,14 @@ class ReportController extends Controller
             ->get();
 
             foreach($items as $key => $val){
-                $db_courier = DB::select(DB::raw("SELECT SUM(order_items.quantity) as com_courier FROM orders JOIN order_items ON orders.id = order_items.order_id WHERE orders.dispensing_method = 'Delivery' AND order_items.myob_product_id = ".$val->id." AND orders.dispense_date >= '".$startDate.$startTime."' AND orders.dispense_date <= '".$endDate.$endTime."' AND orders.status_id IN (3, 4, 5)"));
+                $db_courier = DB::select(DB::raw("SELECT SUM(order_items.quantity) as com_courier FROM orders JOIN order_items ON orders.id = order_items.order_id WHERE orders.dispensing_method = 'Delivery' AND order_items.myob_product_id = ".$val->id." AND orders.dispense_date >= '".$startDate.$startTime."' AND orders.dispense_date <= '".$endDate.$endTime."' AND orders.status_id IN (3, 4, 5) AND orders.return_timestamp IS NULL AND orders.deleted_at IS NULL AND order_items.deleted_at IS NULL;"));
                 if ($db_courier[0]->com_courier) {
                     $committed_courier[$key] = $db_courier[0]->com_courier;
                 } else {
                     $committed_courier[$key] = 0;
                 }
 
-                $db_counter = DB::select(DB::raw("SELECT SUM(order_items.quantity) as com_counter FROM orders JOIN order_items ON orders.id = order_items.order_id WHERE orders.dispensing_method = 'Walkin' AND order_items.myob_product_id = ".$val->id." AND orders.dispense_date >= '".$startDate.$startTime."' AND orders.dispense_date <= '".$endDate.$endTime."' AND orders.status_id IN (3, 4, 5)"));
+                $db_counter = DB::select(DB::raw("SELECT SUM(order_items.quantity) as com_counter FROM orders JOIN order_items ON orders.id = order_items.order_id WHERE orders.dispensing_method = 'Walkin' AND order_items.myob_product_id = ".$val->id." AND orders.dispense_date >= '".$startDate.$startTime."' AND orders.dispense_date <= '".$endDate.$endTime."' AND orders.status_id IN (3, 4, 5) AND orders.return_timestamp IS NULL AND orders.deleted_at IS NULL AND order_items.deleted_at IS NULL;"));
                 if ($db_counter[0]->com_counter) {
                     $committed_counter[$key] = $db_counter[0]->com_counter;
                 } else {
@@ -693,14 +693,14 @@ class ReportController extends Controller
             $links = $items->links();
 
             foreach($items as $key => $val){
-                $db_courier = DB::select(DB::raw("SELECT SUM(order_items.quantity) as com_courier FROM orders JOIN order_items ON orders.id = order_items.order_id WHERE orders.dispensing_method = 'Delivery' AND order_items.myob_product_id = ".$val->id." AND orders.dispense_date >= '".$startDate.$startTime."' AND orders.dispense_date <= '".$endDate.$endTime."' AND orders.status_id IN (3, 4, 5)"));
+                $db_courier = DB::select(DB::raw("SELECT SUM(order_items.quantity) as com_courier FROM orders JOIN order_items ON orders.id = order_items.order_id WHERE orders.dispensing_method = 'Delivery' AND order_items.myob_product_id = ".$val->id." AND orders.dispense_date >= '".$startDate.$startTime."' AND orders.dispense_date <= '".$endDate.$endTime."' AND orders.status_id IN (3, 4, 5) AND orders.return_timestamp IS NULL AND orders.deleted_at IS NULL AND order_items.deleted_at IS NULL;"));
                 if ($db_courier[0]->com_courier) {
                     $committed_courier[$key] = $db_courier[0]->com_courier;
                 } else {
                     $committed_courier[$key] = 0;
                 }
 
-                $db_counter = DB::select(DB::raw("SELECT SUM(order_items.quantity) as com_counter FROM orders JOIN order_items ON orders.id = order_items.order_id WHERE orders.dispensing_method = 'Walkin' AND order_items.myob_product_id = ".$val->id." AND orders.dispense_date >= '".$startDate.$startTime."' AND orders.dispense_date <= '".$endDate.$endTime."' AND orders.status_id IN (3, 4, 5)"));
+                $db_counter = DB::select(DB::raw("SELECT SUM(order_items.quantity) as com_counter FROM orders JOIN order_items ON orders.id = order_items.order_id WHERE orders.dispensing_method = 'Walkin' AND order_items.myob_product_id = ".$val->id." AND orders.dispense_date >= '".$startDate.$startTime."' AND orders.dispense_date <= '".$endDate.$endTime."' AND orders.status_id IN (3, 4, 5) AND orders.return_timestamp IS NULL AND orders.deleted_at IS NULL AND order_items.deleted_at IS NULL;"));
                 if ($db_counter[0]->com_counter) {
                     $committed_counter[$key] = $db_counter[0]->com_counter;
                 } else {
