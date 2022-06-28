@@ -116,7 +116,7 @@
 
                                 @php 
 
-                                    if($order->resubmission==1){
+                                    if($order->resubmission==1 && $order->status_id == 1){
                                         $disabled = "readonly"; 
                                         $disabled_select = "disabled";
                                     } else {
@@ -239,7 +239,7 @@
                                             <input type="hidden" id="formula_id" class="formula_id" value="{{ $orderItemSelected[$k]->formula_id }}">
                                             <input type="hidden" id="formula_value" class="formula_value" value="{{ $orderItemSelected[$k]->value }}">
                                         </tr>
-                                        @if ($order->resubmission==1)
+                                        @if ($order->resubmission==1 && $order->status_id == 1)
                                             {{-- @if ($k+1==$total)
                                             <tr>
                                                 <td colspan="11" style="vertical-align: top;">
@@ -443,7 +443,7 @@
                                 </td>
                                 <td>
                                     @if (isset($_GET['parent']))
-                                        @if ($order->resubmission==1)
+                                        @if ($order->resubmission==1 && $order->states_id == 1)
                                         <input type="text" class="form-control" style="width:70px;"
                                             value="{{ number_format($order->orderitem->sum('price'), 2) }}" disabled>
                                         @else
