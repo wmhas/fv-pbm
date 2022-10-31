@@ -17,6 +17,11 @@
             There are {{$price_diff->total}} item(s) with different price value calculation!
         </div>
     @endif
+    @if ($duplicate_do->total != 0)
+        <div class="alert alert-danger" role="alert">
+            There are {{$duplicate_do->total}} DO(s) with duplicate DO Number!
+        </div>
+    @endif
     <div class="content-header">
         <div class="container-fluid">
             {{-- <div class="row mb-2">
