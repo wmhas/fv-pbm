@@ -17,9 +17,14 @@
             There are {{$price_diff->total}} item(s) with different price value calculation!
         </div>
     @endif
-    @if ($duplicate_do->total != 0)
+    @if ($duplicate_do_total->total != 0)
         <div class="alert alert-danger" role="alert">
-            There are {{$duplicate_do->total}} DO(s) with duplicate DO Number!
+            There are {{$duplicate_do_total->total}} DO(s) with duplicate DO Number!
+            <ul>
+                @foreach ($duplicate_do as $do)
+                    <li><a class="text-dark" href="{{ url("/home/search/order?keyword=$do->do_number") }}">{{ $do->do_number }}</a></li>
+                @endforeach
+            </ul>
         </div>
     @endif
     <div class="content-header">

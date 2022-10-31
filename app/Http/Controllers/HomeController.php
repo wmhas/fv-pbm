@@ -64,7 +64,7 @@ class HomeController extends Controller
             ->select(DB::raw('count(*) as total'))
             ->first();
 
-        $duplicate_do = DB::select(DB::raw('SELECT COUNT(*) AS total
+        $duplicate_do_total = DB::select(DB::raw('SELECT COUNT(*) AS total
                     FROM (
                         SELECT 
                             do_number, 
@@ -77,13 +77,22 @@ class HomeController extends Controller
                         HAVING COUNT(do_number) > 1
                     ) AS foo'))[0];
 
+        $duplicate_do = DB::select(DB::raw('SELECT 
+                            do_number
+                        FROM fvkl.orders 
+                        WHERE deleted_at IS NULL 
+                            AND return_timestamp IS NULL 
+                            AND do_number != "" 
+                        GROUP BY do_number 
+                        HAVING COUNT(do_number) > 1'));
+
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
         if ($roles->role_id == 1) {
-            return view('hq.home', compact('orders', 'refills', 'rx_expireds', 'roles', 'price_diff', 'duplicate_do'));
+            return view('hq.home', compact('orders', 'refills', 'rx_expireds', 'roles', 'price_diff', 'duplicate_do_total', 'duplicate_do'));
         } elseif ($roles->role_id == 2) {
-            return view('pharmacist.home', compact('orders', 'refills', 'rx_expireds', 'roles', 'price_diff', 'duplicate_do'));
+            return view('pharmacist.home', compact('orders', 'refills', 'rx_expireds', 'roles', 'price_diff', 'duplicate_do_total', 'duplicate_do'));
         } else {
-            return view('home', compact('orders', 'refills', 'rx_expireds', 'roles', 'price_diff', 'duplicate_do'));
+            return view('home', compact('orders', 'refills', 'rx_expireds', 'roles', 'price_diff', 'duplicate_do_total', 'duplicate_do'));
         }
     }
 
