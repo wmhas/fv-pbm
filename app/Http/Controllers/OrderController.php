@@ -52,78 +52,47 @@ class OrderController extends Controller
         $orders = Order::with('prescription')->with('patient')->with('delivery')->orderBy('status_id', 'asc')
             ->orderBy('do_number', 'desc')
             ->paginate(15);
+        $years = DB::select(DB::raw("SELECT year(created_at) as name FROM fvkl.orders group by year(created_at)"));
         $method = null;
         $keyword = null;
         $status_id = null;
+        $yearSelect = null;
         $statuses = Status::all();
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
-        return view('orders.index', compact('orders', 'method', 'keyword', 'status_id', 'statuses', 'roles'));
+        return view('orders.index', compact('orders', 'method', 'keyword', 'status_id', 'statuses', 'roles','years', 'yearSelect'));
     }
 
     public function search(Request $request)
     {
         $statuses = Status::all();
+        $years = DB::select(DB::raw("SELECT year(created_at) as name FROM fvkl.orders group by year(created_at)"));
         $method = $request->get('method');
         $status_id = $request->get('status');
         $keyword = $request->get('keyword');
+        $yearSelect = $request->get('year');
         $keyword = preg_replace("/[^a-zA-Z0-9 ]/", "", $keyword);
-        if ($method != null && $status_id != null && $keyword != null) {
-            $orders = Order::with('prescription')->with('patient')->with('delivery')->where('dispensing_method', 'like', '%' . strtoupper($method) . '%')
-                ->where('status_id', 'like', '%' . strtoupper($status_id) . '%')
-                ->where('do_number', 'like', '%' . strtoupper($keyword) . '%')
-                ->orderBy('status_id', 'asc')
-                ->orderBy('created_at', 'desc')->limit(500)
-                ->paginate(15);
-        } elseif ($method != null && $status_id != null && $keyword == null) {
-            $orders = Order::with('prescription')->with('patient')->with('delivery')->where('dispensing_method', 'like', '%' . strtoupper($method) . '%')
-                ->where('status_id', 'like', '%' . strtoupper($status_id) . '%')
-                ->orderBy('status_id', 'asc')
-                ->orderBy('created_at', 'desc')->limit(500)
-                ->paginate(15);
-        } elseif ($method != null && $status_id == null && $keyword != null) {
-            $orders = Order::with('prescription')->with('patient')->with('delivery')->where('dispensing_method', 'like', '%' . strtoupper($method) . '%')
-                ->whereHas('patient', function ($patient) use ($keyword) {
-                    $patient->where('full_name', 'like', '%' . strtoupper($keyword) . '%');
-                })
-                ->orWhere('do_number', 'like', '%' . strtoupper($keyword) . '%')
-                ->orderBy('status_id', 'asc')
-                ->orderBy('created_at', 'desc')->limit(500)
-                ->paginate(15);
-        } elseif ($method == null && $status_id != null && $keyword != null) {
-            $orders = Order::with('prescription')->with('patient')->with('delivery')->where('status_id', 'like', '%' . strtoupper($status_id) . '%')
-                ->whereHas('patient', function ($patient) use ($keyword) {
-                    $patient->where('full_name', 'like', '%' . strtoupper($keyword) . '%');
-                })
-                ->orWhere('do_number', 'like', '%' . strtoupper($keyword) . '%')
-                ->orderBy('status_id', 'asc')
-                ->orderBy('created_at', 'desc')->limit(500)
-                ->paginate(15);
-        } elseif ($method != null && $status_id == null && $keyword == null) {
-            $orders = Order::with('prescription')->with('patient')->with('delivery')->where('dispensing_method', 'like', '%' . strtoupper($method) . '%')
-                ->orderBy('status_id', 'asc')
-                ->orderBy('created_at', 'desc')->limit(500)
-                ->paginate(15);
-        } elseif ($method == null && $status_id != null && $keyword == null) {
-            $orders = Order::with('prescription')->with('patient')->with('delivery')->where('status_id', 'like', '%' . strtoupper($status_id) . '%')
-                ->orderBy('status_id', 'asc')
-                ->orderBy('created_at', 'desc')->limit(500)
-                ->paginate(15);
-        } elseif ($method == null && $status_id == null && $keyword != null) {
-            $orders = Order::with('prescription')->with('patient')->with('delivery')
-                ->whereHas('patient', function ($patient) use ($keyword) {
-                    $patient->where('full_name', 'like', '%' . strtoupper($keyword) . '%');
-                })
-                ->orWhere('do_number', 'like', '%' . strtoupper($keyword) . '%')
-                ->orderBy('status_id', 'asc')
-                ->orderBy('created_at', 'desc')->limit(500)
-                ->paginate(15);
-        } else {
-            $orders = Order::with('prescription')->with('patient')->with('delivery')->orderBy('status_id', 'asc')
-                ->orderBy('created_at', 'desc')
-                ->paginate(15);
+        $orders = Order::with('prescription')->with('patient')->with('delivery');
+        
+        if($method != null){
+            $orders = $orders->where('dispensing_method', $method);
+        } 
+        if($status_id != null){
+            $orders = $orders->where('status_id', $status_id);
         }
+        if($yearSelect != null){
+            $orders = $orders->whereYear('created_at', $yearSelect);
+        }
+        if($keyword != ''){
+            $orders = $orders->whereHas('patient', function ($patient) use ($keyword) {
+                        $patient->where('full_name', 'like', '%' . strtoupper($keyword) . '%');
+                        })->orWhere('do_number', 'like', '%' . strtoupper($keyword) . '%');
+        }
+        $orders = $orders->orderBy('status_id', 'asc')
+        ->orderBy('created_at', 'desc')->limit(500)
+        ->paginate(15);
+        
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
-        return view('orders.index', compact('keyword', 'orders', 'method', 'statuses', 'status_id', 'roles'));
+        return view('orders.index', compact('keyword', 'orders', 'method', 'statuses', 'status_id', 'roles','years','yearSelect'));
     }
 
     public function show($id)
@@ -727,10 +696,11 @@ class OrderController extends Controller
     private function getDONumber($dispensing_by = null)
     {
         $increment = 1;
-     
+        $frontNumber = 3;
+        
         do {
-            $count_order = DB::table('orders')->where('do_number', '!=', '')->whereNull('deleted_at')->count();
-            $do_number = str_pad($count_order + $increment, 8, "0", STR_PAD_LEFT);
+            $count_order = DB::table('orders')->where('do_number', '!=', '')->whereYear('created_at', '=', date('Y'))->whereNull('deleted_at')->count();
+            $do_number = $frontNumber.str_pad($count_order + $increment, 7, "0", STR_PAD_LEFT);
 
             $exists = Order::where('do_number', $do_number)->first();
 

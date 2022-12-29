@@ -58,6 +58,21 @@
                                         <button type="submit" class="btn btn-primary" style="width:100%;">Search</button>
                                     </div>
                                 </div>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <label class="input-group-text" for="inputGroupSelect01">Year</label>
+                                            </div>
+                                            <select class="custom-select" name="year" onchange="this.form.submit()">
+                                                <option value="">--Select--</option>
+                                                    @foreach($years as $year)
+                                                        <option value="{{ $year->name }}" @if($yearSelect != null && $year->name == $yearSelect) selected @endif >{{ $year->name }}</option>
+                                                    @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

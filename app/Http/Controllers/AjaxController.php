@@ -28,10 +28,11 @@ class AjaxController extends Controller
     public function getDONumber($dispensing_by)
     {
         $increment = 1;
-     
+        $frontNumber = 3;
+        
         do {
-            $count_order = DB::table('orders')->where('do_number', '!=', '')->whereNull('deleted_at')->count();
-            $do_number = str_pad($count_order + $increment, 8, "0", STR_PAD_LEFT);
+            $count_order = DB::table('orders')->where('do_number', '!=', '')->whereYear('created_at', '=', date('Y'))->whereNull('deleted_at')->count();
+            $do_number = $frontNumber.str_pad($count_order + $increment, 7, "0", STR_PAD_LEFT);
 
             $exists = Order::where('do_number', $do_number)->first();
 
