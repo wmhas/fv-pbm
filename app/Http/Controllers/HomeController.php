@@ -150,14 +150,16 @@ class HomeController extends Controller
     {
         $method = null;
         $keyword = null;
+        $yearSelect = null;
         $status_id = $request->get('status');
+        $years = DB::select(DB::raw("SELECT year(created_at) as name FROM fvkl.orders group by year(created_at)"));
         $statuses = Status::all();
         $orders = Order::with('prescription')->with('patient')->with('delivery')->where('status_id', 'like', '%' . strtoupper($status_id) . '%')
             ->orderBy('created_at', 'desc')
             ->limit(500)
             ->paginate(15);
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
-        return view('orders.index', compact('orders', 'method', 'keyword', 'status_id', 'statuses', 'roles'));
+        return view('orders.index', compact('orders', 'method', 'keyword', 'status_id', 'years', 'yearSelect', 'statuses', 'roles'));
     }
 
     public function see_more_refill(Request $request)
