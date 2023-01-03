@@ -134,7 +134,9 @@ class HomeController extends Controller
     {
         $method = null;
         $status_id = null;
+        $yearSelect = null;
         $statuses = Status::all();
+        $years = DB::select(DB::raw("SELECT year(created_at) as name FROM fvkl.orders group by year(created_at)"));
         $keyword = $request->get('keyword');
         $keyword = preg_replace("/[^a-zA-Z0-9 ]/", "", $keyword);
 
@@ -143,7 +145,7 @@ class HomeController extends Controller
             ->orderBy('created_at', 'desc')->limit(500)
             ->paginate(15);
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
-        return view('orders.index', compact('keyword', 'orders', 'method', 'status_id', 'statuses', 'roles'));
+        return view('orders.index', compact('keyword', 'orders', 'method', 'status_id', 'years', 'yearSelect', 'statuses', 'roles'));
     }
 
     public function view_order(Request $request)
