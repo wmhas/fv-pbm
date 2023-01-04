@@ -307,7 +307,7 @@
                                                 style="width:70px;" disabled>
                                         </td>
                                         <td>
-                                            <input id="i_unit_price" type="text" class="form-control" value="@if (!empty($o_i->items)) {{ number_format($o_i->items->selling_price, 2) }} @else @endif" style="width:70px;" disabled>
+                                            <input id="i_unit_price" type="text" class="form-control" value="@if (!empty($o_i->items)) {{ number_format($o_i->selling_price, 2) }} @else @endif" style="width:70px;" disabled>
                                         </td>
                                         <td>
                                             <input id="i_total_price" type="text" class="form-control"
@@ -1234,8 +1234,8 @@
                                     </td>
                                     <td>
                                         <div class="form-group">
-                                            <input type="number" name="selling_price" id="u_selling_price"
-                                                   class="u_price form-control" step="0.01" style="width:70px;">
+                                                <input type="number" name="selling_price" 
+                                                    class="u_price form-control" step="0.01" style="width:70px;" value="{{ $orderItems->selling_price }}" >
                                         </div>
                                     </td>
                                     <td>

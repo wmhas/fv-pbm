@@ -128,6 +128,7 @@ class OrderController extends Controller
         $salesPersons = SalesPerson::all();
         $order = Order::where('id', $id)->first();
         // $items = DB::table('myob_products as a')->join('myob_product_details as b', 'b.myob_product_id', 'a.ItemNumber')->where('IsInactive', 'N')->get();
+        $orderItems = OrderItem::where('order_id', $id)->first();
         $items = Item::all();
         $item_lists = [];
         foreach ($items as $item) {
@@ -170,7 +171,7 @@ class OrderController extends Controller
         $frequencies = Frequency::all();
         $resubmission = 0;
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
-        return view('orders.edit', compact('states', 'hospitals', 'clinics', 'salesPersons', 'order', 'items', 'item_lists', 'frequencies', 'roles', 'resubmission','duration', 'orderItemSelected'));
+        return view('orders.edit', compact('states', 'hospitals', 'clinics', 'salesPersons', 'order', 'items', 'item_lists', 'frequencies', 'roles', 'resubmission','duration', 'orderItemSelected','orderItems'));
     }
 
     public function store_edit($id, Request $request)

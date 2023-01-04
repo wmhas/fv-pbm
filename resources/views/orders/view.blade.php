@@ -429,7 +429,7 @@
 											style="width:70px;" disabled>
 									</td>
 									<td>
-										<input type="text" class="form-control" value="@if (!empty($o_i->items)) {{ number_format($o_i->items->selling_price, 2) }} @else @endif" style="width:70px;" disabled>
+										<input type="text" class="form-control" value="@if (!empty($o_i->items->selling_price)) {{ number_format($o_i->selling_price, 2) }} @else @endif" style="width:70px;" disabled>
 									</td>
 									<td>
 										<input type="text" class="form-control"
