@@ -1718,6 +1718,7 @@ class OrderController extends Controller
         $order = Order::where('id', $id)->first();
         $items = Item::all();
         // $items = DB::table('myob_products as a')->join('myob_product_details as b', 'b.myob_product_id', 'a.ItemNumber')->where('IsInactive', 'N')->get();
+        $orderItems = OrderItem::where('order_id', $id)->first();
         $item_lists = [];
         foreach ($items as $item) {
             $location = DB::table('locations')->select('counter','courier')->where('item_id', $item->id)->first();
@@ -1796,7 +1797,8 @@ class OrderController extends Controller
             'duration',
             'roles',
             'do_number',
-            'orderItemSelected'
+            'orderItemSelected',
+            'orderItems'
         ));
     }
 
