@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class NewBatch extends Model
 {
-    protected $fillable = ['batch_no', 'batch_person', 'batch_status', 'tariff', 'patient_status', 'submission_date'];
+    protected $fillable = ['batch_no', 'batch_person', 'batch_status', 'tariff', 'patient_status', 'submission_date', 'year'];
 
     public function orders() {
         return $this->hasMany(Order::class, 'batch_id');

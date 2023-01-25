@@ -35,6 +35,7 @@
 									<th>Payor</th>
 									<th>Status</th>
 									<th>Batch Person</th>
+									<th>Year</th>
 									<th>Action</th>
 								</tr>
 							</thead>
@@ -66,6 +67,7 @@
 										@endif
 									</td>
 									<td>{{ $batch->sales_person->name }}</td>
+									<td>{{ $batch->year }}</td>
 									<td>
 										<form action="{{ url('/batch/'.$batch->id.'/batch_list') }}" method="POST">
 											@csrf
@@ -90,21 +92,31 @@
 				<div class="card">
 					<div class="card-header">
 						<div class="row">
-							<div class="col-md-8">
+							<div class="col-6">
 								<h3 class="card-title">Batched Order</h3>
 							</div>
-							<form method="get" action="/batch/search/batched">
-								<div class="form-group">
-									<div class="row">
-										<div class="col-md-8">
-											<input type="text" name="keyword" class="form-control"	placeholder="Batch ID"  @if ($keyword != null ) value="{{$keyword}}" @endif>
-										</div>
-										<div class="col-md-2">
-											<button type="submit" class="btn btn-primary" style="margin-top:2px;">Search</button>
+							<div class="col-6">
+								<form method="get" action="/batch/search/batched">
+									<div class="form-group">
+										<div class="row">
+											<div class="col-5">
+												<select name="year" id="year" class="form-control">
+													@foreach ($years as $year)
+														<option value="{{ $year->year }}" @if ($selectedYear == $year->year) selected @endif>{{ $year->year }}</option>
+													@endforeach
+													<option value="{{ date('Y') }}" @if (date('Y') == $selectedYear) selected @endif>{{ date('Y') }}</option>
+												</select>
+											</div>
+											<div class="col-5">
+												<input type="text" name="keyword" class="form-control"	placeholder="Batch ID"  @if ($keyword != null ) value="{{$keyword}}" @endif>
+											</div>
+											<div class="col-2">
+												<button type="submit" class="btn btn-primary" style="margin-top:2px;">Search</button>
+											</div>
 										</div>
 									</div>
-								</div>
-							</form>
+								</form>
+							</div>
 						</div>
 					</div>
 					<div class="card-body" style="overflow-x:auto;">
@@ -117,6 +129,7 @@
 									<th>Payor</th>
 									<th>Status</th>
 									<th>Batch Person</th>
+									<th>Year</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -146,6 +159,7 @@
 										@endif
 									</td>
 									<td>{{ $batch->sales_person->name }}</td>
+									<td>{{ $batch->year }}</td>
 								</tr>
 								@endforeach
 							</tbody>

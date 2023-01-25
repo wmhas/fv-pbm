@@ -26,12 +26,16 @@ class BatchController extends Controller
     public function index()
     {
         $keyword = null;
+        $year = date('Y');
+        $years = NewBatch::select('year')->where('year', '!=', date('Y'))->groupBy('year')->get();
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
         return view('batch.index', [
             'roles' => $roles,
             'batching' => NewBatch::where('batch_status', 'batching')->where('deleted_at', null)->with(['orders', 'sales_person'])->paginate(5),
-            'batched' => NewBatch::where('batch_status', 'batched')->where('deleted_at', null)->with(['orders', 'sales_person'])->paginate(5),
+            'batched' => NewBatch::where('batch_status', 'batched')->where('deleted_at', null)->where('year', $year)->with(['orders', 'sales_person'])->paginate(5),
             'keyword' => $keyword,
+            'years' => $years,
+            'selectedYear' => $year
         ]);
     }
 
@@ -85,12 +89,15 @@ class BatchController extends Controller
             $patient_status = 0;
         }
 
-        $total_batch = NewBatch::count();
+        $year = date_format($order->created_at, 'Y');
+
+        $total_batch = NewBatch::where('year', $year)->count();
         $batch = NewBatch::where('batch_person', $batch_person)
             ->where('batch_status', 'batching')
             ->where('tariff', $tariff)
             ->where('patient_status', $patient_status)
             ->where('deleted_at', NULL)
+            ->where('year', $year)
             ->first();
         
         if ($batch == NULL) {
@@ -99,7 +106,8 @@ class BatchController extends Controller
                 'batch_person' => $batch_person,
                 'batch_status' => $batch_status,
                 'tariff' => $tariff,
-                'patient_status' => $patient_status
+                'patient_status' => $patient_status,
+                'year' => $year
             ]);
         }
 
@@ -154,12 +162,16 @@ class BatchController extends Controller
     {
         $keyword = $request->get('keyword');
         $keyword = preg_replace("/[^a-zA-Z0-9 ]/", "", $keyword);
+        $year = $request->year;
+        $years = NewBatch::select('year')->where('year', '!=', date('Y'))->groupBy('year')->get();
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
         return view('batch.index', [
             'roles' => $roles,
             'batching' => NewBatch::where('batch_status', 'batching')->where('deleted_at', null)->with(['orders', 'sales_person'])->paginate(5),
-            'batched' => NewBatch::where('batch_status', 'batched')->where('deleted_at', null)->where('batch_no', 'like', '%' . strtoupper($keyword) . '%')->with(['orders', 'sales_person'])->paginate(5),
+            'batched' => NewBatch::where('batch_status', 'batched')->where('deleted_at', null)->where('year', $year)->where('batch_no', 'like', '%' . strtoupper($keyword) . '%')->with(['orders', 'sales_person'])->paginate(5),
             'keyword' => $keyword,
+            'years' => $years,
+            'selectedYear' => $year,
         ]);
     }
 
