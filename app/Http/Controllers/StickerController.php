@@ -56,10 +56,10 @@ class StickerController extends Controller
                 $instruction = '';
                 if (($orderItem->items->selling_uom === 'TAB' || $orderItem->items->selling_uom === 'CAP') && $orderItem->items->instruction !== 'INHALE/SEDUT') {
                     $instruction = 'AMBIL '.$orderItem->dose_quantity.' BIJI '.$orderItem->frequencies->value.' KALI SEHARI '.$orderItem->items->instruction;
-                } else if ($orderItem->items->instruction === 'INHALE/SEDUT') {
+                } else if (strpos($orderItem->items->instruction , 'SEDUT')!== false) {
                     $instruction = $orderItem->dose_quantity.' SEDUT '.$orderItem->frequencies->value.' KALI SEHARI';
                 }
-
+                
                 $sellingUom = $orderItem->items->selling_uom;
                 if ($sellingUom === 'TAB') {
                     $sellingUom = 'BIJI';
