@@ -560,9 +560,11 @@
         }
 
         function ajaxUpdateItem(id){
+            var url = "{{ route('ajax.getItemDetails', ['id' => ':id']) }}";
+            url = url.replace(':id', id);
              // AJAX request
             $.ajax({
-                url: '/getItemDetails/' + id,
+                url: url,
                 type: 'get',
                 dataType: 'json',
                 success: function(response) {
@@ -641,10 +643,11 @@
                 parent.find('#selling_uom').find('option').not(':first').remove();
                 parent.find('#instruction').find('option').not(':first').remove();
                 parent.find('#indication').find('option').not(':first').remove();
-
                 // AJAX request
+                var url = "{{ route('ajax.getItemDetails', ['id' => ':id']) }}";
+                url = url.replace(':id', id);
                 $.ajax({
-                    url: '/getItemDetails/' + id,
+                    url: url,
                     type: 'get',
                     dataType: 'json',
                     success: function(response) {

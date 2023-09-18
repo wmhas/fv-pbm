@@ -29,9 +29,9 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::group(['prefix' => 'home'], function () {
         Route::get('/', 'HomeController@index')->name('home');
-        Route::get('/search/patient', 'HomeController@search_patient');
-        Route::get('/search/order', 'HomeController@search_order');
-        Route::get('/order', 'HomeController@view_order');
+        Route::get('/search/patient', 'HomeController@search_patient')->name('search_patient');
+        Route::get('/search/order', 'HomeController@search_order')->name('search_order');
+        Route::get('/order', 'HomeController@view_order')->name('view_order');
         Route::get('/report', 'HomeController@see_more_refill');
         Route::get('/order_end', 'HomeController@see_more_end');
     });
@@ -45,7 +45,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/{patient}/updateIcAttachment', 'PatientController@update_ic_attach');
         Route::post('/{attachment}/deleteAttachment', 'PatientController@deleteAttachment');
         Route::get('/{patient}/view', 'PatientController@patient_view'); //utk view
-        Route::get('/create/{patient?}', 'PatientController@create');
+        Route::get('/create/{patient?}', 'PatientController@create')->name('create_patient');
         Route::get('/create-address/{id}', 'PatientController@create_address');
         Route::get('/create-card/{id}', 'PatientController@create_card');
         Route::post('/store', 'PatientController@store');
@@ -76,21 +76,25 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/{item}/update/save', 'ItemController@store_edit');
     });
 
-    Route::group(['prefix' => 'order'], function () {
+    Route::group([
+        'as' => 'order.',
+        'prefix' => 'order'
+        ], function () {
+            
         Route::post('/', 'OrderController@index');
-        Route::get('/', 'OrderController@index')->name('orders.index');
-        Route::get('/{id}/delete', 'OrderController@destroy')->name('order.delete');
-        Route::get('/search', 'OrderController@search');
+        Route::get('/', 'OrderController@index')->name('index');
+        Route::get('/{id}/delete', 'OrderController@destroy')->name('delete');
+        Route::get('/search', 'OrderController@search')->name('search_order');
         Route::get('/{order}/view', 'OrderController@show');
         Route::post('/{order}/OrderAttachment', 'OrderController@uploadOrderAttachment');
         Route::get('/{order}/view/OrderAttachment', 'OrderController@downloadOrderAttachment');
         Route::post('/{order}/update/OrderAttachment', 'OrderController@updateOrderAttachment');
         Route::get('/{patient}/history', 'OrderController@history');
-        Route::get('/{patient}/create/{order_id?}', 'OrderController@create_order')->name('order.create');
+        Route::get('/{patient}/create/{order_id?}', 'OrderController@create_order')->name('create');
         Route::post('/{id}/store/{order_id}/dispense', 'OrderController@store_dispense');
         Route::get('/{id}/store/{order_id}/prescription', 'OrderController@create_prescription');
         Route::post('/{id}/store/{order_id}/prescription', 'OrderController@store_prescription');
-        Route::get('/{id}/store/{order_id}/orderentry', 'OrderController@create_orderEntry')->name('order.entry');
+        Route::get('/{id}/store/{order_id}/orderentry', 'OrderController@create_orderEntry')->name('entry');
         Route::post('/{id}/store/{order_id}/orderentry', 'OrderController@store_orderEntry');
         Route::post('/store_item', 'OrderController@store_item');
         Route::post('/store_item_resubmission', 'OrderController@store_item_resubmission');
@@ -101,7 +105,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/{id}/view/downloadRXAttachment', 'OrderController@downloadRXAttachment')->name('order.rxattachment');
         Route::post('/{id}/updateRXAttachment', 'OrderController@updateRXAttachment');
         Route::post('/{order}/deleteOrder', 'OrderController@deleteOrder');
-        Route::get('/{order}/update', 'OrderController@edit')->name('order.update');
+        Route::get('/{order}/update', 'OrderController@edit')->name('update');
         Route::post('/{order}/update', 'OrderController@store_edit');
         Route::post('/{order}/dispense_order','OrderController@dispense_order');
         Route::post('/{order}/complete_order','OrderController@complete_order');
@@ -150,7 +154,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     // AJAX
     // Route::get('/getDetails/{id}', 'OrderController@getDetails');
-    Route::get('/getItemDetails/{id}', 'AjaxController@getItemDetails');
+    //Route::get('/getItemDetails/{id}', 'AjaxController@getItemDetails');
     Route::get('/getPatients/{id}', 'PatientController@getPatients');
     Route::get('/getPurchase/{id}', 'PurchaseController@getDetails');
 
@@ -182,8 +186,12 @@ Route::group(['middleware' => ['auth']], function () {
     });
 
     // Ajax
-    Route::group(['prefix' => 'ajax'], function () {
-        Route::get('/getDONumber/{dispensing_by}', 'AjaxController@getDONumber')->name('ajax.getDONumber');
+    Route::group([
+        'as' => 'ajax.',
+        'prefix' => 'ajax'
+    ], function () {
+        Route::get('/getDONumber/{dispensing_by}', 'AjaxController@getDONumber')->name('getDONumber');
+        Route::get('/getItemDetails/{id}', 'AjaxController@getItemDetails')->name('getItemDetails');
     });
 
     //Purchase

@@ -23,7 +23,7 @@
                 <div class="card">
                     <div class="card-body" style="margin-bottom:-15px;">
                         <div class="form-group">
-                            <form method="get" action="/patient">
+                            <form method="get" action=" {{ route('patient') }} ">
                                 <div class="row">
                                     <div class="col-md-2">
                                         <select class="form-control" name="method" required>
@@ -40,8 +40,7 @@
                                         <button type="submit" class="btn btn-secondary" style="width:100%;">Search</button>
                                     </div>
                                     <div class="col-md-3">
-                                        <button type="button" class="btn btn-primary" style="width:100%;"
-                                            onclick="location.href='/patient/create';">Register New Patient</button>
+                                        <a type="button" class="btn btn-primary" style="width:100%;" href="{{ route('create_patient') }}"> Register New Patient</a>
                                     </div>
                                 </div>
                             </form>

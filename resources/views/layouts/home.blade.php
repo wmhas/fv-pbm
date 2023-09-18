@@ -249,7 +249,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url('/order') }}">
+                            <a class="nav-link" href="{{ route('order.index') }}">
                                 <i class="menu-icon"></i>
                                 <span class="menu-title">Order</span>
                             </a>

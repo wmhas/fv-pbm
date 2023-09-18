@@ -105,9 +105,13 @@
         }
 
         function ajaxUpdateItem(id){
+
+            var url = "{{ route('ajax.getItemDetails', ['id' => ':id']) }}";
+            url = url.replace(':id', id);
+
              // AJAX request
             $.ajax({
-                url: '/getItemDetails/' + id,
+                url: url,
                 type: 'get',
                 dataType: 'json',
                 success: function(response) {
@@ -186,9 +190,11 @@
                 $('#instruction').find('option').not(':first').remove();
                 $('#indication').find('option').not(':first').remove();
 
+                var url = "{{ route('ajax.getItemDetails', ['id' => ':id']) }}";
+                url = url.replace(':id', id);
                 // AJAX request
                 $.ajax({
-                    url: '/getItemDetails/' + id,
+                    url: url,
                     type: 'get',
                     dataType: 'json',
                     success: function(response) {

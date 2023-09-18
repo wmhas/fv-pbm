@@ -21,7 +21,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-12">
-                <form method="get" action="/order/search">
+                <form method="get" action="{{ route('order.search_order') }}">
                     <div class="card">
                         <div class="card-body" style="margin-bottom:-15px;">
                             <div class="form-group">

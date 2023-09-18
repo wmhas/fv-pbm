@@ -294,7 +294,7 @@
         // });
 
         $.ajax({
-            url: '/ajax/getDONumber/' + dispensing_by,
+            url: "{{ route('ajax.getDONumber', ['dispensing_by' => $dispensing_by]) }}",
             type: 'get',
             dataType: 'json',
             success: function(response) {
