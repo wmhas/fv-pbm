@@ -21,7 +21,7 @@
             <div class="col-md-12 mb-4">
                 <div class="card">
                     <div class="card-body">
-                        <form method="get" action="/purchase/search">
+                        <form method="get" action="{{ route('purchase.search') }}">
                             <div class="row">
                                 <div class="col-md-3">
                                     <div class="input-group">
@@ -46,8 +46,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <button type="button" class="btn btn-primary" style="width:95%;"
-                                        onclick="location.href='/purchase/history'">View Purchase History</button>
+                                    <a href="{{ route('purchase.history') }}" class="btn btn-primary" style="width:95%;">View Purchase History</a>
                                 </div>
                             </div>
                         </form>
