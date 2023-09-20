@@ -47,7 +47,7 @@
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <label>Identification</label>
-                                    <select class="form-control" id="ictype">
+                                    <select class="form-control" id="ictype" required>
                                         <option value="">--Please select --</option>
                                         <option value="1">Identification Card</option>
                                         <option value="2">Passport</option>
