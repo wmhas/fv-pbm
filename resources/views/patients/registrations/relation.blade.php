@@ -58,7 +58,7 @@
                                 <div class="form-group">
                                 <label class="text-white">*</label>
                                     <input id="username" type="text" class="form-control"  
-                                    value=""  name="identification"  autocomplete="on" maxlength="14" minlength="7" placeholder="example: 771110-41-1011" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);">
+                                    value=""  name="identification"  autocomplete="on" maxlength="14" minlength="7" placeholder="example: 771110-41-1011" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" required>
                                 </div>
                             </div>
                         </div>
