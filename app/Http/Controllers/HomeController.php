@@ -199,8 +199,10 @@ class HomeController extends Controller
             ->paginate(15);
 
         $statuses = Status::all();
+        $years = DB::select(DB::raw("SELECT year(created_at) as name FROM fvkl.orders group by year(created_at)"));
+        $yearSelect = null;
 
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
-        return view('orders.index', compact('order_lists', 'statuses', 'roles', 'status_id', 'method', 'keyword'));
+        return view('orders.index', compact('order_lists', 'statuses', 'roles', 'status_id', 'method', 'keyword', 'years', 'yearSelect'));
     }
 }

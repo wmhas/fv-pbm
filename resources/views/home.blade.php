@@ -127,7 +127,7 @@
                             <h3 class="card-title text-white"><i class="mdi mdi-account-search"></i>
                                 Search Patient</h3>
                         </div>
-                        <form method="get" action=" {{ route('search_patient') }} ">
+                        <form method="get" action="{{ route('search_patient') }}">
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-12 col-md-3">

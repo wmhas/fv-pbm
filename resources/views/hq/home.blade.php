@@ -50,7 +50,7 @@
                             <p>Complete Order</p>
                         </div>
                         <div class="text-center">
-                            <form method="get" action="/home/order">
+                            <form method="get" action="{{ route('view_order') }}">
                                 <input type="hidden" name="status" value="4">
                                 <button type="submit" class="info-button">More info <i
                                         class="mdi mdi-arrow-right-bold"></i></button>
@@ -65,7 +65,7 @@
                             <p>Batch Order</p>
                         </div>
                         <div class="text-center">
-                            <form method="get" action="/home/order">
+                            <form method="get" action="{{ route('view_order') }}">
                                 <input type="hidden" name="status" value="5">
                                 <button type="submit" class="info-button">More info
                                     <i class="mdi mdi-arrow-right-bold"></i>
@@ -82,7 +82,7 @@
                             <h3 class="card-title text-white"><i class="mdi mdi-account-search"></i>
                                 Search Patient</h3>
                         </div>
-                        <form method="get" action="/home/search/patient">
+                        <form method="get" action="{{ route('search_patient') }}">
                             <div class="card-body">
                                 <div class="form-group">
                                     <div class="row">
@@ -105,7 +105,7 @@
                             <h3 class="card-title text-white"><i class="mdi mdi-magnify"></i>
                                 Search Order</h3>
                         </div>
-                        <form method="get" action="/home/search/order">
+                        <form method="get" action="{{ route('search_order') }}">
                             <div class="card-body">
                                 <div class="form-group">
                                     <div class="row">
