@@ -60,7 +60,8 @@ class PurchaseController extends Controller
     {
         $items = Item::where('id', $item)->first();
         //$salesperson = SalesPerson::with('salespersons')->all();
-        $salesperson = SalesPerson::all();
+        
+        $salesperson = SalesPerson::whereNull('deleted_at')->get();
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
         return view('purchase.create_purchase', compact('roles', 'salesperson', 'items'));
     }

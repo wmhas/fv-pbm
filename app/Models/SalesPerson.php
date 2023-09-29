@@ -6,9 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class SalesPerson extends Model
-{
-    use SoftDeletes;
-    
+{    
     protected $table = 'sales_persons';
 
     protected $fillable = ['name'] ;

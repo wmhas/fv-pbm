@@ -114,7 +114,7 @@ class OrderController extends Controller
                 'id' => $order->patient_id
             ]);
         } else {
-            $salesPersons = SalesPerson::all();
+            $salesPersons = SalesPerson::whereNull('deleted_at')->get();
             $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
             return view('orders.view', compact('order', 'roles', 'salesPersons'));
         }
@@ -125,7 +125,7 @@ class OrderController extends Controller
         $states = State::all();
         $hospitals = Hospital::all();
         $clinics = Clinic::all();
-        $salesPersons = SalesPerson::all();
+        $salesPersons = SalesPerson::whereNull('deleted_at')->get();
         $order = Order::where('id', $id)->first();
         // $items = DB::table('myob_products as a')->join('myob_product_details as b', 'b.myob_product_id', 'a.ItemNumber')->where('IsInactive', 'N')->get();
         $orderItems = OrderItem::where('order_id', $id)->first();
@@ -319,7 +319,7 @@ class OrderController extends Controller
         $states = DB::table('states')->select("id","name")->get();
 
         $order = Order::where('patient_id', $patient)->where('do_number', '')->first();
-        $salesPersons = SalesPerson::all();
+        $salesPersons = SalesPerson::whereNull('deleted_at')->get();
         $roles = DB::table('model_has_roles')->join('users', 'model_has_roles.model_id', '=', 'users.id')->where("users.id", auth()->id())->first();
 
         if (empty($order)) {
@@ -1712,7 +1712,7 @@ class OrderController extends Controller
     {
         $states = State::all();
         $hospitals = Hospital::all();
-        $salesPersons = SalesPerson::all();
+        $salesPersons = SalesPerson::whereNull('deleted_at')->get();
         $clinics = Clinic::all();
         $frequencies = Frequency::all();
         $order = Order::where('id', $id)->first();
