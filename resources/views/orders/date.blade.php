@@ -43,7 +43,7 @@
                 <div class="col-6">
                     <div class="card">
                         <div class="card-body">
-                            <form action="{{ route('date.update', [$order->do_number]) }}" method="post">
+                            <form action="{{ route('order.date.update', [$order->do_number]) }}" method="post">
                                 @csrf
                                 @method('patch')
         

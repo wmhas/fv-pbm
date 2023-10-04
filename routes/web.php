@@ -155,7 +155,7 @@ Route::group(['middleware' => ['auth']], function () {
     // AJAX
     // Route::get('/getDetails/{id}', 'OrderController@getDetails');
     //Route::get('/getItemDetails/{id}', 'AjaxController@getItemDetails');
-    Route::get('/getPatients/{id}', 'PatientController@getPatients');
+    Route::get('/getPatients/{id}', 'PatientController@getPatients')->name('getPatients');
     Route::get('/getPurchase/{id}', 'PurchaseController@getDetails');
 
 
