@@ -280,7 +280,7 @@
             if(value == 'CardOwner'){
 
                 $.ajax({
-                url: '/getPatients/{{ $patient->id }}',
+                url: '{{ route("getPatients", ["id"=>$patient->id]) }}',
                 type: 'get',
                 dataType: 'json',
                 success: function(response){
