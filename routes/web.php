@@ -191,6 +191,7 @@ Route::group(['middleware' => ['auth']], function () {
         'prefix' => 'ajax'
     ], function () {
         Route::get('/getDONumber/{dispensing_by}', 'AjaxController@getDONumber')->name('getDONumber');
+        Route::get('/getDONumber2/{dispensing_by}', 'AjaxController@getDONumber2')->name('getDONumber2');
         Route::get('/getItemDetails/{id}', 'AjaxController@getItemDetails')->name('getItemDetails');
     });
 

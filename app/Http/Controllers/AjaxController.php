@@ -29,9 +29,10 @@ class AjaxController extends Controller
     {
         $increment = 1;
         $frontNumber = 3;
+
+        $count_order = DB::table('orders')->where('do_number', '!=', '')->whereYear('created_at', '=', date('Y'))->whereNull('deleted_at')->count();
         
         do {
-            $count_order = DB::table('orders')->where('do_number', '!=', '')->whereYear('created_at', '=', date('Y'))->whereNull('deleted_at')->count();
             $do_number = $frontNumber.str_pad($count_order + $increment, 7, "0", STR_PAD_LEFT);
 
             $exists = Order::where('do_number', $do_number)->first();
@@ -42,6 +43,31 @@ class AjaxController extends Controller
         } while ($exists);
 
         return response()->json($do_number);
+    }
+
+    public function getDONumber2($dispensing_by)
+    {
+        $increment = 1;
+        $frontNumber = 3;
+
+        DB::enableQueryLog();
+
+        $count_order = DB::table('orders')->where('do_number', '!=', '')->whereYear('created_at', '=', date('Y'))->whereNull('deleted_at')->count();
+        
+        do {
+            $do_number = $frontNumber.str_pad($count_order + $increment, 7, "0", STR_PAD_LEFT);
+
+            $exists = Order::where('do_number', $do_number)->first();
+
+            if ($exists)
+                $increment++;
+
+        } while ($exists);
+
+        dump(DB::getQueryLog());
+        dump($increment);
+
+        // return response()->json($do_number);
     }
 
     public function getItemDetails($item_id = 0)
