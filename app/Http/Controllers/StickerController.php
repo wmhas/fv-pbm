@@ -55,9 +55,23 @@ class StickerController extends Controller
             foreach ($order->orderitem AS $orderItem) {
                 $instruction = '';
                 if (($orderItem->items->selling_uom === 'TAB' || $orderItem->items->selling_uom === 'CAP') && $orderItem->items->instruction !== 'INHALE/SEDUT') {
-                    $instruction = 'AMBIL '.$orderItem->dose_quantity.' BIJI '.$orderItem->frequencies->value.' KALI SEHARI '.$orderItem->items->instruction;
+                    if($orderItem->frequencies->name === 'EOD'){
+                        $instruction = 'AMBIL '.$orderItem->dose_quantity.' BIJI SELANG SEHARI '.$orderItem->items->instruction;
+
+                    }else{
+                        $instruction = 'AMBIL '.$orderItem->dose_quantity.' BIJI '.$orderItem->frequencies->value.' KALI SEHARI '.$orderItem->items->instruction;
+
+                    }
+                    
                 } else if (strpos($orderItem->items->instruction , 'SEDUT')!== false) {
-                    $instruction = $orderItem->dose_quantity.' SEDUT '.$orderItem->frequencies->value.' KALI SEHARI';
+                    if($orderItem->frequencies->name === 'EOD'){
+                        $instruction = $orderItem->dose_quantity.' SEDUT SELANG SEHARI';
+                        
+                    }else{
+                        $instruction = $orderItem->dose_quantity.' SEDUT '.$orderItem->frequencies->value.' KALI SEHARI';
+
+                    }
+
                 }
                 
                 $sellingUom = $orderItem->items->selling_uom;
