@@ -27,7 +27,7 @@ class AjaxController extends Controller
 
     public function getDONumber($dispensing_by)
     {
-        $increment = 1;
+        $increment = 12;
         $frontNumber = 3;
 
         $count_order = DB::table('orders')->where('do_number', '!=', '')->whereYear('created_at', '=', date('Y'))->whereNull('deleted_at')->count();
@@ -47,7 +47,7 @@ class AjaxController extends Controller
 
     public function getDONumber2($dispensing_by)
     {
-        $increment = 1;
+        $increment = 12;
         $frontNumber = 3;
 
         DB::enableQueryLog();
