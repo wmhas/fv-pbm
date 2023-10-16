@@ -944,7 +944,9 @@
                         <div class="card-tools">
                             <div class="form-group">
                                 <div class="custom-control custom-switch">
-                                    <input type="checkbox" class="custom-control-input" id="NSD" @if (\Request::get('parent') !== NULL) checked @else  @if ($order->rx_interval == 1) checked @endif @endif>
+                                    <input type="checkbox" class="custom-control-input" id="NSD" @if (\Request::get('parent') !== NULL) checked @else  @if ($order->rx_interval == 1) checked @endif @endif
+                                    name="rx_one_off_x"
+                                    >
                                     <label class="custom-control-label" for="NSD">Set One Off Supply</label>
                                     <input type="hidden" name="rx_interval" id="rx_interval"
                                         value="{{ $order->rx_interval }}">
