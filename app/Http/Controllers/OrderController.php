@@ -725,12 +725,12 @@ class OrderController extends Controller
 
         //     if ($total_price != $request->price[$i]) {
         //         return redirect()->back()->with(['status' => false, 'message' => 'Incorrect total price']);
-        //     } 
-        // }    
+        //     }
+        // }
         
 
         DB::beginTransaction();
-
+            
         try {
 
             $order = Order::where('id',  $request->input('order_id')[0])->first();
@@ -751,6 +751,8 @@ class OrderController extends Controller
             $od->parent = $order->id;
             $od->save();
 
+            // dd($od);
+
             if ($order->prescription) {
                 $pre = new Prescription;
                 $pre->order_id = $od->id;
@@ -762,6 +764,7 @@ class OrderController extends Controller
                 $pre->rx_start = $order->prescription->rx_start;
                 $pre->rx_end = $order->prescription->rx_end;
                 $pre->next_supply_date = $order->prescription->next_supply_date;
+                //dd($pre);
                 $pre->save();
             }
 
@@ -1616,7 +1619,11 @@ class OrderController extends Controller
                 $prescription->rx_number = ($request->input('rx_number')) ? $request->input('rx_number') : $prev_order->prescription->rx_number;
                 $prescription->rx_start = ($request->input('rx_start_date')) ? $request->input('rx_start_date') : $prev_order->prescription->rx_start;
                 $prescription->rx_end = ($request->input('rx_end_date')) ? $request->input('rx_end_date') : $prev_order->prescription->rx_end;
-                // $prescription->next_supply_date = ($request->input('rx_supply_date')) ? $request->input('rx_supply_date') : $prev_order->prescription->next_supply_date;
+
+                $one_off = $request->input('rx_one_off_x');
+                if(is_null($one_off)){
+                    $prescription->next_supply_date = ($request->input('rx_supply_date')) ? $request->input('rx_supply_date') : $prev_order->prescription->next_supply_date;
+                }
 
                 if ($request->hasFile('rx_attach')) {
                     $fileNameWithExt = $request->file('rx_attach')->getClientOriginalName();
@@ -1710,6 +1717,7 @@ class OrderController extends Controller
 
     public function new_resubmission(Request $request, $id)
     {
+        //dd($request);
         $states = State::all();
         $hospitals = Hospital::all();
         $salesPersons = SalesPerson::whereNull('deleted_at')->get();
