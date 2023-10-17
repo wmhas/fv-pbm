@@ -1033,7 +1033,7 @@
                                     <input type="date" class="form-control" name="rx_end_date" @if (!empty($order->prescription)) value="{{ $order->prescription->rx_end }}" @endif required>
                                 </div>
                             </div>
-                            <div class="col-md-4" id="colNSD" @if (\Request::get('parent') !== NULL) style="display: none;" @endif>
+                            <div class="col-md-4" id="colNSD" @if (\Request::get('parent') !== NULL || $order->rx_interval == 1) style="display: none;" @endif>
                                 <div class="form-group">
                                     <label>Next Supply Date</label>
                                     <input type="date" class="form-control" id="rx_supply_date" name="rx_supply_date" @if (!empty($order->prescription)) value="{{ $order->prescription->next_supply_date }}" @endif>
