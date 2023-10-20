@@ -1725,11 +1725,17 @@ class OrderController extends Controller
         $frequencies = Frequency::all();
         $order = Order::where('id', $id)->first();
         $items = Item::all();
+        $allItemsID = $items->pluck('id');
         // $items = DB::table('myob_products as a')->join('myob_product_details as b', 'b.myob_product_id', 'a.ItemNumber')->where('IsInactive', 'N')->get();
         $orderItems = OrderItem::where('order_id', $id)->first();
+        $location = DB::table('locations')->select('item_id', 'counter','courier')->whereIn('item_id', $allItemsID)->get();
         $item_lists = [];
         foreach ($items as $item) {
-            $location = DB::table('locations')->select('counter','courier')->where('item_id', $item->id)->first();
+            $searchedItemId = $item->id; // The item_id you want to find
+
+            $currentLocation = $location->first(function ($item) use ($searchedItemId) {
+                return $item->item_id === $searchedItemId;
+            });
 
             if ($request->sdm) {
                 if ($request->sdm == "Walkin") {
@@ -1737,7 +1743,7 @@ class OrderController extends Controller
                         'id' => $item->id,
                         'brand_name' => $item->brand_name,
                         'code' => $item->item_code,
-                        'quantity' => $location->counter != null ? $location->counter : 0,
+                        'quantity' => $currentLocation->counter != null ? $currentLocation->counter : 0,
                         'frequency' => $item->frequency_id,
                     ]);
                 } else {
@@ -1745,7 +1751,7 @@ class OrderController extends Controller
                         'id' => $item->id,
                         'brand_name' => $item->brand_name,
                         'code' => $item->item_code,
-                        'quantity' => $location->courier != null ? $location->courier : 0,
+                        'quantity' => $currentLocation->courier != null ? $currentLocation->courier : 0,
                         'frequency' => $item->frequency_id,
                     ]);
                 }
@@ -1755,7 +1761,7 @@ class OrderController extends Controller
                         'id' => $item->id,
                         'brand_name' => $item->brand_name,
                         'code' => $item->item_code,
-                        'quantity' => $location->counter != null ? $location->counter : 0,
+                        'quantity' => $currentLocation->counter != null ? $currentLocation->counter : 0,
                         'frequency' => $item->frequency_id,
                     ]);
                 } else {
@@ -1763,7 +1769,7 @@ class OrderController extends Controller
                         'id' => $item->id,
                         'brand_name' => $item->brand_name,
                         'code' => $item->item_code,
-                        'quantity' => $location->courier != null ? $location->courier : 0,
+                        'quantity' => $currentLocation->courier != null ? $currentLocation->courier : 0,
                         'frequency' => $item->frequency_id,
                     ]);
                 }
