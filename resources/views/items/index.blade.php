@@ -21,7 +21,7 @@
             <div class="col-md-12 mb-4">
                 <div class="card">
                     <div class="card-body">
-                        <form method="get" action="/item/search">
+                        <form method="get" action="{{ route('item.search') }}">
                             <div class="row">
                                 <div class="col-md-4">
                                     <div class="input-group">
@@ -41,7 +41,7 @@
                                     <button type="submit" class="btn btn-secondary w-100">Search</button>
                                 </div>
                                 <div class="col-md-2">
-                                    <button type="button" class="btn btn-primary w-100" onclick="location.href='/item/create'">Add New Item</button>
+                                    <button type="button" class="btn btn-primary w-100" onclick="location.href='{{ route('item.create') }}'">Add New Item</button>
                                 </div>
                             </div>
                         </form>

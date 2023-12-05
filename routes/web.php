@@ -66,14 +66,17 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/delete', 'PatientController@delete')->name("patient.delete");
     });
 
-    Route::group(['prefix' => 'item'], function () {
-        Route::get('/index', 'ItemController@index');
-        Route::get('/search', 'ItemController@search');
-        Route::get('/{item}/view', 'ItemController@view');
-        Route::get('/create', 'ItemController@create');
-        Route::post('/create/save', 'ItemController@store_create');
-        Route::get('/{item}/update', 'ItemController@edit');
-        Route::post('/{item}/update/save', 'ItemController@store_edit');
+    Route::group([
+        'prefix' => 'item',
+        'as' => 'item.'
+    ], function () {
+        Route::get('/index', 'ItemController@index')->name('index');
+        Route::get('/search', 'ItemController@search')->name('search');
+        Route::get('/{item}/view', 'ItemController@view')->name('view');
+        Route::get('/create', 'ItemController@create')->name('create');
+        Route::post('/create/save', 'ItemController@store_create')->name('store');
+        Route::get('/{item}/update', 'ItemController@edit')->name('edit');
+        Route::post('/{item}/update/save', 'ItemController@store_edit')->name('update');
     });
 
     Route::group([
