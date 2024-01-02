@@ -696,12 +696,12 @@ class OrderController extends Controller
 
     private function getDONumber($dispensing_by = null)
     {
-        $increment = 1;
-        $frontNumber = 3;
+        $increment = 0;
+        $frontNumber = 31;
         
         do {
             $count_order = DB::table('orders')->where('do_number', '!=', '')->whereYear('created_at', '=', date('Y'))->whereNull('deleted_at')->count();
-            $do_number = $frontNumber.str_pad($count_order + $increment, 7, "0", STR_PAD_LEFT);
+            $do_number = $frontNumber.str_pad($count_order + $increment, 6, "0", STR_PAD_LEFT);
 
             $exists = Order::where('do_number', $do_number)->first();
 

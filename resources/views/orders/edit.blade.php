@@ -753,7 +753,7 @@
                                     <label>DO Number</label>
                                     @if ($resubmission == 1)
                                         <input type="text" class="form-control" id="do_number" name="do_number"
-                                            value="{{ ($order->do_number)?$order->do_number:$do_number }}">
+                                            value="{{ $do_number }}">
                                     @else
                                         <input type="text" class="form-control" id="do_number" name="do_number" @if (!empty($order)) value="{{ $order->do_number }}" @endif>
                                     @endif
