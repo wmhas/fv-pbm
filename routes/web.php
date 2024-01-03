@@ -149,7 +149,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/{order}/batch_order','BatchController@batch_order');
         Route::get('/{batch}/batch_list', 'BatchController@show_batch');
         Route::post('/{batch}/batch_list', 'BatchController@changeStatus');
-        Route::get('/search/batched', 'BatchController@search_batch');
+        Route::get('/search/batched', 'BatchController@search_batch')->name('search_batch');
         Route::post('/export-excel', 'BatchController@export_batch_excel')->name('batch.export.excel');
         Route::get('/{batch}/delete_batch', 'BatchController@delete_batch')->name('batch.delete');
         Route::get('/{batch}/remove_order/{order}', 'BatchController@remove_order')->name('batch.remove');

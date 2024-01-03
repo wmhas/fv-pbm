@@ -96,7 +96,7 @@
 								<h3 class="card-title">Batched Order</h3>
 							</div>
 							<div class="col-6">
-								<form method="get" action="/batch/search/batched">
+								<form method="get" action="{{ route('search_batch') }}">
 									<div class="form-group">
 										<div class="row">
 											<div class="col-5">
